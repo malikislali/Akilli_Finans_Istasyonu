@@ -1,0 +1,15 @@
+# Python ortamları
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Django Hassas Verileri
+db.sqlite3
+.env
+media/
+static_cdn/
+
+# İşletim sistemi kalıntıları
+.DS_Store
+Thumbs.db
