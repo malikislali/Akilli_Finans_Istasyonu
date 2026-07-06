@@ -1,0 +1,54 @@
+[
+  {
+    "sembol": "BTC-USD",
+    "pazar": "KRIPTO",
+    "orijinal_donem_fark": 0.14280375827461,
+    "orijinal_donem_sharpe": 1.0526547919345852,
+    "orijinal_donem_basarili": true,
+    "orijinal_donem_hata": null,
+    "gecmis_donem_fark": 7.070707070707066,
+    "gecmis_donem_sharpe": 1.6516180986441922,
+    "gecmis_donem_basarili": true,
+    "gecmis_donem_hata": null,
+    "tutarli_pozitif": false
+  },
+  {
+    "sembol": "THYAO.IS",
+    "pazar": "TR_HISSE",
+    "orijinal_donem_fark": 9.677419354838712,
+    "orijinal_donem_sharpe": 3.2652058882380564,
+    "orijinal_donem_basarili": true,
+    "orijinal_donem_hata": null,
+    "gecmis_donem_fark": -9.459459459459467,
+    "gecmis_donem_sharpe": 3.0407871590684503,
+    "gecmis_donem_basarili": true,
+    "gecmis_donem_hata": null,
+    "tutarli_pozitif": false
+  },
+  {
+    "sembol": "AAPL",
+    "pazar": "ABD_HISSE",
+    "orijinal_donem_fark": 6.964608057763954,
+    "orijinal_donem_sharpe": 0.11840499640099737,
+    "orijinal_donem_basarili": true,
+    "orijinal_donem_hata": null,
+    "gecmis_donem_fark": -3.111111111111107,
+    "gecmis_donem_sharpe": 0.2937745228556252,
+    "gecmis_donem_basarili": true,
+    "gecmis_donem_hata": null,
+    "tutarli_pozitif": false
+  },
+  {
+    "sembol": "GC=F",
+    "pazar": "EMTIA",
+    "orijinal_donem_fark": -7.705192629815734,
+    "orijinal_donem_sharpe": -2.9277267763560815,
+    "orijinal_donem_basarili": true,
+    "orijinal_donem_hata": null,
+    "gecmis_donem_fark": 0.0,
+    "gecmis_donem_sharpe": 0.2100281131592799,
+    "gecmis_donem_basarili": true,
+    "gecmis_donem_hata": null,
+    "tutarli_pozitif": false
+  }
+]

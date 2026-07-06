@@ -1,0 +1,424 @@
+{% extends "quant_app/base_v2.html" %}
+{% block title %}{{ pazar_bilgisi.ad }} — Sovereign Cockpit{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="market-ust-bar">
+  <div class="market-baslik">
+    <span style="font-size: 1.8rem;">{{ pazar_bilgisi.emoji }}</span>
+    <h1>{{ pazar_bilgisi.ad }}</h1>
+  </div>
+
+  <!-- ---------------- ARAMA KUTUSU (autocomplete) ---------------- -->
+  <div class="market-arama-kutusu">
+    <input type="text" id="market-arama-input" class="market-arama-input"
+           placeholder="Varlık ara (örn. B yazınca B ile başlayanlar gelir)..." autocomplete="off">
+    <div id="market-arama-sonuclari" class="market-arama-sonuclari gizli"></div>
+  </div>
+
+  <!-- ---------------- PERİYOT SEÇİCİ ---------------- -->
+  <div class="periyot-secici" id="periyot-secici">
+    <!-- JS ile dolduruluyor (pazara göre farklı periyot setleri) -->
+  </div>
+</div>
+
+<!-- ---------------- ALT NAVİGASYON ---------------- -->
+<div class="alt-navigasyon">
+  <button class="alt-nav-buton aktif" data-sekme="anasayfa-sekme">🏠 Anasayfa</button>
+  <button class="alt-nav-buton" data-sekme="tarama-sekme">🔎 Tarama</button>
+  <button class="alt-nav-buton" data-sekme="analiz-sekme">📊 Analiz</button>
+</div>
+
+<!-- ---------------- SEKME: ANASAYFA (bu pazarın TÜM varlık listesi) ---------------- -->
+<div id="anasayfa-sekme" class="market-sekme-panel">
+  <div id="market-varlik-listesi" class="market-varlik-listesi">
+    <div class="text-sm text-muted" style="padding: 1rem 0;">Yükleniyor...</div>
+  </div>
+</div>
+
+<!-- ---------------- SEKME: TARAMA (filtreleme - iskelet) ---------------- -->
+<div id="tarama-sekme" class="market-sekme-panel" style="display: none;">
+  <div class="panel rounded-xl p-5">
+    <div class="font-display text-lg font-bold text-white mb-3">🔎 Tarama (Screener)</div>
+    <div class="text-sm text-muted" style="margin-bottom: 1rem;">
+      Filtreleme motoru henüz hazırlanıyor — bir sonraki geliştirme adımında buraya
+      RSI/MACD/Hacim/Trend gibi kriterlere göre filtreleme eklenecek (örn. "RSI &lt; 30",
+      "Hacim Artışı &gt; %50").
+    </div>
+    <div style="opacity: 0.4; pointer-events: none;">
+      <div class="grid grid-cols-2 gap-3">
+        <div class="field" style="padding: 0.6rem;">RSI &lt; <input type="number" value="30" style="width: 3rem; background: none; border: none; color: white;"></div>
+        <div class="field" style="padding: 0.6rem;">Hacim Artışı &gt; %<input type="number" value="50" style="width: 3rem; background: none; border: none; color: white;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ---------------- SEKME: ANALİZ (tek varlık detay) ---------------- -->
+<div id="analiz-sekme" class="market-sekme-panel" style="display: none;">
+  <div class="panel rounded-xl p-5 mb-4">
+    <div class="flex items-center justify-between" style="flex-wrap: wrap; gap: 0.75rem;">
+      <div>
+        <div class="font-display text-lg font-bold text-white" id="analiz-secili-varlik">Bir varlık seçin</div>
+        <div class="text-xs text-muted font-mono">Yukarıdaki arama kutusundan bir varlık seçtiğinizde burada detaylı analiz açılır.</div>
+      </div>
+      <a href="{% url 'dashboard' %}" class="laboratuvar-link" style="width: auto; padding: 0.6rem 1.1rem;">🧪 Laboratuvar'da Aç</a>
+    </div>
+  </div>
+
+  
+  
+
+  <!-- ---- ANA GRAFİK OVERLAY SEÇİMİ (EMA'lar + Bollinger) ---- -->
+  <div class="panel rounded-xl p-5 mb-4">
+    <div class="font-display text-sm font-bold text-white mb-3">📈 Ana Grafik Katmanları</div>
+    <div class="gosterge-toggle-grup" id="overlay-toggle-grup">
+      <button class="gosterge-toggle aktif" data-overlay="ema_20" style="--toggle-renk: #34D399;">EMA 20</button>
+      <button class="gosterge-toggle aktif" data-overlay="ema_50" style="--toggle-renk: #F87171;">EMA 50</button>
+      <button class="gosterge-toggle" data-overlay="ema_100" style="--toggle-renk: #A78BFA;">EMA 100</button>
+      <button class="gosterge-toggle" data-overlay="sma_200" style="--toggle-renk: #94A3B8;">SMA 200</button>
+      <button class="gosterge-toggle" data-overlay="bollinger" style="--toggle-renk: #38BDF8;">Bollinger Bands</button>
+    </div>
+  </div>
+
+  <!-- ---- ANA FİYAT GRAFİĞİ ---- -->
+  <div class="panel rounded-xl p-5 mb-4">
+    <canvas id="ana-fiyat-grafik" height="100"></canvas>
+  </div>
+
+  
+
+  <!-- ---- OSİLATÖR SEÇİMİ ---- -->
+  <div class="panel rounded-xl p-5 mb-4">
+    <div class="font-display text-sm font-bold text-white mb-3">📊 Osilatör / İndikatör Panelleri</div>
+    <div class="text-xs text-muted" style="margin-bottom: 0.75rem;">
+      Seçtiğiniz göstergeler ana grafiğin altında ayrı panellerde alt alta açılır. Seçimleriniz tarayıcınızda hatırlanır.
+    </div>
+    <div class="gosterge-toggle-grup" id="osilator-toggle-grup">
+      <button class="gosterge-toggle aktif" data-osilator="rsi">RSI</button>
+      <button class="gosterge-toggle aktif" data-osilator="macd">MACD</button>
+      <button class="gosterge-toggle" data-osilator="stoch">Stochastic</button>
+      <button class="gosterge-toggle" data-osilator="wavetrend">WaveTrend</button>
+      <button class="gosterge-toggle" data-osilator="cci">CCI</button>
+      <button class="gosterge-toggle" data-osilator="atr">ATR</button>
+    </div>
+  </div>
+
+  <!-- ---- OSİLATÖR PANELLERİ (alt alta, JS ile doldurulur) ---- -->
+  <div id="osilator-panelleri"></div>
+
+  <div id="analiz-bos-durum" class="panel rounded-xl p-5">
+    <div class="text-sm text-muted" style="text-align: center; padding: 2rem 0;">
+      Yukarıdaki arama kutusundan bir varlık seçin.<br>
+      Tam ML analizi / Backtest için <a href="{% url 'dashboard' %}" style="color: var(--accent-sky);">Laboratuvar</a>'ı kullanabilirsiniz.
+    </div>
+  </div>
+</div>
+
+
+<script>
+const PAZAR = "{{ pazar }}";
+const VARLIK_LISTESI = {{ varlik_listesi_json|safe }};
+const INTERVAL_SECENEKLERI = {{ interval_secenekleri_json|safe }};
+
+// ---------------- ALT NAVİGASYON SEKME GEÇİŞİ ----------------
+document.querySelectorAll('.alt-nav-buton').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.alt-nav-buton').forEach(b => b.classList.remove('aktif'));
+    btn.classList.add('aktif');
+    document.querySelectorAll('.market-sekme-panel').forEach(p => p.style.display = 'none');
+    document.getElementById(btn.dataset.sekme).style.display = 'block';
+  });
+});
+
+// ---------------- PERİYOT SEÇİCİ DOLDUR ----------------
+let aktifPeriyot = null;
+function periyotSeciciDoldur() {
+  const container = document.getElementById('periyot-secici');
+ //aşağıdaki kapattığım kod intervelin tam ortasına odaklanıyor
+  // container.innerHTML = INTERVAL_SECENEKLERI.map(([etiket, deger, native], i) => `
+ //   <button class="periyot-buton ${i === Math.floor(INTERVAL_SECENEKLERI.length/2) ? 'aktif' : ''}" data-deger="${deger}">${etiket}</button>
+  //`).join('');
+container.innerHTML = INTERVAL_SECENEKLERI.map(([etiket, deger, native], i) => {
+  const varsayilanMi = deger === '1d';  // her pazarda TUTARLI bir varsayılan
+  return `<button class="periyot-buton ${varsayilanMi ? 'aktif' : ''}" data-deger="${deger}">${etiket}</button>`;
+}).join('');
+
+  container.querySelectorAll('.periyot-buton').forEach(btn => {
+    if (btn.classList.contains('aktif')) aktifPeriyot = btn.dataset.deger;
+    btn.addEventListener('click', () => {
+      container.querySelectorAll('.periyot-buton').forEach(b => b.classList.remove('aktif'));
+      btn.classList.add('aktif');
+      aktifPeriyot = btn.dataset.deger;
+      // Analiz sekmesinde bir varlık seçiliyse, periyot değişince veriyi yeniden çek
+      const seciliVarlik = document.getElementById('analiz-secili-varlik').textContent;
+      if (seciliVarlik && seciliVarlik !== 'Bir varlık seçin') {
+        analizVerisiYukleVeCiz(seciliVarlik);
+      }
+    });
+  });
+}
+periyotSeciciDoldur();
+
+// ---------------- ARAMA (autocomplete) ----------------
+const aramaInput = document.getElementById('market-arama-input');
+const aramaSonuclari = document.getElementById('market-arama-sonuclari');
+
+aramaInput.addEventListener('input', () => {
+  const sorgu = aramaInput.value.trim().toUpperCase();
+  if (!sorgu) { aramaSonuclari.classList.add('gizli'); return; }
+
+  const eslesenler = VARLIK_LISTESI.filter(v => v.toUpperCase().startsWith(sorgu));
+  if (eslesenler.length === 0) { aramaSonuclari.classList.add('gizli'); return; }
+
+  aramaSonuclari.innerHTML = eslesenler.map(v => `
+    <div class="market-arama-sonuc-ogesi" data-sembol="${v}">
+      <span>${v}</span>
+      <button class="yildiz-buton" onclick="event.stopPropagation(); takipListesineEkle('${v}', '${PAZAR}')">⭐</button>
+    </div>
+  `).join('');
+  aramaSonuclari.classList.remove('gizli');
+
+  aramaSonuclari.querySelectorAll('.market-arama-sonuc-ogesi').forEach(el => {
+    el.addEventListener('click', () => {
+      const sembol = el.dataset.sembol;
+      aramaInput.value = sembol;
+      aramaSonuclari.classList.add('gizli');
+      analizSekmesineGec(sembol);
+    });
+  });
+});
+
+document.addEventListener('click', (e) => {
+  if (!aramaInput.contains(e.target) && !aramaSonuclari.contains(e.target)) {
+    aramaSonuclari.classList.add('gizli');
+  }
+});
+
+function analizSekmesineGec(sembol) {
+  document.querySelectorAll('.alt-nav-buton').forEach(b => b.classList.remove('aktif'));
+  document.querySelector('[data-sekme="analiz-sekme"]').classList.add('aktif');
+  document.querySelectorAll('.market-sekme-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('analiz-sekme').style.display = 'block';
+  document.getElementById('analiz-secili-varlik').textContent = sembol;
+  document.getElementById('analiz-bos-durum').style.display = 'none';
+  analizVerisiYukleVeCiz(sembol);
+}
+
+// =====================================================================
+// 🆕 GÖSTERGE PANELİ — overlay (EMA/Bollinger) + osilatör (RSI/MACD/...)
+// Tercihler localStorage'da saklanır (anahtar: 'sovereign_gosterge_tercihleri')
+// =====================================================================
+const LOCALSTORAGE_ANAHTARI = 'sovereign_gosterge_tercihleri';
+const OSILATOR_ETIKETLERI = {
+  rsi: 'RSI', macd: 'MACD', stoch: 'Stochastic', wavetrend: 'WaveTrend', cci: 'CCI', atr: 'ATR',
+};
+
+function gostergeTercihleriniYukle() {
+  try {
+    const kayitli = localStorage.getItem(LOCALSTORAGE_ANAHTARI);
+    if (kayitli) return JSON.parse(kayitli);
+  } catch (err) { /* localStorage erişilemezse varsayılana düş */ }
+  return {
+    overlay: { ema_20: true, ema_50: true, ema_100: false, sma_200: false, bollinger: false },
+    osilator: { rsi: true, macd: true, stoch: false, wavetrend: false, cci: false, atr: false },
+  };
+}
+
+function gostergeTercihleriniKaydet() {
+  try {
+    localStorage.setItem(LOCALSTORAGE_ANAHTARI, JSON.stringify(gostergeTercihleri));
+  } catch (err) { /* sessiz geç */ }
+}
+
+let gostergeTercihleri = gostergeTercihleriniYukle();
+let sonCekilenGostergeVerisi = null;
+let grafikNesneleri = {};
+
+// ---- Toggle butonlarının görünümünü tercihlere göre ayarla ----
+function toggleButonlariniUygula() {
+  document.querySelectorAll('#overlay-toggle-grup .gosterge-toggle').forEach(btn => {
+    btn.classList.toggle('aktif', !!gostergeTercihleri.overlay[btn.dataset.overlay]);
+  });
+  document.querySelectorAll('#osilator-toggle-grup .gosterge-toggle').forEach(btn => {
+    btn.classList.toggle('aktif', !!gostergeTercihleri.osilator[btn.dataset.osilator]);
+  });
+}
+toggleButonlariniUygula();
+
+document.querySelectorAll('#overlay-toggle-grup .gosterge-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const anahtar = btn.dataset.overlay;
+    gostergeTercihleri.overlay[anahtar] = !gostergeTercihleri.overlay[anahtar];
+    btn.classList.toggle('aktif', gostergeTercihleri.overlay[anahtar]);
+    gostergeTercihleriniKaydet();
+    if (sonCekilenGostergeVerisi) anaFiyatGrafiginiCiz(sonCekilenGostergeVerisi);
+  });
+});
+
+document.querySelectorAll('#osilator-toggle-grup .gosterge-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const anahtar = btn.dataset.osilator;
+    gostergeTercihleri.osilator[anahtar] = !gostergeTercihleri.osilator[anahtar];
+    btn.classList.toggle('aktif', gostergeTercihleri.osilator[anahtar]);
+    gostergeTercihleriniKaydet();
+    if (sonCekilenGostergeVerisi) osilatorPanelleriniCiz(sonCekilenGostergeVerisi);
+  });
+});
+
+async function analizVerisiYukleVeCiz(sembol) {
+  const periyot = aktifPeriyot || '1d';
+  try {
+    const resp = await fetch(`/api/gosterge-serileri/?sembol=${encodeURIComponent(sembol)}&pazar=${PAZAR}&interval=${periyot}`);
+    const veri = await resp.json();
+    if (!veri.basarili) {
+      console.warn('Gösterge verisi alınamadı:', veri.hata_mesaji);
+      return;
+    }
+    sonCekilenGostergeVerisi = veri;
+    anaFiyatGrafiginiCiz(veri);
+    osilatorPanelleriniCiz(veri);
+  } catch (err) {
+    console.error('Gösterge verisi yüklenemedi:', err);
+  }
+}
+
+function temelEksenAyarlari() {
+  return {
+    x: { ticks: { color: '#64748B', maxTicksLimit: 8 }, grid: { color: '#1E293B' } },
+    y: { ticks: { color: '#64748B' }, grid: { color: '#1E293B' } },
+  };
+}
+
+function anaFiyatGrafiginiCiz(veri) {
+  if (typeof Chart === 'undefined') return;
+  const ctx = document.getElementById('ana-fiyat-grafik').getContext('2d');
+  if (grafikNesneleri['ana']) grafikNesneleri['ana'].destroy();
+
+  const datasetler = [
+    { label: 'Close', data: veri.close, borderColor: '#38BDF8', borderWidth: 2, pointRadius: 0, tension: 0.1 },
+  ];
+
+  if (gostergeTercihleri.overlay.ema_20) datasetler.push({ label: 'EMA 20', data: veri.ema_20, borderColor: '#34D399', borderWidth: 1, pointRadius: 0, tension: 0.1 });
+  if (gostergeTercihleri.overlay.ema_50) datasetler.push({ label: 'EMA 50', data: veri.ema_50, borderColor: '#F87171', borderWidth: 1, pointRadius: 0, tension: 0.1 });
+  if (gostergeTercihleri.overlay.ema_100) datasetler.push({ label: 'EMA 100', data: veri.ema_100, borderColor: '#A78BFA', borderWidth: 1, pointRadius: 0, tension: 0.1 });
+  if (gostergeTercihleri.overlay.sma_200) datasetler.push({ label: 'SMA 200', data: veri.sma_200, borderColor: '#94A3B8', borderWidth: 1, pointRadius: 0, tension: 0.1 });
+  if (gostergeTercihleri.overlay.bollinger) {
+    datasetler.push({ label: 'Bollinger Üst', data: veri.bollinger_ust, borderColor: '#38BDF855', borderWidth: 1, pointRadius: 0, tension: 0.1 });
+    datasetler.push({ label: 'Bollinger Alt', data: veri.bollinger_alt, borderColor: '#38BDF855', borderWidth: 1, pointRadius: 0, tension: 0.1 });
+  }
+
+  grafikNesneleri['ana'] = new Chart(ctx, {
+    type: 'line',
+    data: { labels: veri.tarihler, datasets: datasetler },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { labels: { color: '#94A3B8' } } },
+      scales: temelEksenAyarlari(),
+    },
+  });
+}
+
+const OSILATOR_VERI_HARITASI = {
+  rsi: (v) => [{ label: 'RSI', data: v.rsi, borderColor: '#38BDF8', borderWidth: 2 }],
+  macd: (v) => [
+    { label: 'MACD', data: v.macd, borderColor: '#38BDF8', borderWidth: 2 },
+    { label: 'Sinyal', data: v.macd_sinyal, borderColor: '#F59E0B', borderWidth: 1 },
+  ],
+  stoch: (v) => [
+    { label: '%K', data: v.stoch_k, borderColor: '#38BDF8', borderWidth: 2 },
+    { label: '%D', data: v.stoch_d, borderColor: '#F59E0B', borderWidth: 1 },
+  ],
+  wavetrend: (v) => [
+    { label: 'WT1', data: v.wt1, borderColor: '#38BDF8', borderWidth: 2 },
+    { label: 'WT2', data: v.wt2, borderColor: '#F59E0B', borderWidth: 1 },
+  ],
+  cci: (v) => [{ label: 'CCI', data: v.cci, borderColor: '#A78BFA', borderWidth: 2 }],
+  atr: (v) => [{ label: 'ATR', data: v.atr, borderColor: '#F87171', borderWidth: 2 }],
+};
+
+function osilatorPanelleriniCiz(veri) {
+  const container = document.getElementById('osilator-panelleri');
+  const aktifOsilatorler = Object.keys(gostergeTercihleri.osilator).filter(k => gostergeTercihleri.osilator[k]);
+
+  container.innerHTML = aktifOsilatorler.map(anahtar => `
+    <div class="panel rounded-xl p-5 mb-4">
+      <div class="font-display text-sm font-bold text-white mb-3">${OSILATOR_ETIKETLERI[anahtar]}</div>
+      <canvas id="osilator-grafik-${anahtar}" height="70"></canvas>
+    </div>
+  `).join('');
+
+  if (typeof Chart === 'undefined') return;
+
+  aktifOsilatorler.forEach(anahtar => {
+    const canvasId = `osilator-grafik-${anahtar}`;
+    const canvasEl = document.getElementById(canvasId);
+    if (!canvasEl) return;
+    if (grafikNesneleri[canvasId]) grafikNesneleri[canvasId].destroy();
+
+    const serilerOlustur = OSILATOR_VERI_HARITASI[anahtar];
+    const datasetler = serilerOlustur(veri).map(s => ({
+      label: s.label, data: s.data, borderColor: s.borderColor, borderWidth: s.borderWidth,
+      pointRadius: 0, tension: 0.1,
+    }));
+
+    grafikNesneleri[canvasId] = new Chart(canvasEl.getContext('2d'), {
+      type: 'line',
+      data: { labels: veri.tarihler, datasets: datasetler },
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { labels: { color: '#94A3B8' } } },
+        scales: temelEksenAyarlari(),
+      },
+    });
+  });
+}
+
+// ---------------- VARLIK LİSTESİ (Anasayfa sekmesi) ----------------
+function fmt(deger, ondalik = 2) {
+  if (deger === null || deger === undefined || isNaN(deger)) return '—';
+  return Number(deger).toLocaleString('tr-TR', { minimumFractionDigits: ondalik, maximumFractionDigits: ondalik });
+}
+
+async function marketVarlikListesiniYukle() {
+  const container = document.getElementById('market-varlik-listesi');
+  try {
+    const resp = await fetch(`/api/market-fiyatlar/${PAZAR}/`);
+    const veri = await resp.json();
+    if (!veri.basarili) { container.innerHTML = '<div class="text-sm text-red">Yüklenemedi.</div>'; return; }
+
+    container.innerHTML = veri.varliklar.map(v => {
+      if (!v.basarili) return `<div class="market-varlik-satiri"><span>${v.sembol}</span><span class="text-muted text-xs">Veri yok</span></div>`;
+      const degisimSinif = v.degisim_yuzde >= 0 ? 'text-green' : 'text-red';
+      const isaret = v.degisim_yuzde >= 0 ? '+' : '';
+      return `
+        <div class="market-varlik-satiri" onclick="analizSekmesineGec('${v.sembol}')">
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <button class="yildiz-buton" onclick="event.stopPropagation(); takipListesineEkle('${v.sembol}', '${PAZAR}')">⭐</button>
+            <span class="font-mono font-bold text-white">${v.sembol}</span>
+          </div>
+          <div style="display:flex; gap:1.5rem; align-items:center;">
+            <span class="font-mono text-white">${fmt(v.fiyat)}</span>
+            <span class="font-mono font-bold ${degisimSinif}">${isaret}${fmt(v.degisim_yuzde)}%</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    container.innerHTML = '<div class="text-sm text-red">Yüklenemedi.</div>';
+  }
+}
+
+marketVarlikListesiniYukle();
+const urlParametreleri = new URLSearchParams(window.location.search);
+const urlSembol = urlParametreleri.get('sembol');
+if (urlSembol) {
+  analizSekmesineGec(urlSembol);
+}
+</script>
+{% endblock %}

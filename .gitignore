@@ -1,15 +1,30 @@
 # Python ortamları
-venv/
-.venv/
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
 
 # Django Hassas Verileri
 db.sqlite3
 .env
 media/
 static_cdn/
+staticfiles/
+local_settings.py
 
 # İşletim sistemi kalıntıları
 .DS_Store
 Thumbs.db
+
+# Gizli bilgiler
+.env
+secrets.py
+
+# MacOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

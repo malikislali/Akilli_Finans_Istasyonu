@@ -14,7 +14,7 @@ try:
 except Exception:
     XGBOOST_AVAILABLE = False
 
-# --- 🧮 İNDİKATÖR MOTORLARI ---
+# --- 🧮 İNDİKATÖR MOTORLARI (Asıl Çekirdekten Aktarılanlar) ---
 def rsi_calc(series, period=14):
     delta = series.diff()
     gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
@@ -27,6 +27,28 @@ def macd_calc(series, fast=12, slow=26, signal=9):
     macd_line = fast_ema - slow_ema
     signal_line = macd_line.ewm(span=signal, adjust=False).mean()
     return macd_line, signal_line, macd_line - signal_line
+
+def stoch_calc(high, low, close, k=14, d=3):
+    low_min = low.rolling(window=k).min()
+    high_max = high.rolling(window=k).max()
+    pk = ((close - low_min) / (high_max - low_min + 1e-10)) * 100
+    pd_series = pk.rolling(window=d).mean()
+    return pk, pd_series
+
+def wavetrend_calc(high, low, close, n1=10, n2=21):
+    esa = (high + low + close) / 3
+    esa_ema = esa.ewm(span=n1, adjust=False).mean()
+    d_ema = (esa - esa_ema).abs().ewm(span=n1, adjust=False).mean()
+    ci = (esa - esa_ema) / (0.015 * d_ema + 1e-10)
+    wt1 = ci.ewm(span=n2, adjust=False).mean()
+    wt2 = wt1.rolling(window=4).mean()
+    return wt1, wt2
+
+def cci_calc(high, low, close, period=20):
+    tp = (high + low + close) / 3
+    sma_tp = tp.rolling(window=period).mean()
+    mad = (tp - sma_tp).abs().rolling(window=period).mean()
+    return (tp - sma_tp) / (0.015 * mad + 1e-10)
 
 def atr_calc(high, low, close, period=14):
     tr = pd.concat([high - low, (high - close.shift(1)).abs(), (low - close.shift(1)).abs()], axis=1).max(axis=1)
@@ -58,8 +80,12 @@ def calculate_metrics(df):
     df_out['Bollinger_Ust'] = sma_20_bb + (std_20 * 2)
     df_out['Bollinger_Alt'] = sma_20_bb - (std_20 * 2)
     
+    # Eklenen Asıl Osilatör Gövdeleri hoca
     df_out['RSI'] = rsi_calc(c)
-    df_out['MACD'], df_out['MACD_Sig'], _ = macd_calc(c)
+    df_out['MACD'], df_out['MACD_Sig'], df_out['MACD_Hist'] = macd_calc(c)
+    df_out['Stoch_K'], df_out['Stoch_D'] = stoch_calc(h, l, c)
+    df_out['WT1'], df_out['WT2'] = wavetrend_calc(h, l, c)
+    df_out['CCI'] = cci_calc(h, l, c)
     df_out['ATR'] = atr_calc(h, l, c)
     
     df_out['Getiri_1G'] = c.pct_change(1)
@@ -70,19 +96,16 @@ def calculate_metrics(df):
     df_out['Yuzde_Getiri_Yarin'] = c.pct_change(1).shift(-1)
     df_out['Hedef'] = (df_out['Yuzde_Getiri_Yarin'] > 0.001).astype(int)
     
-    # 🛡️ Sızıntısız dropna() koruması
     df_out = df_out.replace([np.inf, -np.inf], np.nan).dropna()
     return df_out
 
 # =====================================================================
-# 🚀 ANA ANAHTAR: KANTİTATİF ANALİZ VE ENSEMBLE TAHMİN FONKSİYONU
+# 🚀 KANTİTATİF ENSEMBLE TAHMİN FONKSİYONU
 # =====================================================================
 def calistir_quant_analiz(sembol, pazar, aktif_period, aktif_interval):
     """
-    Dışarıdan gelen parametrelere göre ML Ensemble pipeline'ını çalıştırır 
-     ve Django/FastAPI arayüzünün tüketeceği temiz bir Python sözlüğü (dict) döner hoca.
+    Asıl ilk çekirdek motorla %100 senkronize edilmiş bilimsel tahmin kapısı hoca.
     """
-    # 1. Veri Çekme
     df_raw = yf.download(sembol, period=aktif_period, interval=aktif_interval, progress=False)
     if df_raw.empty:
         return {"durum": "hata", "mesaj": "Veri seti boş döndü."}
@@ -91,12 +114,10 @@ def calistir_quant_analiz(sembol, pazar, aktif_period, aktif_interval):
         df_raw.columns = df_raw.columns.get_level_values(0)
     df_raw.columns = [str(c).strip() for c in df_raw.columns]
     
-    # 2. İndikatörleri Hesaplama
     df_active = calculate_metrics(df_raw)
     if df_active.empty or len(df_active) < 30:
         return {"durum": "yetersiz_veri", "satir_sayisi": len(df_active)}
         
-    # 3. Anlık Fiyat ve Hacim Eşitleme Zırhı
     try:
         df_anlik = yf.download(sembol, period="1d", interval="1m", progress=False)
         if not df_anlik.empty:
@@ -114,7 +135,6 @@ def calistir_quant_analiz(sembol, pazar, aktif_period, aktif_interval):
     sma_hacim_20_degeri = float(last_row['SMA_Volume_20'])
     atr_degeri = float(last_row['ATR'])
     
-    # 🛡️ V54.0 Akıllı Hacim Regresyon Tamiri
     if hacim_su_an == 0 or pd.isna(hacim_su_an):
         hacim_su_an = sma_hacim_20_degeri
         hacim_turu = "ortalama"
@@ -125,7 +145,6 @@ def calistir_quant_analiz(sembol, pazar, aktif_period, aktif_interval):
     ath_degeri = float(df_active['High'].max())
     ath_uzaklik = ((fiyat_su_an - ath_degeri) / ath_degeri) * 100
 
-    # 4. ML Pipeline & Zaman Serisi İzolasyonu
     ozellikler = ['Close', 'SMA_200', 'Bollinger_Ust', 'RSI', 'MACD', 'Getiri_1G', 'Volatilite_5G', 'ATR', 'Hacim_ROC_5', 'Trend_Gucu']
     df_ml = df_active.iloc[:-1].copy()
     bugunun_satiri = df_active.iloc[[-1]][ozellikler].copy()
@@ -182,7 +201,6 @@ def calistir_quant_analiz(sembol, pazar, aktif_period, aktif_interval):
     model_rf.fit(X_train_scaled, y_train)
     model_baseline_lr.fit(X_train_scaled, y_train)
     
-    # Skor Hesaplamaları
     acc_gbm = accuracy_score(y_test, model_gbm.predict(X_test_scaled)) * 100
     acc_xgb = accuracy_score(y_test, model_xgb.predict(X_test_scaled)) * 100
     acc_rf = accuracy_score(y_test, model_rf.predict(X_test_scaled)) * 100
@@ -198,7 +216,6 @@ def calistir_quant_analiz(sembol, pazar, aktif_period, aktif_interval):
     
     prob_ensemble = (model_gbm.predict_proba(bugunun_scaled)[:, 1][0] + model_xgb.predict_proba(bugunun_scaled)[:, 1][0] + model_rf.predict_proba(bugunun_scaled)[:, 1][0]) / 3
     
-    # 5. Paketleme (Django/FastAPI'ye fırlatılacak nihai mühimmat)
     return {
         "durum": "basarili",
         "meta": {"sembol": sembol, "pazar": pazar, "period": aktif_period, "interval": aktif_interval},
@@ -225,7 +242,10 @@ def calistir_quant_analiz(sembol, pazar, aktif_period, aktif_interval):
             "bireysel_skorlar": {"gbm": acc_gbm, "xgb_lr": acc_xgb, "rf": acc_rf, "baseline_lr": acc_lr}
         },
         "grafik_verisi": {
-            "tarihler": df_active.index.strftime('%Y-%m-%d %H:%M').tolist(),
+            "x": df_active.index.strftime('%Y-%m-%d %H:%M').tolist(),
+            "open": df_active['Open'].squeeze().tolist(),
+            "high": df_active['High'].squeeze().tolist(),
+            "low": df_active['Low'].squeeze().tolist(),
             "close": df_active['Close'].squeeze().tolist(),
             "sma_20": df_active['SMA_20'].squeeze().tolist(),
             "sma_50": df_active['SMA_50'].squeeze().tolist(),
@@ -234,6 +254,11 @@ def calistir_quant_analiz(sembol, pazar, aktif_period, aktif_interval):
             "bollinger_ust": df_active['Bollinger_Ust'].squeeze().tolist(),
             "bollinger_alt": df_active['Bollinger_Alt'].squeeze().tolist(),
             "rsi": df_active['RSI'].squeeze().tolist(),
-            "macd": df_active['MACD'].squeeze().tolist()
+            "macd": df_active['MACD'].squeeze().tolist(),
+            "stoch_k": df_active['Stoch_K'].squeeze().tolist(),
+            "stoch_d": df_active['Stoch_D'].squeeze().tolist(),
+            "wt1": df_active['WT1'].squeeze().tolist(),
+            "wt2": df_active['WT2'].squeeze().tolist(),
+            "cci": df_active['CCI'].squeeze().tolist()
         }
     }

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akıllı Finans İstasyonu | Yapay Zeka Kokpiti</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-slate-950">
+
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                    <svg class="w-5 h-5 text-slate-950 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </div>
+                <span class="text-lg font-bold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">AKILLI FİNANS İSTASYONU</span>
+                <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20">Mac M4 Engine</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="text-right hidden sm:block">
+                    <p class="text-xs text-slate-400">Veri Kaynağı</p>
+                    <p class="text-xs font-medium text-emerald-400 flex items-center justify-end">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse mr-1.5"></span>
+                        {{ kaynak }} `[Pencere: {{ aktif_pencere }}]`
+                    </p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-wrap gap-4 items-center justify-between">
+           <form method="GET" action="" class="flex flex-wrap gap-4 items-center w-full sm:w-auto" id="configForm">
+                <div>
+                    <label class="block text-[10px] text-slate-400 font-medium uppercase mb-1">Pazar Alanı</label>
+                    <select name="pazar" id="pazarSelect" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer">
+                        <option value="KRIPTO" {% if request.GET.pazar == 'KRIPTO' or not request.GET.pazar %}selected{% endif %}>Kripto Para</option>
+                        <option value="TR_HISSE" {% if request.GET.pazar == 'TR_HISSE' %}selected{% endif %}>Borsa İstanbul</option>
+                        <option value="ABD_HISSE" {% if request.GET.pazar == 'ABD_HISSE' %}selected{% endif %}>ABD Borsaları</option>
+                        <option value="EMTIA" {% if request.GET.pazar == 'EMTIA' %}selected{% endif %}>Emtia / Maden</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-slate-400 font-medium uppercase mb-1">Varlık Seçimi</label>
+                    <select name="sembol" id="sembolSelect" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer w-40">
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-slate-400 font-medium uppercase mb-1">Mum Periyodu</label>
+                    <select name="period_label" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer">
+                        <option value="15 dk" {% if request.GET.period_label == '15 dk' %}selected{% endif %}>15 Dakika</option>
+                        <option value="30 dk" {% if request.GET.period_label == '30 dk' %}selected{% endif %}>30 Dakika</option>
+                        <option value="1 saat" {% if request.GET.period_label == '1 saat' %}selected{% endif %}>1 Saat</option>
+                        <option value="4 saat" {% if request.GET.period_label == '4 saat' %}selected{% endif %}>4 Saat</option>
+                        <option value="1 Gün" {% if request.GET.period_label == '1 Gün' or not request.GET.period_label %}selected{% endif %}>1 Gün</option>
+                        <option value="1 Hafta" {% if request.GET.period_label == '1 Hafta' %}selected{% endif %}>1 Hafta</option>
+                    </select>
+                </div>
+                <div class="self-end">
+                    <button type="submit" class="bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold text-xs px-4 py-2 rounded-lg shadow-md hover:opacity-90 transition-all cursor-pointer">SİNYAL ÜRET</button>
+                </div>
+            </form>
+            <div class="text-right">
+                <span class="text-xs text-slate-400">Aktif Takip:</span>
+                <span class="text-sm font-bold block text-white">{{ sinyal.sembol }}</span>
+            </div>
+        </section>
+        
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 relative overflow-hidden group hover:border-slate-700 transition-all">
+                <p class="text-sm font-medium text-slate-400">Toplam Takip Edilen Varlık</p>
+                <p class="text-3xl font-bold mt-2 tracking-tight">{{ toplam_takip_adedi }} <span class="text-sm text-slate-500">Adet</span></p>
+            </div>
+            
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 relative overflow-hidden group hover:border-slate-700 transition-all">
+                <p class="text-sm font-medium text-slate-400">Yapay Zeka Konsensüs Kararı</p>
+                <div class="mt-2 flex items-baseline space-x-2">
+                    <span class="text-3xl font-extrabold tracking-tight {% if 'ARTIŞ' in sinyal.konsensüs_karari or 'BUY' in sinyal.konsensüs_karari %}text-emerald-400{% else %}text-rose-400{% endif %}">
+                        {{ sinyal.konsensüs_karari }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 relative overflow-hidden group hover:border-slate-700 transition-all">
+                <p class="text-sm font-medium text-slate-400">Ensemble Tarihsel Başarı Oranı</p>
+                <p class="text-3xl font-bold mt-2 text-teal-400 tracking-tight">%{{ sinyal.ensemble_accuracy|floatformat:1 }} <span class="text-xs text-slate-500 font-normal">Backtest Skoru</span></p>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4">
+                <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-4 gap-2">
+                    <div>
+                        <h2 class="text-lg font-bold text-white tracking-tight">Canlı Algoritmik Grafik Kontrolü</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">XGBoost & LightGBM Öngörü Simülasyonu</p>
+                    </div>
+                    <div id="oscillatorPanel" class="flex gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800">
+                        <button onclick="changeIndicator('KAPALI')" id="btn-KAPALI" class="osc-btn osc-btn px-2.5 py-1 text-[11px] font-medium rounded-lg text-slate-400 hover:text-white transition-all cursor-pointer bg-slate-800 text-white">SADE</button>
+                        <button onclick="changeIndicator('RSI')" id="btn-RSI" class="osc-btn px-2.5 py-1 text-[11px] font-medium rounded-lg text-slate-400 hover:text-white transition-all cursor-pointer">RSI</button>
+                        <button onclick="changeIndicator('MACD')" id="btn-MACD" class="osc-btn px-2.5 py-1 text-[11px] font-medium rounded-lg text-slate-400 hover:text-white transition-all cursor-pointer">MACD</button>
+                        <button onclick="changeIndicator('WT')" id="btn-WT" class="osc-btn px-2.5 py-1 text-[11px] font-medium rounded-lg text-slate-400 hover:text-white transition-all cursor-pointer">WT</button>
+                        <button onclick="changeIndicator('CCI')" id="btn-CCI" class="osc-btn px-2.5 py-1 text-[11px] font-medium rounded-lg text-slate-400 hover:text-white transition-all cursor-pointer">CCI</button>
+                    </div>
+                </div>
+                
+                <div id="mumGrafigi" class="w-full h-[480px] bg-slate-950/50 rounded-2xl border border-slate-800/50"></div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6">
+                    <h3 class="text-md font-bold text-white border-b border-slate-800 pb-3 flex items-center">
+                        Olasılık Dağılım Matrisi
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-medium mb-1.5">
+                                <span class="text-emerald-400 flex items-center">▲ Boğa İhtimali</span>
+                                <span class="text-slate-300 font-bold">%{{ sinyal.boga_ihtimali|floatformat:1 }}</span>
+                            </div>
+                            <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
+                                <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-1000" style="width: {{ sinyal.boga_ihtimali }}%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-medium mb-1.5">
+                                <span class="text-rose-400 flex items-center">▼ Ayı İhtimali</span>
+                                <span class="text-slate-300 font-bold">%{{ sinyal.ayi_ihtimali|floatformat:1 }}</span>
+                            </div>
+                            <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
+                                <div class="bg-gradient-to-r from-rose-500 to-orange-400 h-full rounded-full transition-all duration-1000" style="width: {{ sinyal.ayi_ihtimali }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800/80 rounded-2xl p-5">
+                    <p class="text-[11px] text-slate-500 leading-relaxed">
+                        <strong class="text-slate-400 block mb-1">💡 Altın Kural:</strong> 
+                        Riskini yönet, geleceğini mühürle hoca! Son Fiyat: {{ sinyal.son_fiyat|floatformat:2 }} | Günlük Değişim: %{{ sinyal.degisim_24s|floatformat:2 }}
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <script>
+        // Global veri setlerini Django güvenliği ile sarmalıyoruz hoca
+        let xData = {% if grafik.x %}{{ grafik.x|safe }}{% else %}[]{% endif %};
+        let openData = {% if grafik.open %}{{ grafik.open|safe }}{% else %}[]{% endif %};
+        let highData = {% if grafik.high %}{{ grafik.high|safe }}{% else %}[]{% endif %};
+        let lowData = {% if grafik.low %}{{ grafik.low|safe }}{% else %}[]{% endif %};
+        let closeData = {% if grafik.close %}{{ grafik.close|safe }}{% else %}[]{% endif %};
+        
+        // 🔮 Çekirdek Osilatör Serileri hoca
+        let rsiData = {% if grafik.rsi %}{{ grafik.rsi|safe }}{% else %}[]{% endif %};
+        let macdData = {% if grafik.macd %}{{ grafik.macd|safe }}{% else %}[]{% endif %};
+        let wtData = {% if grafik.wt1 %}{{ grafik.wt1|safe }}{% else %}[]{% endif %};
+        let cciData = {% if grafik.cci %}{{ grafik.cci|safe }}{% else %}[]{% endif %};
+
+        let aktifOsilator = "KAPALI";
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Emniyet parsing işlemleri
+            if (typeof xData === 'string') xData = JSON.parse(xData.replace(/&#x27;/g, '"').replace(/&quot;/g, '"'));
+            if (typeof openData === 'string') openData = JSON.parse(openData);
+            if (typeof highData === 'string') highData = JSON.parse(highData);
+            if (typeof lowData === 'string') lowData = JSON.parse(lowData);
+            if (typeof closeData === 'string') closeData = JSON.parse(closeData);
+            
+            if (typeof rsiData === 'string') rsiData = JSON.parse(rsiData);
+            if (typeof macdData === 'string') macdData = JSON.parse(macdData);
+            if (typeof wtData === 'string') wtData = JSON.parse(wtData);
+            if (typeof cciData === 'string') cciData = JSON.parse(cciData);
+
+            // Boş veri emniyet sibobu
+            if (!xData || xData.length === 0 || openData.length === 0) {
+                xData = ['2026-06-15', '2026-06-16', '2026-06-17', '2026-06-18', '2026-06-19'];
+                openData = [64300, 65150, 64800, 66050, 65900];
+                highData = [65600, 65300, 66400, 66200, 67800];
+                lowData = [64100, 64200, 64700, 65100, 65600];
+                closeData = [65200, 64800, 66100, 65900, 67400];
+            }
+
+            grafikCiz();
+        });
+
+        function changeIndicator(indName) {
+            aktifOsilator = indName;
+            
+            // Aktif buton rengini değiştir hoca
+            document.querySelectorAll(".osc-btn").forEach(btn => btn.classList.remove("bg-slate-800", "text-white"));
+            document.getElementById("btn-" + indName).classList.add("bg-slate-800", "text-white");
+            
+            grafikCiz();
+        }
+
+        function grafikCiz() {
+            const mainTrace = {
+                x: xData, open: openData, high: highData, low: lowData, close: closeData,
+                type: 'candlestick', xaxis: 'x', yaxis: 'y',
+                increasing: {line: {color: '#10b981'}, fillcolor: '#10b981'},
+                decreasing: {line: {color: '#f43f5e'}, fillcolor: '#f43f5e'}
+            };
+
+            let veriKupununTamami = [mainTrace];
+
+            // Plotly Grid Ayarları
+            let layout = {
+                dragmode: 'zoom', showlegend: false,
+                paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+                margin: {r: 10, t: 10, b: 20, l: 55},
+                xaxis: { gridcolor: '#1e293b', tickfont: {color: '#94a3b8'}, rangeslider: {visible: false} },
+                yaxis: { gridcolor: '#1e293b', tickfont: {color: '#94a3b8'}, autorange: true }
+            };
+
+            // Eğer osilatör alt penceresi aktifse Plotly'i çift eksene geçiriyoruz hoca
+            if (aktifOsilator !== "KAPALI") {
+                layout.grid = {rows: 2, columns: 1, pattern: 'coupled', roworder: 'top to bottom'};
+                layout.subplots = [['xy'], ['xy2']];
+                
+                // Ana grafiği üst panele %75 hacimle sıkıştırıyoruz
+                layout.yaxis.domain = [0.3, 1];
+                
+                // Alt pencere ekseni (%25 hacim)
+                layout.yaxis2 = {
+                    domain: [0, 0.22], gridcolor: '#1e293b', tickfont: {color: '#94a3b8'}, autorange: true,
+                    title: { text: aktifOsilator, font: {size: 10, color: '#94a3b8'} }
+                };
+
+                let oscTrace = {
+                    x: xData, type: 'scatter', mode: 'lines', xaxis: 'x', yaxis: 'y2',
+                    line: {width: 1.5}
+                };
+
+                if (aktifOsilator === "RSI") {
+                    oscTrace.y = rsiData;
+                    oscTrace.line.color = '#a855f7'; // Mor RSI hoca
+                    
+                    // RSI 30 ve 70 referans çizgilerini de enjekte edelim hoca
+                    layout.shapes = [
+                        {type: 'line', x0: xData[0], x1: xData[xData.length-1], y0: 70, y1: 70, yref: 'y2', line: {color: '#rose-500', width: 1, dash: 'dash'}},
+                        {type: 'line', x0: xData[0], x1: xData[xData.length-1], y0: 30, y1: 30, yref: 'y2', line: {color: '#emerald-500', width: 1, dash: 'dash'}}
+                    ];
+                } else if (aktifOsilator === "MACD") {
+                    oscTrace.y = macdData;
+                    oscTrace.line.color = '#3b82f6'; // Mavi MACD hoca
+                } else if (aktifOsilator === "WT") {
+                    oscTrace.y = wtData;
+                    oscTrace.line.color = '#f59e0b'; // Turuncu WaveTrend hoca
+                } else if (aktifOsilator === "CCI") {
+                    oscTrace.y = cciData;
+                    oscTrace.line.color = '#06b6d4'; // Turkuaz CCI hoca
+                }
+
+                veriKupununTamami.push(oscTrace);
+            } else {
+                // Alt pencere kapalıysa şekilleri temizle hoca
+                layout.shapes = [];
+            }
+
+            const config = { responsive: true, displayModeBar: false };
+            Plotly.newPlot('mumGrafigi', veriKupununTamami, layout, config);
+        }
+
+        // =====================================================================
+        // 🎛️ PAZAR / VARLIK BAĞLANTI MOTORU (YENİ EKLENEN SİBER KATMAN)
+        // =====================================================================
+        const varlikHavuzu = {
+            "KRIPTO": ["BTC-USD", "ETH-USD", "SOL-USD", "AVAX-USD", "XRP-USD", "DOGE-USD", "PEPE-USD", "FIL-USD", "LINK-USD"],
+            "TR_HISSE": ["THYAO.IS", "SOKM.IS", "ASELS.IS", "EREGL.IS", "BIMAS.IS", "GARAN.IS", "TUPRS.IS", "SISE.IS"],
+            "ABD_HISSE": ["AAPL", "NVDA", "TSLA", "MSFT", "AMZN", "META", "GOOGL"],
+            "EMTIA": ["GC=F", "SI=F", "CL=F", "NG=F"]
+        };
+
+        const pazarSelect = document.getElementById("pazarSelect");
+        const sembolSelect = document.getElementById("sembolSelect");
+        const suAnkiSembol = "{{ sinyal.sembol }}";
+
+        // 🛡️ AKILLI GÜVENLİK DUVARI: Sembolün asıl ait olduğu pazarı otomatik bul hoca
+        let gercekPazar = pazarSelect.value;
+        for (const [pazarAnahtari, sembolListesi] of Object.entries(varlikHavuzu)) {
+            if (sembolListesi.includes(suAnkiSembol)) {
+                gercekPazar = pazarAnahtari;
+                break;
+            }
+        }
+
+        // Eğer bir uyuşmazlık varsa, üstteki pazar seçim kutusunu otomatik eşitle hoca
+        if (pazarSelect.value !== gercekPazar) {
+            pazarSelect.value = gercekPazar;
+        }
+
+        function sembolListesiniGuncelle(secilenPazar) {
+            sembolSelect.innerHTML = "";
+            
+            if (varlikHavuzu[secilenPazar]) {
+                varlikHavuzu[secilenPazar].forEach(sembol => {
+                    const opt = document.createElement("option");
+                    opt.value = sembol;
+                    opt.textContent = sembol;
+                    
+                    // Eğer o anki sembolse seçili yap hoca
+                    if (sembol === suAnkiSembol) {
+                        opt.selected = true;
+                    }
+                    sembolSelect.appendChild(opt);
+                });
+            }
+            
+            // 🚨 Emniyet Kilidi: İçi boş kalmasın, ilk elemanı otomatik seçili yap
+            if (sembolSelect.selectedIndex === -1 && sembolSelect.options.length > 0) {
+                sembolSelect.options[0].selected = true;
+            }
+        }
+
+        // 🚀 Sayfa açıldığında ilk tetikleme
+        sembolListesiniGuncelle(pazarSelect.value);
+
+        // Kullanıcı pazar değiştirdiğinde alt listeyi anlık yenile
+        pazarSelect.addEventListener("change", function() {
+            sembolListesiniGuncelle(this.value);
+        });
+    </script>
+</body>
+</html>

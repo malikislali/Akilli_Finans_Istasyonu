@@ -33,8 +33,10 @@ class SiteAyariAdmin(admin.ModelAdmin):
 
     def ucretli_kayit_durumu(self, obj):
         if obj.ucretli_kayit_aktif:
+            #return format_html('<span style="color:green;font-weight:bold;">🔓 AÇIK — Ücretli kayıt zorunlu</span>')
             return mark_safe('<span style="color:green;font-weight:bold;">🔓 AÇIK — Ücretli kayıt zorunlu</span>')
-        return mark_safe('<span style="color:gray;">🔒 KAPALI — Ücretsiz kayıt</span>')
+
+        return format_html('<span style="color:gray;">🔒 KAPALI — Ücretsiz kayıt</span>')
     ucretli_kayit_durumu.short_description = "Ücretli Kayıt"
 
     def has_add_permission(self, request):
@@ -55,25 +57,6 @@ class AbonelikPlanAdmin(admin.ModelAdmin):
         return obj.abonelik_set.filter(durum='aktif').count()
     abone_sayisi.short_description = "Aktif Abone"
 
-class GunlukAnalizInline(admin.TabularInline):
-    model = GunlukAnaliz
-    fk_name = 'user'
-    extra = 0
-    max_num = 0  # Admin panelinden elle yeni satır eklenemez, sadece mevcut kayıtlar düzenlenir
-    can_delete = False
-    fields = ('tarih', 'adet', 'tarama_adet', 'lab_analiz_adet')
-    readonly_fields = ('tarih',)
-    ordering = ('-tarih',)
-    verbose_name = "Günlük Kullanım Kaydı"
-    verbose_name_plural = "Günlük Kullanım Geçmişi (Analiz / Tarama / Lab) — Son 14 Gün"
-
-    def get_queryset(self, request):
-        from django.utils import timezone
-        from datetime import timedelta
-        qs = super().get_queryset(request)
-        return qs.filter(tarih__gte=timezone.now().date() - timedelta(days=14))
-
-
 
 # ── Abonelik ──
 class AbonelikInline(admin.StackedInline):
@@ -84,8 +67,8 @@ class AbonelikInline(admin.StackedInline):
 
     def gecerli_mi_goster(self, obj):
         if obj.gecerli_mi:
-            return mark_safe('<span style="color:green;">✅ Geçerli</span>')
-        return mark_safe('<span style="color:red;">❌ Geçersiz/Süresi Dolmuş</span>')
+            return format_html('<span style="color:green;">✅ Geçerli</span>')
+        return format_html('<span style="color:red;">❌ Geçersiz/Süresi Dolmuş</span>')
     gecerli_mi_goster.short_description = "Durum"
 
 
@@ -108,8 +91,8 @@ class AbonelikAdmin(admin.ModelAdmin):
 
     def gecerli_mi_goster(self, obj):
         if obj.gecerli_mi:
-            return mark_safe('<span style="color:green;">✅</span>')
-        return mark_safe('<span style="color:red;">❌</span>')
+            return format_html('<span style="color:green;">✅</span>')
+        return format_html('<span style="color:red;">❌</span>')
     gecerli_mi_goster.short_description = "Geçerli"
 
     @admin.action(description="Seçili abonelikleri AKTİF yap")
@@ -124,7 +107,7 @@ class AbonelikAdmin(admin.ModelAdmin):
 # ── Kullanıcı listesini abonelik bilgisiyle genişlet ──
 class SovereignUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'date_joined', 'last_login', 'plan_badge', 'abonelik_durumu')
-    inlines = [AbonelikInline, GunlukAnalizInline]
+    inlines = [AbonelikInline]
 
     def plan_badge(self, obj):
         try:
@@ -134,17 +117,17 @@ class SovereignUserAdmin(UserAdmin):
             return format_html('<span style="color:{};font-weight:bold;">{}</span>',
                                renk, ab.plan.get_ad_display())
         except Abonelik.DoesNotExist:
-            return mark_safe('<span style="color:gray;">—</span>')
+            return format_html('<span style="color:gray;">—</span>')
     plan_badge.short_description = "Plan"
 
     def abonelik_durumu(self, obj):
         try:
             ab = obj.abonelik
             if ab.gecerli_mi:
-                return mark_safe('<span style="color:green;">✅ Aktif</span>')
-            return mark_safe('<span style="color:red;">❌ Pasif</span>')
+                return format_html('<span style="color:green;">✅ Aktif</span>')
+            return format_html('<span style="color:red;">❌ Pasif</span>')
         except Abonelik.DoesNotExist:
-            return mark_safe('<span style="color:orange;">⚠️ Abonelik Yok</span>')
+            return format_html('<span style="color:orange;">⚠️ Abonelik Yok</span>')
     abonelik_durumu.short_description = "Abonelik"
 
 

@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kayıt Ol — Sovereign Cockpit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'quant_app/css/style.css' %}">
+<style>
+  .auth-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+  .auth-box { background: var(--bg-panel); border: 1px solid var(--border-faint); border-radius: 1rem; padding: 2.5rem; width: 100%; max-width: 480px; }
+  .auth-logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem; }
+  .auth-input { width: 100%; padding: 0.75rem 1rem; background: var(--bg-deep); border: 1px solid var(--border-faint); border-radius: 0.5rem; color: var(--text-main); font-size: 0.95rem; margin-bottom: 1rem; box-sizing: border-box; }
+  .auth-input:focus { outline: none; border-color: var(--accent-sky); }
+  .auth-btn { width: 100%; padding: 0.85rem; background: var(--accent-sky); color: var(--bg-deep); border: none; border-radius: 0.5rem; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 0.5rem; }
+  .auth-btn:hover { opacity: 0.9; }
+  .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin: 1rem 0; }
+  .plan-karti { border: 2px solid var(--border-faint); border-radius: 0.75rem; padding: 1rem; cursor: pointer; text-align: center; transition: all 0.15s; }
+  .plan-karti:hover { border-color: var(--accent-sky); }
+  .plan-karti.secili { border-color: var(--accent-sky); background: rgba(56,189,248,0.08); }
+  .plan-karti input[type="radio"] { display: none; }
+  .plan-fiyat { font-size: 1.3rem; font-weight: 700; color: var(--text-main); }
+  .plan-ad { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+  .hata-mesaji { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: var(--accent-red); padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem; }
+  label.alan-etiketi { display: block; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.3rem; font-family: 'JetBrains Mono', monospace; }
+</style>
+</head>
+<body>
+<div class="auth-container">
+  <div class="auth-box">
+    <div class="auth-logo">🏛️ Sovereign Cockpit</div>
+    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">Hesap oluştur</p>
+
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="hata-mesaji">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <label class="alan-etiketi">Kullanıcı Adı</label>
+      <input class="auth-input" type="text" name="username" value="{{ username|default:'' }}" required>
+
+      <label class="alan-etiketi">E-posta (opsiyonel)</label>
+      <input class="auth-input" type="email" name="email" value="{{ email|default:'' }}">
+
+      <label class="alan-etiketi">Şifre</label>
+      <input class="auth-input" type="password" name="password" required>
+
+      <label class="alan-etiketi">Şifre Tekrar</label>
+      <input class="auth-input" type="password" name="password2" required>
+
+      {% if ayar.ucretli_kayit_aktif %}
+      <!-- Ücretli kayıt açık — plan seçimi göster -->
+      <div style="margin: 1.25rem 0 0.5rem;">
+        <label class="alan-etiketi">Plan Seç</label>
+        <div class="plan-grid" id="plan-grid">
+          {% for plan in planlar %}
+          <label class="plan-karti {% if forloop.first %}secili{% endif %}" onclick="planSec(this)">
+            <input type="radio" name="plan" value="{{ plan.ad }}" {% if forloop.first %}checked{% endif %}>
+            <div class="plan-fiyat">
+              {% if plan.fiyat_tl == 0 %}Ücretsiz{% else %}{{ plan.fiyat_tl }}₺{% endif %}
+            </div>
+            <div class="plan-ad">{{ plan.get_ad_display }}</div>
+            {% if plan.fiyat_tl > 0 %}
+            <div style="font-size:0.7rem; color:var(--accent-sky); margin-top:0.4rem;">
+              {% if plan.sure_gun == 30 %}/ ay{% elif plan.sure_gun == 365 %}/ yıl{% endif %}
+            </div>
+            {% endif %}
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+      {% else %}
+      <!-- Ücretsiz kayıt — gizli input -->
+      <input type="hidden" name="plan" value="ucretsiz">
+      {% endif %}
+
+      <button type="submit" class="auth-btn">
+        {% if ayar.ucretli_kayit_aktif %}Devam Et →{% else %}Ücretsiz Kayıt Ol{% endif %}
+      </button>
+    </form>
+
+    <p style="text-align:center; margin-top:1.25rem; font-size:0.875rem; color:var(--text-muted);">
+      Zaten hesabın var mı? <a href="{% url 'login' %}">Giriş yap</a>
+    </p>
+  </div>
+</div>
+
+<script>
+function planSec(label) {
+  document.querySelectorAll('.plan-karti').forEach(k => k.classList.remove('secili'));
+  label.classList.add('secili');
+  label.querySelector('input[type="radio"]').checked = true;
+}
+</script>
+</body>
+</html>

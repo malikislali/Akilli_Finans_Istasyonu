@@ -1,0 +1,688 @@
+{
+  "BOGA": {
+    "basarili_test_sayisi": 28,
+    "toplam_test_sayisi": 28,
+    "ortalama_rejim_gozlem_sayisi": 333.67857142857144,
+    "win_rate_gercek_ortalama": 52.64729139821048,
+    "win_rate_permutasyon_ortalama": 51.31129185873766,
+    "ortalama_fark": 1.3359995394728024,
+    "test_1_vs_50yuzde": {
+      "p_degeri": 0.22412663310916658,
+      "anlamli_mi": false
+    },
+    "test_2_vs_permutasyon": {
+      "p_degeri": 0.553920150057368,
+      "anlamli_mi": false
+    },
+    "detaylar": [
+      {
+        "sembol": "BTC-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 58.4,
+        "win_rate_permutasyon": 59.8,
+        "fark": -1.3,
+        "n_gozlem": 405
+      },
+      {
+        "sembol": "ETH-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 77.6,
+        "win_rate_permutasyon": 49.3,
+        "fark": 28.3,
+        "n_gozlem": 277
+      },
+      {
+        "sembol": "SOL-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 64.6,
+        "win_rate_permutasyon": 49.0,
+        "fark": 15.7,
+        "n_gozlem": 328
+      },
+      {
+        "sembol": "AVAX-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 52.4,
+        "win_rate_permutasyon": 55.8,
+        "fark": -3.4,
+        "n_gozlem": 212
+      },
+      {
+        "sembol": "XRP-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 56.2,
+        "win_rate_permutasyon": 54.8,
+        "fark": 1.3,
+        "n_gozlem": 291
+      },
+      {
+        "sembol": "DOGE-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 55.8,
+        "win_rate_permutasyon": 65.1,
+        "fark": -9.2,
+        "n_gozlem": 242
+      },
+      {
+        "sembol": "LINK-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 69.5,
+        "win_rate_permutasyon": 48.6,
+        "fark": 20.9,
+        "n_gozlem": 226
+      },
+      {
+        "sembol": "FIL-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 30.2,
+        "win_rate_permutasyon": 56.6,
+        "fark": -26.4,
+        "n_gozlem": 123
+      },
+      {
+        "sembol": "THYAO.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 70.3,
+        "win_rate_permutasyon": 52.7,
+        "fark": 17.6,
+        "n_gozlem": 246
+      },
+      {
+        "sembol": "GARAN.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 60.2,
+        "win_rate_permutasyon": 51.1,
+        "fark": 9.1,
+        "n_gozlem": 320
+      },
+      {
+        "sembol": "BIMAS.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 60.7,
+        "win_rate_permutasyon": 56.6,
+        "fark": 4.1,
+        "n_gozlem": 325
+      },
+      {
+        "sembol": "ASELS.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 46.8,
+        "win_rate_permutasyon": 44.1,
+        "fark": 2.7,
+        "n_gozlem": 372
+      },
+      {
+        "sembol": "EREGL.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 54.0,
+        "win_rate_permutasyon": 53.1,
+        "fark": 0.9,
+        "n_gozlem": 280
+      },
+      {
+        "sembol": "SISE.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 37.5,
+        "win_rate_permutasyon": 46.6,
+        "fark": -9.1,
+        "n_gozlem": 144
+      },
+      {
+        "sembol": "TUPRS.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 39.2,
+        "win_rate_permutasyon": 50.6,
+        "fark": -11.4,
+        "n_gozlem": 253
+      },
+      {
+        "sembol": "KCHOL.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 45.4,
+        "win_rate_permutasyon": 47.5,
+        "fark": -2.1,
+        "n_gozlem": 221
+      },
+      {
+        "sembol": "AKBNK.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 52.1,
+        "win_rate_permutasyon": 50.3,
+        "fark": 1.8,
+        "n_gozlem": 292
+      },
+      {
+        "sembol": "AAPL",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 48.9,
+        "win_rate_permutasyon": 49.1,
+        "fark": -0.2,
+        "n_gozlem": 516
+      },
+      {
+        "sembol": "MSFT",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 52.2,
+        "win_rate_permutasyon": 47.6,
+        "fark": 4.6,
+        "n_gozlem": 439
+      },
+      {
+        "sembol": "TSLA",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 59.1,
+        "win_rate_permutasyon": 50.9,
+        "fark": 8.2,
+        "n_gozlem": 363
+      },
+      {
+        "sembol": "AMZN",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 51.6,
+        "win_rate_permutasyon": 44.1,
+        "fark": 7.4,
+        "n_gozlem": 463
+      },
+      {
+        "sembol": "META",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 54.8,
+        "win_rate_permutasyon": 50.7,
+        "fark": 4.1,
+        "n_gozlem": 438
+      },
+      {
+        "sembol": "GOOGL",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 52.2,
+        "win_rate_permutasyon": 44.8,
+        "fark": 7.4,
+        "n_gozlem": 518
+      },
+      {
+        "sembol": "NVDA",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 55.5,
+        "win_rate_permutasyon": 50.9,
+        "fark": 4.6,
+        "n_gozlem": 570
+      },
+      {
+        "sembol": "GC=F",
+        "pazar": "EMTIA",
+        "win_rate_gercek": 38.3,
+        "win_rate_permutasyon": 51.3,
+        "fark": -13.0,
+        "n_gozlem": 513
+      },
+      {
+        "sembol": "CL=F",
+        "pazar": "EMTIA",
+        "win_rate_gercek": 29.2,
+        "win_rate_permutasyon": 47.3,
+        "fark": -18.2,
+        "n_gozlem": 200
+      },
+      {
+        "sembol": "SI=F",
+        "pazar": "EMTIA",
+        "win_rate_gercek": 55.5,
+        "win_rate_permutasyon": 51.2,
+        "fark": 4.3,
+        "n_gozlem": 480
+      },
+      {
+        "sembol": "NG=F",
+        "pazar": "EMTIA",
+        "win_rate_gercek": 45.9,
+        "win_rate_permutasyon": 57.3,
+        "fark": -11.4,
+        "n_gozlem": 286
+      }
+    ]
+  },
+  "AYI": {
+    "basarili_test_sayisi": 23,
+    "toplam_test_sayisi": 28,
+    "ortalama_rejim_gozlem_sayisi": 276.2608695652174,
+    "win_rate_gercek_ortalama": 43.45523244170146,
+    "win_rate_permutasyon_ortalama": 52.221344513030374,
+    "ortalama_fark": -8.76611207132891,
+    "test_1_vs_50yuzde": {
+      "p_degeri": 0.015147138428333947,
+      "anlamli_mi": true
+    },
+    "test_2_vs_permutasyon": {
+      "p_degeri": 0.022606571203051942,
+      "anlamli_mi": true
+    },
+    "detaylar": [
+      {
+        "sembol": "BTC-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 37.6,
+        "win_rate_permutasyon": 46.1,
+        "fark": -8.5,
+        "n_gozlem": 249
+      },
+      {
+        "sembol": "ETH-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 37.4,
+        "win_rate_permutasyon": 53.3,
+        "fark": -15.9,
+        "n_gozlem": 346
+      },
+      {
+        "sembol": "SOL-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 39.5,
+        "win_rate_permutasyon": 46.3,
+        "fark": -6.8,
+        "n_gozlem": 320
+      },
+      {
+        "sembol": "AVAX-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 40.6,
+        "win_rate_permutasyon": 49.0,
+        "fark": -8.4,
+        "n_gozlem": 429
+      },
+      {
+        "sembol": "XRP-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 46.5,
+        "win_rate_permutasyon": 49.1,
+        "fark": -2.6,
+        "n_gozlem": 326
+      },
+      {
+        "sembol": "DOGE-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 58.8,
+        "win_rate_permutasyon": 50.9,
+        "fark": 7.9,
+        "n_gozlem": 380
+      },
+      {
+        "sembol": "LINK-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 54.1,
+        "win_rate_permutasyon": 46.3,
+        "fark": 7.8,
+        "n_gozlem": 402
+      },
+      {
+        "sembol": "FIL-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 49.6,
+        "win_rate_permutasyon": 51.7,
+        "fark": -2.1,
+        "n_gozlem": 499
+      },
+      {
+        "sembol": "THYAO.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 48.2,
+        "win_rate_permutasyon": 40.8,
+        "fark": 7.4,
+        "n_gozlem": 163
+      },
+      {
+        "sembol": "EREGL.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 17.2,
+        "win_rate_permutasyon": 64.4,
+        "fark": -47.2,
+        "n_gozlem": 106
+      },
+      {
+        "sembol": "SISE.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 54.8,
+        "win_rate_permutasyon": 54.4,
+        "fark": 0.4,
+        "n_gozlem": 240
+      },
+      {
+        "sembol": "TUPRS.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 21.4,
+        "win_rate_permutasyon": 64.3,
+        "fark": -42.9,
+        "n_gozlem": 131
+      },
+      {
+        "sembol": "KCHOL.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 34.5,
+        "win_rate_permutasyon": 62.1,
+        "fark": -27.6,
+        "n_gozlem": 159
+      },
+      {
+        "sembol": "AKBNK.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 33.7,
+        "win_rate_permutasyon": 65.4,
+        "fark": -31.7,
+        "n_gozlem": 87
+      },
+      {
+        "sembol": "AAPL",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 61.2,
+        "win_rate_permutasyon": 43.2,
+        "fark": 18.0,
+        "n_gozlem": 248
+      },
+      {
+        "sembol": "MSFT",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 56.6,
+        "win_rate_permutasyon": 51.8,
+        "fark": 4.9,
+        "n_gozlem": 319
+      },
+      {
+        "sembol": "TSLA",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 46.8,
+        "win_rate_permutasyon": 56.0,
+        "fark": -9.2,
+        "n_gozlem": 346
+      },
+      {
+        "sembol": "AMZN",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 29.6,
+        "win_rate_permutasyon": 59.7,
+        "fark": -30.1,
+        "n_gozlem": 230
+      },
+      {
+        "sembol": "META",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 44.2,
+        "win_rate_permutasyon": 51.5,
+        "fark": -7.3,
+        "n_gozlem": 244
+      },
+      {
+        "sembol": "GOOGL",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 56.7,
+        "win_rate_permutasyon": 55.0,
+        "fark": 1.7,
+        "n_gozlem": 252
+      },
+      {
+        "sembol": "NVDA",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 30.2,
+        "win_rate_permutasyon": 48.3,
+        "fark": -18.1,
+        "n_gozlem": 189
+      },
+      {
+        "sembol": "CL=F",
+        "pazar": "EMTIA",
+        "win_rate_gercek": 50.6,
+        "win_rate_permutasyon": 48.6,
+        "fark": 2.0,
+        "n_gozlem": 366
+      },
+      {
+        "sembol": "NG=F",
+        "pazar": "EMTIA",
+        "win_rate_gercek": 49.5,
+        "win_rate_permutasyon": 42.9,
+        "fark": 6.6,
+        "n_gozlem": 323
+      }
+    ]
+  },
+  "YATAY": {
+    "basarili_test_sayisi": 28,
+    "toplam_test_sayisi": 28,
+    "ortalama_rejim_gozlem_sayisi": 238.39285714285714,
+    "win_rate_gercek_ortalama": 51.943646106838045,
+    "win_rate_permutasyon_ortalama": 50.405192124770856,
+    "ortalama_fark": 1.5384539820671814,
+    "test_1_vs_50yuzde": {
+      "p_degeri": 0.3255641366386041,
+      "anlamli_mi": false
+    },
+    "test_2_vs_permutasyon": {
+      "p_degeri": 0.424416943400427,
+      "anlamli_mi": false
+    },
+    "detaylar": [
+      {
+        "sembol": "BTC-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 57.8,
+        "win_rate_permutasyon": 45.9,
+        "fark": 11.9,
+        "n_gozlem": 241
+      },
+      {
+        "sembol": "ETH-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 43.3,
+        "win_rate_permutasyon": 49.5,
+        "fark": -6.2,
+        "n_gozlem": 272
+      },
+      {
+        "sembol": "SOL-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 77.3,
+        "win_rate_permutasyon": 50.3,
+        "fark": 27.0,
+        "n_gozlem": 247
+      },
+      {
+        "sembol": "AVAX-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 59.1,
+        "win_rate_permutasyon": 50.5,
+        "fark": 8.6,
+        "n_gozlem": 254
+      },
+      {
+        "sembol": "XRP-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 56.8,
+        "win_rate_permutasyon": 51.6,
+        "fark": 5.2,
+        "n_gozlem": 278
+      },
+      {
+        "sembol": "DOGE-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 58.6,
+        "win_rate_permutasyon": 57.7,
+        "fark": 0.9,
+        "n_gozlem": 273
+      },
+      {
+        "sembol": "LINK-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 63.0,
+        "win_rate_permutasyon": 51.3,
+        "fark": 11.6,
+        "n_gozlem": 267
+      },
+      {
+        "sembol": "FIL-USD",
+        "pazar": "KRIPTO",
+        "win_rate_gercek": 52.6,
+        "win_rate_permutasyon": 44.9,
+        "fark": 7.7,
+        "n_gozlem": 273
+      },
+      {
+        "sembol": "THYAO.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 50.5,
+        "win_rate_permutasyon": 51.1,
+        "fark": -0.5,
+        "n_gozlem": 139
+      },
+      {
+        "sembol": "GARAN.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 48.3,
+        "win_rate_permutasyon": 50.6,
+        "fark": -2.3,
+        "n_gozlem": 155
+      },
+      {
+        "sembol": "BIMAS.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 42.5,
+        "win_rate_permutasyon": 55.4,
+        "fark": -12.9,
+        "n_gozlem": 155
+      },
+      {
+        "sembol": "ASELS.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 33.8,
+        "win_rate_permutasyon": 50.4,
+        "fark": -16.6,
+        "n_gozlem": 169
+      },
+      {
+        "sembol": "EREGL.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 53.7,
+        "win_rate_permutasyon": 50.7,
+        "fark": 3.0,
+        "n_gozlem": 162
+      },
+      {
+        "sembol": "SISE.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 39.7,
+        "win_rate_permutasyon": 46.5,
+        "fark": -6.8,
+        "n_gozlem": 164
+      },
+      {
+        "sembol": "TUPRS.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 44.4,
+        "win_rate_permutasyon": 48.5,
+        "fark": -4.1,
+        "n_gozlem": 164
+      },
+      {
+        "sembol": "KCHOL.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 37.8,
+        "win_rate_permutasyon": 45.8,
+        "fark": -8.0,
+        "n_gozlem": 168
+      },
+      {
+        "sembol": "AKBNK.IS",
+        "pazar": "TR_HISSE",
+        "win_rate_gercek": 61.3,
+        "win_rate_permutasyon": 55.0,
+        "fark": 6.3,
+        "n_gozlem": 169
+      },
+      {
+        "sembol": "AAPL",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 60.2,
+        "win_rate_permutasyon": 48.3,
+        "fark": 11.9,
+        "n_gozlem": 290
+      },
+      {
+        "sembol": "MSFT",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 30.1,
+        "win_rate_permutasyon": 48.6,
+        "fark": -18.5,
+        "n_gozlem": 296
+      },
+      {
+        "sembol": "TSLA",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 58.2,
+        "win_rate_permutasyon": 48.0,
+        "fark": 10.1,
+        "n_gozlem": 345
+      },
+      {
+        "sembol": "AMZN",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 55.2,
+        "win_rate_permutasyon": 51.5,
+        "fark": 3.6,
+        "n_gozlem": 361
+      },
+      {
+        "sembol": "META",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 56.7,
+        "win_rate_permutasyon": 55.4,
+        "fark": 1.3,
+        "n_gozlem": 372
+      },
+      {
+        "sembol": "GOOGL",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 52.7,
+        "win_rate_permutasyon": 53.1,
+        "fark": -0.5,
+        "n_gozlem": 284
+      },
+      {
+        "sembol": "NVDA",
+        "pazar": "ABD_HISSE",
+        "win_rate_gercek": 51.8,
+        "win_rate_permutasyon": 53.5,
+        "fark": -1.7,
+        "n_gozlem": 295
+      },
+      {
+        "sembol": "GC=F",
+        "pazar": "EMTIA",
+        "win_rate_gercek": 49.1,
+        "win_rate_permutasyon": 47.3,
+        "fark": 1.8,
+        "n_gozlem": 250
+      },
+      {
+        "sembol": "CL=F",
+        "pazar": "EMTIA",
+        "win_rate_gercek": 65.4,
+        "win_rate_permutasyon": 49.0,
+        "fark": 16.4,
+        "n_gozlem": 231
+      },
+      {
+        "sembol": "SI=F",
+        "pazar": "EMTIA",
+        "win_rate_gercek": 53.4,
+        "win_rate_permutasyon": 51.1,
+        "fark": 2.3,
+        "n_gozlem": 212
+      },
+      {
+        "sembol": "NG=F",
+        "pazar": "EMTIA",
+        "win_rate_gercek": 41.2,
+        "win_rate_permutasyon": 49.8,
+        "fark": -8.6,
+        "n_gozlem": 189
+      }
+    ]
+  }
+}

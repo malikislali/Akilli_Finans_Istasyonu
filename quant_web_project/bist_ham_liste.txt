@@ -1,0 +1,464 @@
+A1CAP,A1 Capital Yatırım Menkul Değerler
+ACSEL,Acıpayam Selüloz
+ADEL,Adel Kalemcilik
+ADGYO,Adra Gayrimenkul Yatırım Ortaklığı
+AEFES,Anadolu Efes
+AFYON,Afyon Çimento
+AGESA,Agesa Hayat ve Emeklilik
+AGHOL,Anadolu Grubu Holding
+AGROT,Agrotech Yüksek Teknoloji
+AHGAZ,Ahlatcı Doğal Gaz
+AKBNK,Akbank
+AKCNS,Akçansa
+AKENR,Akenerji
+AKFGY,Akfen GYO
+AKFYE,Akfen Yenilenebilir Enerji
+AKGRT,Aksigorta
+AKMGY,Akmerkez GYO
+AKSA,Aksa
+AKSEN,Aksa Enerji
+AKSGY,Akiş GYO
+ALARK,Alarko Holding
+ALBRK,Albaraka Türk
+ALCTL,Alcatel Lucent Teletaş
+ALFAS,Alfa Solar Enerji
+ALGYO,Alarko GYO
+ALKA,Alkim Kağıt
+ALKIM,Alkim Kimya
+ALTNY,Altınay Savunma
+ALVES,Alves Kablo
+ANACM,Anadolu Cam (Şişecam Birleşmesi)
+ANELE,Anel Elektrik
+ANGEN,Anatolia Tanı ve Biyoteknoloji
+ANHYT,Anadolu Hayat Emeklilik
+ANSGR,Anadolu Sigorta
+ARCLK,Arçelik
+ARDYZ,ARD Bilişim
+ARENA,Arena Bilgisayar
+ARSAN,Arsan Tekstil
+ASGYO,Asce GYO
+ASELS,Aselsan
+ASTOR,Astor Enerji
+ASUZU,Anadolu Isuzu
+ATAKP,Atakey Patates
+ATATP,Atatp Teknolojik Yatırımlar
+AVOD,Avod Gıda
+AYDEM,Aydem Yenilenebilir Enerji
+AYGAZ,Aygaz
+AYNES,Aynes Gıda
+BAGFS,Bagfaş
+BAKAB,Bak Ambalaj
+BALAT,Balat Teknoloji
+BANVT,Banvit
+BARMA,Barem Ambalaj
+BATAŞ,Batı Anadolu Çimento
+BAYRK,Bayrak EBT Taban
+BEGNY,Batı Ege GYO
+BERA,Bera Holding
+BEYAZ,Beyaz Filo
+BFREN,Bosch Fren
+BIENY,Bien Yapı Ürünleri
+BIGCH,Big Chefs
+BIMAS,BİM Birleşik Mağazalar
+BINHO,1000 Yatırımlar Holding
+BIOEN,Biyotrend Enerji
+BIZIM,Bizim Toptan
+BLCYT,Bilici Yatırım
+BMSCH,BMS Çelik Hasır
+BMSTL,BMS Birleşik Metal
+BNTAS,Bantaş Ambalaj
+BOBET,Boğaziçi Beton
+BORAN,Boran Şofben
+BORLS,Borlease Otomotiv
+BORSK,Bor Şeker
+BOSSA,Bossa
+BRISA,Brisa
+BRKO,Birko Mensucat
+BRKSN,Berksan Yalıtım
+BRMEN,Birlik Mensucat
+BRSAN,Borusan Boru
+BRYAT,Borusan Yatırım Pazarlama
+BSOKE,Batısöke Çimento
+BTCIM,Batıçim Çimento
+BUCIM,Bursa Çimento
+BUPP,Burçelik Vana
+BURCE,Burçelik
+BURVA,Burçelik Vana
+BVSAN,Bülbüloğlu Vinç
+BYDNR,Baydöner
+CASA,Casa Emtia Petrol
+CATES,Çatalağzı Termik Santral
+CCOLA,Coca-Cola İçecek
+CELHA,Çelik Halat
+CEMAS,Çemaş Döküm
+CEMTS,Çemtaş
+CEOEM,CEO Event Medya
+CIMSA,Çimsa
+CLEBI,Çelebi Hava Servisi
+CMBTN,Çimbeton
+CMENT,Çimentaş
+CONSE,Consus Enerji
+COSMO,Cosmos Yatırım Holding
+CRDFA,Creditwest Faktoring
+CUSAN,Çuhadaroğlu Metal
+CVKMD,CVK Maden
+CWENE,CW Enerji
+DAGHL,Dagi Yatırım Holding
+DAGI,Dagi Giyim
+DAPGM,Dap Gayrimenkul
+DATAE,Dataist Bilişim
+DATATE,Datagate Bilgisayar
+DERYA,Derya Madencilik
+DESA,Desa Deri
+DESPC,Despec Bilgisayar
+DEVA,Deva Holding
+DGGYO,Doğuş GYO
+DGNMO,Doğanlar Mobilya
+DIRIT,Diriliş Tekstil
+DITAS,Ditaş Doğan
+DMSAS,Demisaş Döküm
+DNISI,Dinamik Isı yalıtım
+DOAS,Doğuş Otomotiv
+DOCO,DO & CO
+DOGUB,Doğusan
+DOHOL,Doğan Holding
+DOKTA,Döktaş Döküm
+DOMES,Dardanel Önentaş
+DOST,Dost Enerji
+DURDO,Duran Doğan Basım
+DYOBY,Dyo Boya
+DZGYO,Deniz GYO
+EBEBK,Ebebek Mağazacılık
+ECILC,Eczacıbaşı İlaç
+ECZYT,Eczacıbaşı Yatırım
+EDATA,E-Data Teknoloji
+EDIP,Edip Gayrimenkul
+EGEEN,Ege Endüstri
+EGEPO,Egepol Hastaneler
+EGGUB,Ege Gübre
+EGSER,Ege Seramik
+EKGYO,Emlak Konut GYO
+EKIZ,Ekiz Kimya
+EKOS,Ekos Teknoloji
+EKTAM,Ektam Kıbrıs
+ELITE,Elite Naturel Organik Gıda
+EMKEL,Emek Elektrik
+ENERY,Enerya Enerji
+ENJSA,Enerjisa Enerji
+ENKAI,Enka İnşaat
+EPLAS,Egeplast
+ERBOS,Erbosan
+EREGL,Ereğli Demir Çelik
+ERCB,Erciyas Çelik Boru
+ERIS,Eriş Un
+ERSU,Ersu Meyve Suları
+ESCAR,Escort Car Rental
+ESCOM,Escort Teknoloji
+ESDUR,Esas Durmuş Tekstil
+ESEN,Esenboğa Elektrik
+ETILR,Etiler Gıda
+EUPWR,Europower Enerji
+EUREK,Euro Kapital
+EYGYO,Eyüp Yapı GYO
+FADE,Fade Gıda
+FENER,Fenerbahçe Futbol
+FLAP,Flap Kongre Toplantı Hizm.
+FMIZP,Federal-Mogul İzmit Piston
+FONET,Fonet Bilgi Teknolojileri
+FORMT,Formet Metal ve Cam
+FRIGO,Frigo Pak Gıda
+FROTO,Ford Otosan
+FZGYO,Fuzul GYO
+GARAN,Garanti BBVA
+GBYTE,Giga Byte Teknoloji
+GENIL,Gen İlaç
+GENTS,Gentaş
+GEREL,Gersan Elektrik
+GESAN,Girişim Elektrik Sanayi
+GIPTA,Gıpta Ofis Kırtasiye
+GLBMD,Global Menkul Değerler
+GLCVY,Gelecek Varlık Yönetimi
+GLRYH,Güler Yatırım Holding
+GLYHO,Global Yatırım Holding
+GMDN,Gümüşhane Madencilik
+GMTAL,Gimat Mağazacılık
+GOODY,Goodyear
+GOZDE,Gözde Girişim
+GRNYO,Garanti Yatırım Ortaklığı
+GRSEL,Gürsel Turizm
+GRTRK,Graınturk Tarım
+GSDHO,GSD Holding
+GSDDE,GSD Denizcilik
+GUH,Güneş Sigorta
+GUBRF,Gübre Fabrikaları
+GWIND,Galata Wind Enerji
+GZNMI,Gezinomi Seyahat
+HALKB,Halkbank
+HAZN,Haznedar Refrakter
+HATEK,Hateks Hatay Tekstil
+HDG,Hedef Girişim
+HEDEF,Hedef Holding
+HEKTS,Hektaş
+HKTM,Hidropar Hareket Kontrol
+HLGYO,Halk GYO
+HRK,Hereke Dokuma
+HTTBT,Hitit Bilgisayar
+HUBVC,Hub Girişim Yatırım
+HUNER,Hun Yenilenebilir Enerji
+HURGZ,Hürriyet Gzt.
+ICBCT,ICBC Turkey Bank
+IDGYO,İdeal GIST GYO
+IEYHO,Işıklar Enerji Yapı Holding
+IHAAS,İhlas Haber Ajansı
+IHEVA,İhlas Ev Aletleri
+IHGZT,İhlas Gazetecilik
+IHLAM,İhlas Ambalaj
+IHLAS,İhlas Holding
+IHYAY,İhlas Yayın Holding
+IMASM,İmaş Makina
+INDES,İndeks Bilgisayar
+INFO,İnfo Yatırım
+INTEM,İntema
+INVEST,Investco Holding
+IPM,İpek Doğal Enerji
+IPEKE,İpek Doğal Enerji
+ISATR,İş Bankası (A)
+ISBTR,İş Bankası (B)
+ISCTR,İş Bankası (C)
+ISDMR,İskenderun Demir Çelik
+ISFIN,İş Finansal Kiralama
+ISGEY,İş GYO
+ISGSY,İş Girişim
+ISMEN,İş Yatırım Menkul Değerler
+ISSEN,İşbir Sentetik
+IZENR,İzdemir Enerji
+IZFAS,İzmir Fırça
+IZMDC,İzmir Demir Çelik
+JANTS,Jantsa Jant Sanayi
+KAPLM,Kaplamin
+KARYE,Kartal Yenilenebilir Enerji
+KATMR,Katmerciler Ekipman
+KAYSE,Kayseri Şeker Fabrikası
+KBVK,Körfez GYO
+KCAER,Kocaer Çelik
+KCHOL,Koç Holding
+KELMN,Kelaman Madencilik
+KENT,Kent Gıda
+KERVT,Kerevitaş
+KFEIN,Kafein Yazılım
+KGYO,Koray GYO
+KIMMR,Kimteks Poliüretan
+KLGYO,Kiler GYO
+KLMSN,Klimasan Klima
+KLNMA,T. Kalkınma ve Yatırım Bankası
+KLRHO,Kiler Holding
+KLSER,Kaleseramik
+KMEK,Konya Meram Elektrik
+KNFRT,Konfrut Gıda
+KODLT,Kodalat Bilgi
+KOLY,Koleksiyon Mobilya
+KONFG,Konfig Yapı
+KONTR,Kontrolmatik Teknoloji
+KONYA,Konya Çimento
+KORDS,Kordsa
+KOTON,Koton Mağazacılık
+KOZAL,Koza Altın
+KOZAA,Koza Anadolu Metal
+KPOL,Koza Polyester
+KRALS,Kral Mobilya
+KRVGD,Kervan Gıda
+KRTEK,Karsu Tekstil
+KRONT,Kron Teknoloji
+KSTUR,Kuştur Kuşadası Turizm
+KUTPO,Kütahya Porselen
+KUVVA,Kuvva Gıda
+LIDFA,Lider Faktoring
+LINK,Link Bilgisayar
+LKMNH,Lokman Hekim Sağlık
+LMKDC,Limak Doğu Anadolu Çimento
+LOGAN,Logan Teknoloji
+LOGO,Logo Yazılım
+LRN,Larin Kimya
+LUKSK,Lüks Kadife
+MAALT,Marmaris Altınyunus
+MACKO,Maçkolik İnternet Hizmetleri
+MAGEN,Margün Enerji
+MAKIM,Makim Makine
+MAKTK,Makina Takım
+MANAS,Manas Enerji Yönetimi
+MARKA,Marka Yatırım Holding
+MARTI,Martı Otel
+MAVI,Mavi Giyim
+MEDTR,Medisera Tıbbi Malzeme
+MEGAP,Mega Polietilen
+MEGMT,Mega Metal
+MEPET,Mepet Metro Petrol
+MERCN,Mercan Kimya
+MERKO,Merko Gıda
+METRO,Metro Holding
+METUR,Metemtur Otelcilik
+MGROS,Migros
+MIATK,Mia Teknoloji
+MIPAZ,Milpa
+MNDRS,Menderes Tekstil
+MNDTR,Mondı Turkey
+MOBTL,Mobiltel İletişim
+MOGAN,Mogan Enerji
+MPARK,Medical Park (MLP Sağlık)
+MRGYO,Martı GYO
+MRSHL,Marshall
+MSGYO,Mishal GYO
+MTRKS,Matriks Bilgi Dağıtım
+MTRYO,Metro Yatırım Ortaklığı
+MZHLD,Mazhar Zorlu Holding
+NARK,Narkissos Bilişim
+NATEN,Naturel Yenilenebilir Enerji
+NETAS,Netaş Telekom.
+NIBAS,Niğbaş Niğde Beton
+NTGAZ,Naturelgaz
+NUGYO,Nurol GYO
+NUHCM,Nuh Çimento
+OBASE,Obase Bilgisayar
+OBL,Obal Alüminyum
+ODAS,Odaş Elektrik
+OFSYM,Ofis Yem Gıda
+ONCSM,Oncosem Onkolojik Sistemler
+ORCA,Orca Teknoloji
+ORGE,Orge Enerji Elektrik
+ORMA,Orma Orman Mahsulleri
+OSMEN,Osmanlı Menkul
+OSTIM,Ostim Endüstriyel Yatırımlar
+OTKAR,Otokar
+OYAKC,Oyak Çimento
+OYAYO,Oyak Yatırım Ortaklığı
+OYLUM,Oylum Sınai Yatırımlar
+OYYAT,Oyak Yatırım Menkul Değerler
+OZGYO,Özderici GYO
+OZKGY,Özak GYO
+OZSUB,Özsu Balık
+PAGYO,Panora GYO
+PAMEL,Pamel Yenilenebilir Elektrik
+PARSN,Parsan
+PASEU,Pasifik Eurasia Lojistik
+PATIL,Patil Gıda
+PDR,Pudra Teknoloji
+PEGYO,Pera GYO
+PEKGY,Peker GYO
+PENGD,Penguen Gıda
+PENTA,Penta Teknoloji
+PETKM,Petkim
+PETUN,Pınar Entegre Et ve Un
+PGSUS,Pegasus
+PINSU,Pınar Su
+PKART,Plastikkart
+PKENT,Petrokent Turizm
+PLTUR,Platform Turizm
+PNLSN,Panelsan Çatı Cephe
+PNSUT,Pınar Süt
+POLHO,Polisan Holding
+POLTK,Politeknik Metal
+PRKAB,Türk Prysmian Kablo
+PRKME,Park Elektrik Madencilik
+PRZMA,Prizma Pres Matbaacılık
+PSDTC,Pergamon Status Dış Tic.
+QNBFB,QNB Finansbank
+QNBFL,QNB Finans Finansal Kiralama
+QUAGR,Qua Granite Hayal Yapı
+RALYH,Ral Yatırım Holding
+RAYSG,Ray Sigorta
+RNPOL,Rainbow Polikarbonat
+RODRG,Rodrigo Tekstil
+ROYAL,Royal Halı
+RYSAS,Reysaş Lojistik
+RYGYO,Reysaş GYO
+SAHOL,Sabancı Holding
+SAMAT,Saray Matbaacılık
+SANEL,Sanel Mühendislik
+SANFO,Sanifoam Sünger
+SANKO,Sanko Pazarlama
+SARKY,Sarkuysan
+SASA,Sasa Polyester
+SAYAS,Say Yenilenebilir Enerji
+SDTTR,SDT Uzay ve Savunma
+SEKFK,Şeker Finansal Kiralama
+SEKR,Şekerbank
+SELEC,Selçuk Ecza Deposu
+SELVA,Selva Gıda
+SEYKM,Seyitler Kimya
+SILVR,Silverline Endüstri
+SISE,Şişecam
+SKTAS,Söktaş
+SMART,Smartiks Yazılım
+SMRTG,Smart Güneş Enerjisi
+SNGYO,Sinpaş GYO
+SNICA,Sanica Isı Sanayi
+SNKRN,Senkron Siber Güvenlik
+SNPAM,Sönmez Pamuklu
+SOKMD,Şok Marketler
+SONME,Sönmez Filament
+SRVGY,Servet GYO
+SUMAS,Sumaş Suni Tahta
+SUNTK,Sun Tekstil
+SURGY,Sur Tatil Evleri GYO
+TABGD,TAB Gıda
+TAPDI,Tapdi Oksijen
+TARAF,Taraf Gazetecilik
+TATEN,Tatlıpınar Enerji
+TATGD,Tat Gıda
+TAVHL,TAV Havalimanları
+TBORG,Türk Tuborg
+TCELL,Turkcell
+TDGYO,Trend GYO
+TEKST,Tekstilbank
+TEKTU,Tek-Art Turizm
+TERA,Tera Yatırım
+TETMT,Tetamat Gıda
+TEZOL,Europap Tezol Kağıt
+THYAO,Türk Hava Yolları
+TIRE,Mondi Tire Kutsan
+TKFEN,Tekfen Holding
+TKNSA,Teknosa
+TLMAN,Trabzon Liman
+TMPOL,Temapol Polimer
+TMSN,Tümosan Motor
+TOASO,Tofaş Oto. Fab.
+TRCAS,Turcas Petrol
+TRGYO,Torunlar GYO
+TRILC,Turk ilaç ve Serum Sanayi
+TSKB,T. Sınai Kalkınma Bankası
+TSPOR,Trabzonspor Sportif
+TTKOM,Türk Telekom
+TTRAK,Türk Traktör
+TUCLK,Tuğçelik
+TUKAS,Tukaş
+TUPRS,Tüpraş
+TURGG,Türker Proje Gayrimenkul
+TURSG,Türkiye Sigorta
+UFUK,Ufuk Yatırım
+ULAS,Ulaşlar Turizm Yat.
+ULKER,Ülker Bisküvi
+ULUFA,Ulusal Faktoring
+ULUSE,Ulusoy Elektrik
+VAKBN,Vakıfbank
+VAKFN,Vakıf Finansal Kiralama
+VAKKO,Vakko Tekstil
+VANGD,Vanet Gıda
+VBTYZ,VBT Yazılım
+VESTL,Vestel
+VESBE,Vestel Beyaz Eşya
+VKGYO,Vakıf GYO
+VKING,Viking Kağıt
+WOOSH,Woosh Teknoloji
+YAPRK,Yaprak Süt ve Besi Çift.
+YATAS,Yataş
+YAYLA,Yayla Agro Gıda
+YGGYO,Yeni Gimat GYO
+YGYO,Yeşil GYO
+YKBNK,Yapı Kredi Bankası
+YONGA,Yonga Mobilya
+YOTAS,Yotaş Teknoloji
+YUNSA,Yünsa
+YYAPI,Yeşil Yapı
+ZEDUR,Zedur Enerji
+ZOREN,Zorlu Enerji
+ZRGYO,Ziraat GYO

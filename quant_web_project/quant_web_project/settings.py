@@ -1,3 +1,17 @@
+
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
+SECRET_KEY = os.environ.get('SECRET_KEY', 'gelistirme-icin-gecici-key')
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+IYZICO_API_KEY = os.environ.get('IYZICO_API_KEY', '')
+IYZICO_SECRET_KEY = os.environ.get('IYZICO_SECRET_KEY', '')
+IYZICO_BASE_URL = os.environ.get('IYZICO_BASE_URL', 'https://sandbox-api.iyzipay.com')
+SITE_URL = os.environ.get('SITE_URL', 'http://127.0.0.1:8000')
+
+
+
 """
 Django settings for quant_web_project project.
 
@@ -25,7 +39,10 @@ SECRET_KEY = 'django-insecure-0s95qb7986qxly90che@6=-gi^27%jpb+^lib&ib@efo*%@^ua
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+
 
 
 # Application definition
@@ -37,10 +54,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'quant_app',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # bu satır olmalı
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -72,12 +91,25 @@ WSGI_APPLICATION = 'quant_web_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+
+#DATABASES = {
+    #'default': {
+     #  'ENGINE': 'django.db.backends.sqlite3',
+      #  'NAME': BASE_DIR / 'db.sqlite3',
+   # }
+#}
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB', 'sovereign_cockpit'),
+        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
+        'HOST': os.environ.get('POSTGRES_HOST', 'db'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
+#Dikkat: HOST değeri 'db' — bu, docker-compose.yml'de PostgreSQL container'ına vereceğimiz servis adıyla birebir eşleşecek.
 
 
 # Password validation
@@ -102,9 +134,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGOUT_REDIRECT_URL = 'login'
 
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'tr'
+TIME_ZONE = 'Europe/Istanbul'
 
 USE_I18N = True
 
@@ -115,3 +150,40 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# IYZICO_API_KEY = 'sandbox-...'
+# IYZICO_SECRET_KEY = 'sandbox-...'
+# IYZICO_BASE_URL = 'https://sandbox-api.iyzipay.com'
+# SITE_URL = 'http://127.0.0.1:8000'
+
+
+# ── Celery Ayarları ──
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://redis:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://redis:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Istanbul'
+
+# Cache'i de Redis'e taşıyoruz (şu an muhtemelen LocMemCache/varsayılan)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': os.environ.get('REDIS_CACHE_URL', 'redis://redis:6379/1'),
+    }
+}
+
+# ── Celery-beat Zamanlaması ──
+CELERY_BEAT_SCHEDULE = {
+    'market-cache-yenile': {
+        'task': 'quant_app.market_cache_yenile',
+        'schedule': 240.0,
+    },
+    'usd-try-kuru-yenile': {
+        'task': 'quant_app.usd_try_kuru_yenile',
+        'schedule': 480.0,  # 8 dakika (10 dakikalık cache süresinden önce)
+    },
+}

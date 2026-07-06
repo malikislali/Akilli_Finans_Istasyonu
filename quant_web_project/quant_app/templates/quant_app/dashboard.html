@@ -1,0 +1,1000 @@
+
+
+{% extends "quant_app/base.html" %}
+
+{% load static %}
+
+{% block title %}Sovereign Cockpit — Dashboard{% endblock %}
+
+{% block extra_head %}
+<script src="{% static 'quant_app/js/limit_sistemi.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<!-- 🆕 Mum grafiği (candlestick) desteği için ek kütüphaneler -->
+<script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.2.1/dist/chartjs-chart-financial.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<div id="limit-modal-overlay" class="limit-modal-overlay hidden">
+  <div class="limit-modal-kutu">
+    <button class="limit-modal-x" onclick="limitModalKapat()">✕</button>
+    <div class="limit-modal-icon">🔒</div>
+    <div id="limit-modal-mesaj" class="limit-modal-mesaj"></div>
+    <a id="limit-modal-link" href="#" class="limit-modal-buton">Ücretli Planları Görüntüle →</a>
+  </div>
+</div>
+<div id="ucretli-toast" class="ucretli-toast hidden">🔒 Ücretli Üyelik Gerektirir</div>
+
+
+<div class="flex min-h-screen sidebar-layout">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="w-80 panel flex flex-col gap-6 p-6 sticky top-0 h-screen overflow-y-auto" style="border-right: 1px solid var(--border-faint);">
+    <div>
+      <div class="font-display text-xl font-bold text-white">🏛️ Sovereign</div>
+      <div class="font-mono text-[10px] text-muted tracking-widest mt-1">QUANT COCKPIT</div>
+    </div>
+
+   <a href="{% url 'anasayfa' %}" style="display:flex; align-items:center; background-color: aliceblue; gap:0.5rem; text-decoration:none; padding:0.6rem 0.9rem; border:1px solid var(--border-faint); border-radius:0.6rem;  color:black; font-size:0.85rem; font-weight:600; transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--accent-sky)'" onmouseout="this.style.borderColor='var(--border-faint)'">
+      <span>🏠</span> <span>Anasayfa'ya Dön (Market) </span>
+    </a>
+
+    <div class="text-xs font-mono text-muted flex items-center justify-between border-t pt-4">
+      <span>{{ request.user.username }}</span>
+      <a href="{% url 'logout' %}" class="text-red">Çıkış</a>
+    </div>
+
+    <div id="lab-hak-bilgisi" class="hidden"></div>
+
+    <div>
+      <label class="field-label">1. Pazar Seçimi</label>
+      <select id="pazar-select" class="field">
+        {% for pazar in pazarlar %}
+          <option value="{{ pazar }}">{{ pazar }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label class="field-label">2. Varlık Seçimi</label>
+      <select id="sembol-select" class="field"></select>
+    </div>
+
+    <div>
+      <label class="field-label">3. Mum Periyodu</label>
+      <select id="interval-select" class="field"></select>
+    </div>
+
+    <button id="analiz-btn" class="btn btn-sky">🔮 Analiz Et</button>
+
+    <div id="sidebar-info" class="text-xs font-mono text-muted border-t pt-4" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+  </aside>
+
+  <!-- ===================== ANA İÇERİK ===================== -->
+  <main class="flex-1 p-8 overflow-y-auto">
+    <div id="loading-indicator" class="hidden text-center py-20">
+      <div class="font-mono text-sky animate-pulse">📡 Analiz motoru çalışıyor, walk-forward CV + 3 model eğitiliyor...</div>
+    </div>
+
+    <div id="hata-kutusu" class="hidden message-error rounded-xl p-6 mb-6"></div>
+
+    <div id="sonuc-alani" class="hidden">
+      <h1 id="baslik" class="font-display text-3xl font-bold text-white mb-1"></h1>
+      <p id="alt-baslik" class="text-sm text-muted font-mono mb-6"></p>
+
+      <!-- ===================== SEKME BAŞLIKLARI ===================== -->
+      <div class="tab-bar">
+        <button data-tab="ozet" class="tab-btn active">🔮 Özet Raporu</button>
+        <button data-tab="teknik" class="tab-btn">📊 Teknik Gösterge</button>
+        <button data-tab="trend" class="tab-btn">⛓️ Trend &amp; Volatilite</button>
+        <button data-tab="grafik" class="tab-btn">📈 Canlı Grafik</button>
+        <button data-tab="backtest" class="tab-btn">🎯 Backtest</button>
+        <button data-tab="risk" class="tab-btn">💸 Risk Analizi</button>
+      </div>
+
+      <!-- ===================== SEKME 1: ÖZET ===================== -->
+      <div data-panel="ozet" class="tab-panel">
+
+        <!-- 🛡️ DÜRÜSTLÜK UYARISI — kararın HEMEN ÖNCESİNDE, kaçırılamaz -->
+        <div class="research-warning">
+          <div class="research-warning-baslik">⚠️ Bu Bir Kazanç inyali DEĞİLDİR</div>
+          <div class="research-warning-metin">
+            Bu motor, 6 turluk bağımsız bir istatistiksel araştırmayla (Triple Barrier
+            etiketleme + Purged Cross-Validation + permütasyon testi, ~47 varlık/periyot
+            kombinasyonunda) test edildi. <b>Sonuç: hiçbir pazarda istatistiksel olarak
+            güvenilir bir tahmin gücü (edge) bulunamadı</b>  Aşağıdaki "ARTIŞ/AZALIŞ" kararı
+            ve <b>Backtest</b> sekmesindeki metrikler, <b>eğitim ve şeffaflık amaçlıdır. -YATIRIM TAVSİYESİ DEĞİLDİR-</b>;
+            bir alım/satım tavsiyesi veya kazanç garantisi olarak yorumlanmamalıdır.
+            Gerçek para ile işlem yapmadan önce kendi araştırmanızı yapın.
+          </div>
+          <div class="research-warning-metin">
+            Bu motor, sizlere daha iyi fikirler vermesi için her geçen gün makina öğrenimi ve derin öğrenme ile geliştirilmektedir.
+          </div>
+          <div class="research-warning-metin">
+           Akademik literatür, "garantili kazanç" iddia eden algoritmik ticaret botlarına ve
+            sinyal servislerine karşı sistematik bir şüphecilik öneriyor. Bunun birkaç bilinen
+            nedeni var: <b>(1) Aşırı uyum (overfitting)</b> — geçmiş veriye göre ince ayar
+            yapılan bir model, o veriye özgü rastgele örüntüleri "öğrenir"; bu, geçmişte
+            mükemmel görünüp gelecekte çökmesinin en yaygın sebebidir. <b>(2) Hayatta kalma
+            yanlılığı (survivorship bias)</b> — başarısız olan bot/stratejiler sessizce
+            kapanıp pazarlama materyallerinden kaldırılır, geriye sadece "şanslı" örnekler
+            kalır. <b>(3) Verimli Piyasalar Hipotezi</b> — kamuya açık verilerle üretilen
+            basit teknik sinyallerin, likit piyasalarda sürdürülebilir bir avantaj sağlaması
+            teorik olarak zordur; var olan avantajlar genelde hızla arbitraj edilip kaybolur.
+            <b>(4) Düzenleyici kurumların (SPK, SEC ve benzerleri) tekrarlayan uyarıları</b> —
+            "yüzde yüz garantili", "risksiz" gibi ifadeler kullanan platformlar, dünya
+            genelinde finansal düzenleyicilerin en sık soruşturduğu dolandırıcılık
+            kategorilerinden biridir. Bu ilkeler ışığında: hiçbir bot ya da site (bu platform
+            dahil) %100 güvenilir değildir; bağımsız doğrulama yapmadan, küçük sermaye ile
+            test etmeden ve platformun düzenleyici kayıtlarını kontrol etmeden büyük miktarda
+            para yatırmayın.
+          </div>
+        </div>
+
+        <div class="panel rounded-xl p-4 mb-6">
+          <div class="flex gap-8 font-mono text-xs" style="flex-wrap: wrap;">
+            <div><span class="text-muted">Train Verisi:</span> <span id="meta-train" class="text-white font-bold"></span></div>
+            <div><span class="text-muted">Model Mimarisi:</span> <span class="text-sky font-bold">3'lü Konsensüs (GBM+RF+XGB)</span></div>
+            <div><span class="text-muted">Kalibrasyon:</span> <span id="meta-kalibrasyon" class="font-bold"></span></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 mb-6">
+          <div id="karar-kart" class="panel rounded-xl p-5" style="border-width: 2px;">
+            <div class="text-xs font-mono text-muted uppercase mb-2">Konsensüs Kararı</div>
+            <div id="karar-deger" class="font-display text-2xl font-bold"></div>
+          </div>
+          <div class="panel rounded-xl p-5">
+            <div class="text-xs font-mono text-muted uppercase mb-2">Yükseliş İhtimali</div>
+            <div id="boga-deger" class="font-mono text-2xl font-bold text-green"></div>
+          </div>
+          <div class="panel rounded-xl p-5">
+            <div class="text-xs font-mono text-muted uppercase mb-2">Düşüş İhtimali</div>
+            <div id="ayi-deger" class="font-mono text-2xl font-bold text-red"></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-5 gap-3">
+          <div class="indicator-card panel rounded-lg p-3 text-center" data-gosterge="rsi">
+            <div class="text-[10px] font-mono text-muted">RSI</div>
+            <div id="ind-rsi" class="font-mono font-bold text-white"></div>
+            <div class="indicator-tip">RSI 70 üzeri aşırı alım (düzeltme riski), 30 altı aşırı satım (dönüş potansiyeli) bölgesidir.</div>
+          </div>
+          <div class="indicator-card panel rounded-lg p-3 text-center" data-gosterge="macd">
+            <div class="text-[10px] font-mono text-muted">MACD</div>
+            <div id="ind-macd" class="font-mono font-bold text-white"></div>
+            <div class="indicator-tip">MACD çizgisi Sinyal çizgisini yukarı keserse alım, aşağı keserse satım sinyali sayılır.</div>
+          </div>
+          <div class="indicator-card panel rounded-lg p-3 text-center" data-gosterge="stoch">
+            <div class="text-[10px] font-mono text-muted">Stoch %K</div>
+            <div id="ind-stoch" class="font-mono font-bold text-white"></div>
+            <div class="indicator-tip">80 üzeri aşırı alım, 20 altı aşırı satım. %K'nın %D'yi kesmesi kısa vadeli dönüş sinyali verir.</div>
+          </div>
+          <div class="indicator-card panel rounded-lg p-3 text-center" data-gosterge="wt1">
+            <div class="text-[10px] font-mono text-muted">WT1</div>
+            <div id="ind-wt1" class="font-mono font-bold text-white"></div>
+            <div class="indicator-tip">WT1'in aşırı satımda yukarı, aşırı alımda aşağı kesmesi momentum dönüşüne işaret eder.</div>
+          </div>
+          <div class="indicator-card panel rounded-lg p-3 text-center" data-gosterge="cci">
+            <div class="text-[10px] font-mono text-muted">CCI</div>
+            <div id="ind-cci" class="font-mono font-bold text-white"></div>
+            <div class="indicator-tip">+100 üzeri güçlü yükseliş trendi, -100 altı güçlü düşüş trendini işaret eder.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== SEKME 2: TEKNİK GÖSTERGE ===================== -->
+      <div data-panel="teknik" class="tab-panel hidden">
+        <div class="panel rounded-xl p-5 mb-6">
+          <div class="flex items-center justify-between mb-4" style="flex-wrap: wrap; gap: 0.75rem;">
+            <div class="text-sm font-display font-semibold text-white">📈 Fiyat &amp; Hareketli Ortalamalar</div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <label class="text-xs font-mono text-muted">Grafik Türü:</label>
+              <select id="grafik-turu-select" class="field" style="width: auto; padding: 0.4rem 0.75rem; font-size: 0.8rem;">
+                <option value="cizgi">📈 Temel Çizgi</option>
+                <option value="mum">🕯️ Mum Grafiği (Candlestick)</option>
+                <option value="isaretli">📍 İşaretli Çizgi</option>
+              </select>
+            </div>
+          </div>
+          <canvas id="fiyat-grafik" height="90"></canvas>
+        </div>
+        <div class="grid grid-cols-2 gap-6">
+          <div class="panel rounded-xl p-5">
+            <div class="text-sm font-display font-semibold text-white mb-4">🔮 RSI</div>
+            <canvas id="rsi-grafik" height="120"></canvas>
+          </div>
+          <div class="panel rounded-xl p-5">
+            <div class="text-sm font-display font-semibold text-white mb-4">⛓️ MACD</div>
+            <canvas id="macd-grafik" height="120"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== SEKME 3: TREND & VOLATİLİTE ===================== -->
+      <div data-panel="trend" class="tab-panel hidden">
+        <div id="rejim-kutusu" class="panel rounded-xl p-5 mb-6">
+          <div class="text-xs font-mono text-muted uppercase mb-2">Piyasa Yapısı</div>
+          <div id="rejim-deger" class="font-display text-xl font-bold"></div>
+        </div>
+        <div class="grid grid-cols-3 gap-4 mb-6">
+          <div class="panel rounded-xl p-5"><div class="text-xs font-mono text-muted uppercase mb-2">ATR Gücü</div><div id="trend-atr" class="font-mono text-xl font-bold text-white"></div></div>
+          <div class="panel rounded-xl p-5"><div class="text-xs font-mono text-muted uppercase mb-2">SMA 200</div><div id="trend-sma200" class="font-mono text-xl font-bold text-white"></div></div>
+          <div class="panel rounded-xl p-5"><div class="text-xs font-mono text-muted uppercase mb-2">Güncel Fiyat</div><div id="trend-fiyat" class="font-mono text-xl font-bold text-white"></div></div>
+        </div>
+        <div id="sma200-uyari" class="hidden bg-yellow-soft rounded-lg p-4 text-sm font-mono text-yellow"></div>
+      </div>
+
+      <!-- ===================== SEKME 4: CANLI GRAFİK ===================== -->
+      <div data-panel="grafik" class="tab-panel hidden">
+        <div class="panel rounded-xl p-5 mb-6">
+          <div class="flex items-center justify-between mb-4" style="flex-wrap: wrap; gap: 0.75rem;">
+            <div class="text-sm font-display font-semibold text-white">📈 Canlı Fiyat Akış Hattı</div>
+            <div class="text-xs font-mono text-muted">Grafik türü, "Teknik Gösterge" sekmesindeki seçiciyle senkronizedir.</div>
+          </div>
+          <canvas id="canli-grafik" height="100"></canvas>
+        </div>
+        <div class="panel rounded-xl p-5">
+          <div class="flex items-center justify-between mb-4" style="flex-wrap: wrap; gap: 0.75rem;">
+            <div class="text-sm font-display font-semibold text-white">📊 Hacim</div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <label class="text-xs font-mono text-muted">Gösterim:</label>
+              <select id="hacim-turu-select" class="field" style="width: auto; padding: 0.4rem 0.75rem; font-size: 0.8rem;">
+                <option value="bar">📊 Hacim Mumları (Bar)</option>
+                <option value="cizgi">📈 Çizgi</option>
+              </select>
+            </div>
+          </div>
+          <canvas id="hacim-grafik" height="80"></canvas>
+        </div>
+      </div>
+
+      <!-- ===================== SEKME 5: BACKTEST ===================== -->
+      <div data-panel="backtest" class="tab-panel hidden">
+        <div class="panel rounded-xl p-5 mb-6">
+          <div class="text-sm font-display font-semibold text-white mb-2">🗳️ Kurul Üyelerinin Oy Güçleri</div>
+          <div class="text-xs text-muted" style="margin-bottom: 1rem; line-height: 1.5;">
+            Sistem üç ayrı modele (GBM, Random Forest, XGBoost) danışır. Her birinin oyu, GEÇMİŞTE ne kadar
+            başarılı olduğuna göre otomatik ağırlıklandırılır — eşit değildir, performansa göre değişir.
+          </div>
+          <div class="grid grid-cols-3 gap-4 font-mono text-sm">
+            <div><div class="text-muted text-xs">GBM Ağırlığı</div><div id="w-gbm" class="text-white font-bold"></div></div>
+            <div><div class="text-muted text-xs">RF Ağırlığı</div><div id="w-rf" class="text-white font-bold"></div></div>
+            <div><div class="text-muted text-xs">XGBoost Ağırlığı</div><div id="w-xgb" class="text-white font-bold"></div></div>
+          </div>
+        </div>
+
+        <div class="panel rounded-xl p-5 mb-6">
+          <div class="text-sm font-display font-semibold text-white mb-2">📉 Backtest Performans Özeti (Test Seti)</div>
+          <div class="text-xs text-muted" style="margin-bottom: 1rem; line-height: 1.5;">
+            Bu dört metrik, modelin EĞİTİMDE GÖRMEDİĞİ veriyle test edilmesinden gelir — yani modelin gerçek
+            hayatta nasıl davranabileceğine en yakın tahmin budur.
+          </div>
+          <div class="grid grid-cols-4 gap-4 font-mono text-sm">
+            <div class="metric-box">
+              <div class="text-muted text-xs">Profit Factor</div>
+              <div id="bt-pf" class="text-white font-bold"></div>
+              <div id="bt-pf-durum" class="metric-durum"></div>
+              <div class="metric-aciklama">Kazanılan / kaybedilen toplam tutar oranı. &gt;1 kârlı, &lt;1 zararlı. &gt;1.5 genelde "iyi" sayılır.</div>
+            </div>
+            <div class="metric-box">
+              <div class="text-muted text-xs">Max Drawdown</div>
+              <div id="bt-dd" class="text-white font-bold"></div>
+              <div id="bt-dd-durum" class="metric-durum"></div>
+              <div class="metric-aciklama">Tepeden dibe en büyük kümülatif kayıp. %82 demek, o anda kasanın %82'sinin erimiş olması demektir — ne kadar düşükse o kadar iyi.</div>
+            </div>
+            <div class="metric-box">
+              <div class="text-muted text-xs">Sharpe</div>
+              <div id="bt-sharpe" class="text-white font-bold"></div>
+              <div id="bt-sharpe-durum" class="metric-durum"></div>
+              <div class="metric-aciklama">Risk başına getiri. Negatif = alınan riske karşılık beklenen pozitif getiri yok. &gt;1 iyi, &gt;2 çok iyi sayılır.</div>
+            </div>
+            <div class="metric-box">
+              <div class="text-muted text-xs">Win Rate</div>
+              <div id="bt-winrate" class="text-white font-bold"></div>
+              <div id="bt-winrate-durum" class="metric-durum"></div>
+              <div class="metric-aciklama">İşlemlerin yüzde kaçı kârla kapanmış. Düşük olması tek başına kötü değildir — kazananlar büyükse (Profit Factor'a bakın) yine kârlı olunabilir.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel rounded-xl p-5">
+          <div class="text-sm font-display font-semibold text-white mb-2">🧮 Genişletilmiş İşlem İstatistikleri</div>
+          <div class="text-xs text-muted" style="margin-bottom: 1rem; line-height: 1.5;">
+            Profit Factor'ın "neden" o değeri aldığını açıklayan ayrıntılar. Expectancy, hepsini tek bir
+            sayıya indirir: komisyon dahil, BİR işlemden ortalama beklenen kazancınız.
+          </div>
+          <div class="grid grid-cols-2 gap-4 font-mono text-sm">
+            <div class="metric-box">
+              <div class="text-muted text-xs">Ort. Kazanç (İşlem)</div>
+              <div id="bt-avgwin" class="text-green font-bold"></div>
+              <div class="metric-aciklama">Kazanılan bir işlemde ortalama ne kadar kazanılıyor.</div>
+            </div>
+            <div class="metric-box">
+              <div class="text-muted text-xs">Ort. Kayıp (İşlem)</div>
+              <div id="bt-avgloss" class="text-red font-bold"></div>
+              <div class="metric-aciklama">Kaybedilen bir işlemde ortalama ne kadar kaybediliyor.</div>
+            </div>
+            <div class="metric-box col-span-2">
+              <div class="text-muted text-xs">Expectancy (İşlem Başı)</div>
+              <div id="bt-expectancy" class="font-bold" style="font-size: 1.1rem;"></div>
+              <div id="bt-expectancy-durum" class="metric-durum"></div>
+              <div class="metric-aciklama">Pozitifse strateji istatistiksel olarak uzun vadede kazandırır; negatifse, komisyon dahil, uzun vadede kaybettirir. Bu PANELDEKİ EN ÖNEMLİ TEK RAKAMDIR.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== SEKME 6: RİSK ANALİZİ ===================== -->
+      <div data-panel="risk" class="tab-panel hidden">
+        <div class="panel rounded-xl p-6">
+          <div class="text-sm font-display font-semibold text-white mb-4">💸 Volatilite Tabanlı Risk Kokpiti</div>
+
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div>
+              <label class="field-label">Kasa Büyüklüğü</label>
+              <input id="risk-kasa" type="number" value="2000" min="100" step="100" class="field">
+            </div>
+            <div>
+              <label class="field-label">Risk Yüzdesi (%)</label>
+              <input id="risk-yuzde" type="number" value="1.0" min="0.5" max="5" step="0.1" class="field">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-4 mb-6">
+            <div class="bg-red-soft rounded-lg p-4"><div class="text-xs font-mono text-red mb-1">🚨 Stop-Loss</div><div id="risk-stop" class="font-mono font-bold text-white"></div></div>
+            <div class="bg-green-soft rounded-lg p-4"><div class="text-xs font-mono text-green mb-1">🎯 Kâr-Al Hedefi</div><div id="risk-karal" class="font-mono font-bold text-white"></div></div>
+            <div class="bg-yellow-soft rounded-lg p-4"><div class="text-xs font-mono text-yellow mb-1">💼 Maks. Pozisyon</div><div id="risk-pozisyon" class="font-mono font-bold text-white"></div></div>
+          </div>
+
+          <div class="text-xs font-mono text-muted border-t pt-4">
+            ⚠️ Bu panel eğitim/araştırma amaçlıdır; yatırım tavsiyesi değildir.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ===================== GÖSTERGE DETAY MODALI ===================== -->
+<div id="gosterge-modal" class="modal-overlay hidden">
+  <div class="modal-box panel">
+    <div class="modal-header">
+      <div id="modal-baslik" class="font-display text-xl font-bold text-white"></div>
+      <button id="modal-kapat" class="modal-close">✕</button>
+    </div>
+    <div id="modal-aciklama" class="text-sm text-muted font-mono modal-aciklama"></div>
+    <canvas id="modal-grafik" height="110"></canvas>
+  </div>
+</div>
+
+<script>
+const VARLIK_HAVUZU = {{ varlik_havuzu_json|safe }};
+const INTERVAL_SECENEKLERI = {{ interval_secenekleri_json|safe }};
+
+const pazarSelect = document.getElementById('pazar-select');
+const sembolSelect = document.getElementById('sembol-select');
+const intervalSelect = document.getElementById('interval-select');
+const analizBtn = document.getElementById('analiz-btn');
+const loadingIndicator = document.getElementById('loading-indicator');
+const hataKutusu = document.getElementById('hata-kutusu');
+const sonucAlani = document.getElementById('sonuc-alani');
+const sidebarInfo = document.getElementById('sidebar-info');
+const PLAN_SEC_URL = "{% url 'plan_sec' %}";
+
+let charts = {};
+let sonGelenVeri = null;
+let LAB_LIMIT_DURUMU = { premium: true };
+
+async function labHakBilgisiGuncelle() {
+  try {
+    const resp = await fetch('/api/limit-durumu/');
+    const veri = await resp.json();
+    if (!veri.basarili) return;
+    LAB_LIMIT_DURUMU = veri;
+
+    const etiketEl = document.getElementById('lab-hak-bilgisi');
+    if (etiketEl) {
+      if (veri.premium) {
+        etiketEl.classList.add('hidden');
+        etiketEl.innerHTML = '';
+      } else {
+        etiketEl.classList.remove('hidden');
+        etiketEl.innerHTML = hakEtiketiHtmlUret('🧪', 'Lab Analiz', veri.lab_analiz);
+      }
+    }
+    ozetRaporKisitlamalariniUygula(veri.premium);
+  } catch (err) {
+    console.error('Lab limit durumu yüklenemedi:', err);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', labHakBilgisiGuncelle);
+
+// ---------- Gösterge bilgi sözlüğü (kart altı eğitim metni + modal açıklaması) ----------
+const GOSTERGE_BILGI = {
+  rsi: {
+    baslik: '🔮 RSI — Göreceli Güç Endeksi',
+    aciklama: 'RSI, son dönemdeki fiyat hareketinin hızını ve büyüklüğünü 0-100 arası bir skorla ölçer. ' +
+      '70 üzerinde "aşırı alım" bölgesi (fiyat çok hızlı yükselmiş, düzeltme riski var); ' +
+      '30 altında "aşırı satım" bölgesi (fiyat çok hızlı düşmüş, tepki yükselişi gelebilir) olarak yorumlanır. ' +
+      '50 civarı nötr bölgedir, net bir yön sinyali vermez.',
+    renk: '#38BDF8',
+    veriAnahtari: 'rsi',
+  },
+  macd: {
+    baslik: '⛓️ MACD — Trend Takip ve Momentum',
+    aciklama: 'MACD, kısa ve uzun dönemli iki hareketli ortalamanın farkını gösterir. ' +
+      'MACD çizgisi Sinyal çizgisini yukarı keserse alım, aşağı keserse satım sinyali sayılır. ' +
+      'Sıfırın üzerinde olması genel yükseliş momentumunu, altında olması düşüş momentumunu işaret eder.',
+    renk: '#34D399',
+    veriAnahtari: 'macd',
+    ikinciSeri: 'macd_sig',
+    ikinciEtiket: 'Sinyal',
+  },
+  stoch: {
+    baslik: '🎯 Stochastic Osilatör (%K / %D)',
+    aciklama: 'Fiyatın, son bir periyottaki en yüksek-en düşük aralığına göre nerede durduğunu ölçer. ' +
+      '80 üzeri aşırı alım, 20 altı aşırı satım bölgesidir. ' +
+      '%K çizgisinin %D çizgisini kesmesi, kısa vadeli bir dönüşün habercisi olarak yorumlanır.',
+    renk: '#F59E0B',
+    veriAnahtari: 'stoch_k',
+  },
+  wt1: {
+    baslik: '🌊 WaveTrend (WT1)',
+    aciklama: 'WaveTrend, fiyatın ortalamadan ne kadar saptığını ölçen bir momentum osilatörüdür. ' +
+      'WT1\'in aşırı satım bölgesinde yukarı kesmesi alım, aşırı alım bölgesinde aşağı kesmesi satım ' +
+      'sinyali olarak değerlendirilir. Kripto piyasalarında özellikle popülerdir.',
+    renk: '#A78BFA',
+    veriAnahtari: 'wt1',
+  },
+  cci: {
+    baslik: '📐 CCI — Commodity Channel Index',
+    aciklama: 'CCI, fiyatın istatistiksel ortalamasından ne kadar uzaklaştığını ölçer. ' +
+      '+100 üzeri güçlü yükseliş trendini, -100 altı güçlü düşüş trendini işaret eder. ' +
+      'Bu bantların dışına çıkış, trendin güçlendiğine veya tükenme noktasına yaklaştığına işaret edebilir.',
+    renk: '#F87171',
+    veriAnahtari: 'cci',
+  },
+};
+
+// ---------- Gösterge kartlarına tıklama/hover davranışı ----------
+const UCRETSIZ_ACIK_GOSTERGELER = ['rsi', 'macd'];
+
+document.querySelectorAll('.indicator-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const gostergeKey = card.dataset.gosterge;
+    if (card.classList.contains('kilitli-eleman')) {
+      ucretliToastGoster();
+      return;
+    }
+    gostergeModalAc(gostergeKey);
+  });
+});
+
+function ozetRaporKisitlamalariniUygula(premium) {
+  if (premium) return;
+  document.querySelectorAll('.indicator-card').forEach(card => {
+    if (!UCRETSIZ_ACIK_GOSTERGELER.includes(card.dataset.gosterge)) {
+      card.classList.add('kilitli-eleman');
+    }
+  });
+}
+
+function gostergeModalAc(gostergeKey) {
+  const bilgi = GOSTERGE_BILGI[gostergeKey];
+  if (!bilgi || !sonGelenVeri) return;
+
+  document.getElementById('modal-baslik').textContent = bilgi.baslik;
+  document.getElementById('modal-aciklama').textContent = bilgi.aciklama;
+  document.getElementById('gosterge-modal').classList.remove('hidden');
+
+  const g = sonGelenVeri.grafik;
+  // Şu an sadece RSI ve MACD için gerçek zaman serisi geliyor (bkz. quant_ml_core.AnalizSonucu);
+  // Stoch/WT1/CCI için backend henüz seri göndermiyor, o yüzden mevcut olanı çiziyoruz,
+  // yoksa kullanıcıya bunu açıkça söylüyoruz (sessizce boş grafik göstermek yanıltıcı olurdu).
+  const seriler = [];
+  if (g[bilgi.veriAnahtari]) {
+    seriler.push({ label: gostergeKey.toUpperCase(), data: g[bilgi.veriAnahtari], color: bilgi.renk, width: 2 });
+  }
+  if (bilgi.ikinciSeri && g[bilgi.ikinciSeri]) {
+    seriler.push({ label: bilgi.ikinciEtiket, data: g[bilgi.ikinciSeri], color: '#94A3B8', width: 1 });
+  }
+
+  if (seriler.length === 0) {
+    document.getElementById('modal-aciklama').textContent += ' (Bu gösterge için henüz zaman serisi grafiği mevcut değil — yalnızca güncel değer gösteriliyor: ' + fmt(sonGelenVeri[bilgi.veriAnahtari], 2) + ')';
+    if (charts['modal-grafik']) { charts['modal-grafik'].destroy(); delete charts['modal-grafik']; }
+    return;
+  }
+
+  cizCizgiGrafik('modal-grafik', g.tarihler, seriler);
+}
+
+document.getElementById('modal-kapat').addEventListener('click', () => {
+  document.getElementById('gosterge-modal').classList.add('hidden');
+});
+document.getElementById('gosterge-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'gosterge-modal') document.getElementById('gosterge-modal').classList.add('hidden');
+});
+
+// ---------- Sekme geçişleri ----------
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const hedefTab = btn.dataset.tab;
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+    document.querySelector(`[data-panel="${hedefTab}"]`).classList.remove('hidden');
+
+    if (sonGelenVeri) grafikleriGerekirseCiz(hedefTab, sonGelenVeri);
+  });
+});
+
+function sembolleriDoldur() {
+  const pazar = pazarSelect.value;
+  sembolSelect.innerHTML = '';
+  (VARLIK_HAVUZU[pazar] || []).forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    sembolSelect.appendChild(opt);
+  });
+}
+
+function intervalleriDoldur() {
+  const pazar = pazarSelect.value;
+  intervalSelect.innerHTML = '';
+  (INTERVAL_SECENEKLERI[pazar] || []).forEach(([etiket, deger, native]) => {
+    const opt = document.createElement('option');
+    opt.value = deger;
+    opt.textContent = etiket + (native ? '' : ' (sentetik)');
+    intervalSelect.appendChild(opt);
+  });
+  if (intervalSelect.options.length > 0) {
+    intervalSelect.selectedIndex = Math.floor(intervalSelect.options.length / 2);
+  }
+}
+
+pazarSelect.addEventListener('change', () => { sembolleriDoldur(); intervalleriDoldur(); });
+sembolleriDoldur();
+intervalleriDoldur();
+
+function fmt(deger, ondalik = 2) {
+  if (deger === null || deger === undefined || Number.isNaN(deger)) return '—';
+  return Number(deger).toFixed(ondalik);
+}
+
+// ---------- Backtest metrikleri için "iyi/nötr/kötü" durum hesaplama ----------
+// Bunlar yaygın kullanılan KABA referans eşikleridir, kesin bilimsel sınır
+// değildir. Tek bir metriğe bakıp yatırım kararı vermek doğru değildir;
+// amaç kullanıcıya "bu rakam genel olarak nereye düşüyor" sezgisi vermektir.
+
+// "Yüksek = iyi" mantığıyla çalışan metrikler için (Profit Factor, Sharpe, Win Rate, Expectancy)
+function durumHesaplaEsik(deger, iyiEsik, kotuEsik) {
+  if (deger === null || deger === undefined || Number.isNaN(deger)) return null;
+  if (deger >= iyiEsik) return 'iyi';
+  if (deger <= kotuEsik) return 'kotu';
+  return 'notr';
+}
+
+// "Düşük = iyi" mantığıyla çalışan metrikler için (Max Drawdown)
+function durumHesaplaTersEsik(deger, iyiEsik, kotuEsik) {
+  if (deger === null || deger === undefined || Number.isNaN(deger)) return null;
+  if (deger <= iyiEsik) return 'iyi';
+  if (deger >= kotuEsik) return 'kotu';
+  return 'notr';
+}
+
+const DURUM_ETIKETLERI = { iyi: '✓ İYİ', notr: '● NÖTR', kotu: '✕ DİKKAT' };
+
+function durumRozetiAyarla(elementId, durum) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  if (!durum) { el.textContent = ''; el.className = 'metric-durum'; return; }
+  el.textContent = DURUM_ETIKETLERI[durum];
+  el.className = 'metric-durum ' + durum;
+}
+
+/*  async function analizCalistir() {
+  const sembol = sembolSelect.value;
+  const pazar = pazarSelect.value;
+  const interval = intervalSelect.value;
+
+  loadingIndicator.classList.remove('hidden');
+  hataKutusu.classList.add('hidden');
+  sonucAlani.classList.add('hidden');
+
+  try {
+    const resp = await fetch(`/analiz/?sembol=${encodeURIComponent(sembol)}&pazar=${encodeURIComponent(pazar)}&interval=${encodeURIComponent(interval)}`);
+    const veri = await resp.json();
+
+    loadingIndicator.classList.add('hidden');
+
+    if (!veri.basarili) {
+      hataKutusu.textContent = '⚠️ ' + (veri.hata_mesaji || 'Bilinmeyen bir hata oluştu.');
+      hataKutusu.classList.remove('hidden');
+      return;
+    }
+    if (veri.veri_yetersiz) {
+      hataKutusu.textContent = '⚠️ Veri derinliği yetersiz: ' + (veri.hata_mesaji || 'Lütfen daha uzun bir periyot seçin.');
+      hataKutusu.classList.remove('hidden');
+      return;
+    }
+
+    sonGelenVeri = veri;
+    sonucGoster(veri);
+  } catch (err) {
+    loadingIndicator.classList.add('hidden');
+    hataKutusu.textContent = '⚠️ Sunucuya ulaşılamadı: ' + err;
+    hataKutusu.classList.remove('hidden');
+  }
+} */
+
+
+async function analizCalistir() {
+  const sembol = sembolSelect.value;
+  const pazar = pazarSelect.value;
+  const interval = intervalSelect.value;
+
+  loadingIndicator.classList.remove('hidden');
+  hataKutusu.classList.add('hidden');
+  sonucAlani.classList.add('hidden');
+
+  try {
+    const resp = await fetch(`/analiz/?sembol=${encodeURIComponent(sembol)}&pazar=${encodeURIComponent(pazar)}&interval=${encodeURIComponent(interval)}`);
+    const veri = await resp.json();
+
+   if (!veri.basarili) {
+      loadingIndicator.classList.add('hidden');
+      if (veri.limit_asimi) {
+        limitModalAc(veri.hata_mesaji, PLAN_SEC_URL);
+        labHakBilgisiGuncelle();
+        return;
+      }
+      hataKutusu.textContent = '⚠️ ' + (veri.hata_mesaji || 'Bilinmeyen bir hata oluştu.');
+      hataKutusu.classList.remove('hidden');
+      return;
+    }
+
+    // Cache'ten anında geldiyse (task_id yok) -> direkt göster
+    if (!veri.beklemede) {
+      loadingIndicator.classList.add('hidden');
+      if (veri.veri_yetersiz) {
+        hataKutusu.textContent = '⚠️ Veri derinliği yetersiz: ' + (veri.hata_mesaji || 'Lütfen daha uzun bir periyot seçin.');
+        hataKutusu.classList.remove('hidden');
+        return;
+      }
+      sonGelenVeri = veri;
+      sonucGoster(veri);
+      return;
+    }
+
+    // Cache yok -> arka planda hesaplanıyor (bir hak harcandı), polling başlat
+    labHakBilgisiGuncelle();
+    pollingIleSonucuBekle(veri.task_id);
+  } catch (err) {
+    loadingIndicator.classList.add('hidden');
+    hataKutusu.textContent = '⚠️ Sunucuya ulaşılamadı: ' + err;
+    hataKutusu.classList.remove('hidden');
+  }
+}
+
+async function pollingIleSonucuBekle(taskId) {
+  const POLLING_ARALIGI_MS = 1500;
+
+  const kontrolEt = async () => {
+    try {
+      const resp = await fetch(`/analiz/durum/${taskId}/`);
+      const veri = await resp.json();
+
+      if (!veri.basarili) {
+        loadingIndicator.classList.add('hidden');
+        hataKutusu.textContent = '⚠️ ' + (veri.hata_mesaji || 'Bilinmeyen bir hata oluştu.');
+        hataKutusu.classList.remove('hidden');
+        return;
+      }
+
+      if (veri.beklemede) {
+        // Henüz bitmedi -> tekrar dene
+        setTimeout(kontrolEt, POLLING_ARALIGI_MS);
+        return;
+      }
+
+      // Bitti
+      loadingIndicator.classList.add('hidden');
+      if (veri.veri_yetersiz) {
+        hataKutusu.textContent = '⚠️ Veri derinliği yetersiz: ' + (veri.hata_mesaji || 'Lütfen daha uzun bir periyot seçin.');
+        hataKutusu.classList.remove('hidden');
+        return;
+      }
+      sonGelenVeri = veri;
+      sonucGoster(veri);
+    } catch (err) {
+      loadingIndicator.classList.add('hidden');
+      hataKutusu.textContent = '⚠️ Sunucuya ulaşılamadı: ' + err;
+      hataKutusu.classList.remove('hidden');
+    }
+  };
+
+  kontrolEt();
+}
+
+function sonucGoster(veri) {
+  document.getElementById('baslik').textContent = `${veri.sembol} — ${veri.pazar}`;
+  document.getElementById('alt-baslik').textContent =
+    `Kaynak: ${veri.cache_ten_mi ? 'önbellek (5dk içinde)' : (veri.veri_kaynagi || '—')} | Interval: ${veri.interval}`;
+
+  document.getElementById('meta-train').textContent = (veri.ml.train_satir_sayisi ?? '—') + ' Satır';
+  const kalibEl = document.getElementById('meta-kalibrasyon');
+  kalibEl.textContent = veri.ml.kalibrasyon_aktif ? 'AKTİF (İzotonik) ✅' : 'PASİF ⚠️';
+  kalibEl.className = 'font-bold ' + (veri.ml.kalibrasyon_aktif ? 'text-green' : 'text-yellow');
+
+  const karar = veri.ml.karar || '';
+  const yukselis = karar.includes('ARTIŞ');
+  const kararEl = document.getElementById('karar-deger');
+  kararEl.textContent = karar;
+  kararEl.className = 'font-display text-2xl font-bold ' + (yukselis ? 'text-green' : 'text-red');
+  document.getElementById('karar-kart').style.borderColor = yukselis ? 'var(--accent-green)' : 'var(--accent-red)';
+
+  document.getElementById('boga-deger').textContent = '%' + fmt(veri.ml.boga_ihtimali, 1);
+  document.getElementById('ayi-deger').textContent = '%' + fmt(veri.ml.ayi_ihtimali, 1);
+
+  document.getElementById('ind-rsi').textContent = fmt(veri.rsi, 1);
+  document.getElementById('ind-macd').textContent = fmt(veri.macd, 2);
+  document.getElementById('ind-stoch').textContent = fmt(veri.stoch_k, 1);
+  document.getElementById('ind-wt1').textContent = fmt(veri.wt1, 1);
+  document.getElementById('ind-cci').textContent = fmt(veri.cci, 1);
+
+  document.getElementById('rejim-deger').textContent = veri.rejim || '—';
+  document.getElementById('trend-atr').textContent = fmt(veri.atr_gucu, 4);
+  document.getElementById('trend-sma200').textContent = fmt(veri.sma_200_degeri, 2);
+  document.getElementById('trend-fiyat').textContent = fmt(veri.fiyat_su_an, 2) + ' ' + (veri.para_birimi || '');
+
+  const smaUyari = document.getElementById('sma200-uyari');
+  if (!veri.sma_200_guvenilir) {
+    smaUyari.textContent = '⚠️ Bu pencerede SMA_200 gerçek 200 mumdan az veriye dayanıyor — yorumlarken dikkatli olun.';
+    smaUyari.classList.remove('hidden');
+  } else {
+    smaUyari.classList.add('hidden');
+  }
+
+  document.getElementById('w-gbm').textContent = '%' + fmt(veri.ml.w_gbm * 100, 1);
+  document.getElementById('w-rf').textContent = '%' + fmt(veri.ml.w_rf * 100, 1);
+  document.getElementById('w-xgb').textContent = '%' + fmt(veri.ml.w_xgb * 100, 1);
+
+  // ---- Backtest metrikleri + "iyi / nötr / kötü" durum rozetleri ----
+  // Eşik değerleri kesin bilimsel sınırlar değil, yaygın kullanılan kaba
+  // referans aralıklarıdır; tek bir metriğe göre yatırım kararı verilmemelidir.
+  document.getElementById('bt-pf').textContent = fmt(veri.ml.profit_factor, 2);
+  durumRozetiAyarla('bt-pf-durum', durumHesaplaEsik(veri.ml.profit_factor, 1.5, 1.0));
+
+  document.getElementById('bt-dd').textContent = '%' + fmt(veri.ml.max_dd, 1);
+  durumRozetiAyarla('bt-dd-durum', durumHesaplaTersEsik(veri.ml.max_dd, 20, 40));
+
+  document.getElementById('bt-sharpe').textContent = fmt(veri.ml.sharpe, 2);
+  durumRozetiAyarla('bt-sharpe-durum', durumHesaplaEsik(veri.ml.sharpe, 1.0, 0.0));
+
+  document.getElementById('bt-winrate').textContent = '%' + fmt(veri.ml.win_rate, 1);
+  durumRozetiAyarla('bt-winrate-durum', durumHesaplaEsik(veri.ml.win_rate, 50, 35));
+
+  document.getElementById('bt-avgwin').textContent = '%' + fmt(veri.ml.avg_win * 100, 2);
+  document.getElementById('bt-avgloss').textContent = '%' + fmt(veri.ml.avg_loss * 100, 2);
+
+  const expectancyEl = document.getElementById('bt-expectancy');
+  expectancyEl.textContent = '%' + fmt(veri.ml.expectancy, 3) + ' (işlem başı)';
+  expectancyEl.className = 'font-bold ' + (veri.ml.expectancy > 0 ? 'text-green' : 'text-red');
+  durumRozetiAyarla('bt-expectancy-durum', durumHesaplaEsik(veri.ml.expectancy, 0.001, 0));
+
+  sidebarInfo.innerHTML = `
+    <div class="sidebar-ritim-kutusu">
+      <div>🛡️ <b>Akademik Ritim Bilgisi:</b> Veri penceresi <code>${veri.period || '—'}</code> olarak kilitlendi.</div>
+      <div>📅 <b>Yıllıklandırma Katsayısı:</b> <code>${fmt(veri.annual_factor, 1)}</code> (pazar: ${veri.pazar})</div>
+      <div>💸 <b>Varsayılan Komisyon/Slippage:</b> <code>%${fmt((veri.komisyon_orani || 0) * 100, 3)}</code> (tek yön)</div>
+    </div>
+    <div style="margin-top: 0.75rem;">📡 Kaynak: ${veri.veri_kaynagi || (veri.cache_ten_mi ? 'önbellek (5dk içinde)' : '—')}</div>
+    <div>🎯 Kalibrasyon: ${veri.ml.kalibrasyon_aktif ? 'Aktif ✅' : 'Pasif ⚠️'}</div>
+    ${veri.tazelik_uyarisi ? `<div class="text-yellow">🕒 ${veri.tazelik_uyarisi}</div>` : ''}
+    <details class="sidebar-teshis">
+      <summary>🔍 Teşhis Bilgisi</summary>
+      <div>Sembol: <code>${veri.sembol}</code></div>
+      <div>İstenen period: <code>${veri.period || '—'}</code></div>
+      <div>İstenen interval: <code>${veri.interval}</code></div>
+      <div>Pazar: <code>${veri.pazar}</code></div>
+      <div>Veri kaynağı: <code>${veri.veri_kaynagi || (veri.cache_ten_mi ? 'önbellek' : '—')}</code></div>
+      ${veri.df_raw_satir_sayisi ? `<div>df_raw satır sayısı: <code>${veri.df_raw_satir_sayisi}</code></div>` : ''}
+      ${veri.df_raw_ilk_tarih ? `<div>df_raw İLK tarih: <code>${veri.df_raw_ilk_tarih}</code></div>` : ''}
+      ${veri.df_raw_son_tarih ? `<div>df_raw SON tarih: <code>${veri.df_raw_son_tarih}</code></div>` : ''}
+      ${veri.cache_ten_mi ? '<div class="text-yellow">⚠️ Bu sonuç önbellekten geldi; df_raw tarih bilgisi sadece taze hesaplamada gösterilir.</div>' : ''}
+    </details>
+  `;
+
+  riskHesapla(veri);
+
+  const aktifBtn = document.querySelector('.tab-btn.active');
+  const aktifTab = aktifBtn ? aktifBtn.dataset.tab : 'ozet';
+  grafikleriGerekirseCiz(aktifTab, veri);
+  grafikleriGerekirseCiz('teknik', veri);
+  grafikleriGerekirseCiz('grafik', veri);
+
+  sonucAlani.classList.remove('hidden');
+}
+
+function riskHesapla(veri) {
+  const kasa = parseFloat(document.getElementById('risk-kasa').value) || 2000;
+  const riskYuzde = parseFloat(document.getElementById('risk-yuzde').value) || 1.0;
+  const atr = veri.atr_gucu || 0;
+  const fiyat = veri.fiyat_su_an || 0;
+  const yukselis = (veri.ml.karar || '').includes('ARTIŞ');
+
+  const stopMesafe = atr * 1.5;
+  const karAlMesafe = atr * 3.0;
+  const maksPozisyon = (kasa * (riskYuzde / 100)) / (stopMesafe + 1e-10);
+
+  const stopFiyat = yukselis ? fiyat - stopMesafe : fiyat + stopMesafe;
+  const karAlFiyat = yukselis ? fiyat + karAlMesafe : fiyat - karAlMesafe;
+
+  document.getElementById('risk-stop').textContent = fmt(stopFiyat, 2);
+  document.getElementById('risk-karal').textContent = fmt(karAlFiyat, 2);
+  document.getElementById('risk-pozisyon').textContent = fmt(maksPozisyon, 4) + ' Adet';
+}
+
+document.getElementById('risk-kasa').addEventListener('input', () => { if (sonGelenVeri) riskHesapla(sonGelenVeri); });
+document.getElementById('risk-yuzde').addEventListener('input', () => { if (sonGelenVeri) riskHesapla(sonGelenVeri); });
+
+function temelEksenAyarlari() {
+  return {
+    x: { ticks: { color: '#64748B', maxTicksLimit: 8 }, grid: { color: '#1E293B' } },
+    y: { ticks: { color: '#64748B' }, grid: { color: '#1E293B' } },
+  };
+}
+
+// 🆕 Ana fiyat grafiğinin türü ("Teknik Gösterge" ve "Canlı Grafik" sekmeleri
+// arasında senkronize) ve hacim grafiğinin türü, kullanıcı seçimine göre saklanır.
+let aktifFiyatGrafikTuru = 'cizgi';
+let aktifHacimGrafikTuru = 'bar';
+
+const grafikTuruSelect = document.getElementById('grafik-turu-select');
+const hacimTuruSelect = document.getElementById('hacim-turu-select');
+
+grafikTuruSelect.addEventListener('change', () => {
+  aktifFiyatGrafikTuru = grafikTuruSelect.value;
+  if (sonGelenVeri) {
+    grafikleriGerekirseCiz('teknik', sonGelenVeri);
+    grafikleriGerekirseCiz('grafik', sonGelenVeri);
+  }
+});
+
+hacimTuruSelect.addEventListener('change', () => {
+  aktifHacimGrafikTuru = hacimTuruSelect.value;
+  if (sonGelenVeri) grafikleriGerekirseCiz('grafik', sonGelenVeri);
+});
+
+function grafikleriGerekirseCiz(tabAdi, veri) {
+  const g = veri.grafik;
+  if (tabAdi === 'teknik') {
+    cizAnaFiyatGrafigi('fiyat-grafik', g, [
+      { label: 'EMA 20', data: g.ema20, color: '#34D399', width: 1 },
+      { label: 'EMA 50', data: g.ema50, color: '#F87171', width: 1 },
+      { label: 'SMA 200', data: g.sma200, color: '#94A3B8', width: 1 },
+    ]);
+    cizCizgiGrafik('rsi-grafik', g.tarihler, [{ label: 'RSI', data: g.rsi, color: '#38BDF8', width: 2 }]);
+    cizCizgiGrafik('macd-grafik', g.tarihler, [
+      { label: 'MACD', data: g.macd, color: '#38BDF8', width: 2 },
+      { label: 'Sinyal', data: g.macd_sig, color: '#F59E0B', width: 1 },
+    ]);
+  } else if (tabAdi === 'grafik') {
+    cizAnaFiyatGrafigi('canli-grafik', g, []);
+    if (aktifHacimGrafikTuru === 'bar') {
+      cizBarGrafik('hacim-grafik', g.tarihler, g.volume);
+    } else {
+      cizCizgiGrafik('hacim-grafik', g.tarihler, [{ label: 'Hacim', data: g.volume, color: '#38BDF8', width: 2 }]);
+    }
+  }
+}
+
+// ---------- Ana fiyat grafiği: seçilen türe göre çizgi / mum / işaretli ----------
+function cizAnaFiyatGrafigi(canvasId, g, ekSeriler) {
+  if (aktifFiyatGrafikTuru === 'mum') {
+    cizMumGrafigi(canvasId, g);
+  } else if (aktifFiyatGrafikTuru === 'isaretli') {
+    cizCizgiGrafik(canvasId, g.tarihler, [
+      { label: 'Close', data: g.close, color: '#38BDF8', width: 2, noktalar: true },
+      ...ekSeriler,
+    ]);
+  } else {
+    cizCizgiGrafik(canvasId, g.tarihler, [
+      { label: 'Close', data: g.close, color: '#38BDF8', width: 2 },
+      ...ekSeriler,
+    ]);
+  }
+}
+
+function cizCizgiGrafik(canvasId, labels, seriler) {
+  if (typeof Chart === 'undefined') {
+    console.warn('Chart.js yüklenemedi (CDN engellenmiş olabilir) — grafik atlandı:', canvasId);
+    return;
+  }
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  if (charts[canvasId]) charts[canvasId].destroy();
+  charts[canvasId] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: seriler.map(s => ({
+        label: s.label, data: s.data, borderColor: s.color, borderWidth: s.width,
+        pointRadius: s.noktalar ? 3 : 0,
+        pointBackgroundColor: s.color,
+        pointHoverRadius: s.noktalar ? 5 : 3,
+        tension: 0.1,
+      })),
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { labels: { color: '#94A3B8' } } },
+      scales: temelEksenAyarlari(),
+    },
+  });
+}
+
+// ---------- Mum grafiği (candlestick) — chartjs-chart-financial kullanır ----------
+function cizMumGrafigi(canvasId, g) {
+  if (typeof Chart === 'undefined' || typeof Chart.registry === 'undefined' || !Chart.registry.controllers.get('candlestick')) {
+    console.warn('chartjs-chart-financial yüklenemedi (CDN engellenmiş olabilir) — mum grafiği atlandı, çizgiye düşülüyor:', canvasId);
+    cizCizgiGrafik(canvasId, g.tarihler, [{ label: 'Close', data: g.close, color: '#38BDF8', width: 2 }]);
+    return;
+  }
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  if (charts[canvasId]) charts[canvasId].destroy();
+
+  const ohlcVeri = g.tarihler.map((tarih, i) => ({
+    x: new Date(tarih).getTime(),
+    o: g.open[i], h: g.high[i], l: g.low[i], c: g.close[i],
+  }));
+
+  charts[canvasId] = new Chart(ctx, {
+    type: 'candlestick',
+    data: {
+      datasets: [{
+        label: 'OHLC',
+        data: ohlcVeri,
+        color: { up: '#34D399', down: '#F87171', unchanged: '#94A3B8' },
+        borderColor: { up: '#34D399', down: '#F87171', unchanged: '#94A3B8' },
+      }],
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#94A3B8' } } },
+      scales: {
+        x: { type: 'timeseries', ticks: { color: '#64748B', maxTicksLimit: 8 }, grid: { color: '#1E293B' } },
+        y: { ticks: { color: '#64748B' }, grid: { color: '#1E293B' } },
+      },
+    },
+  });
+}
+
+function cizBarGrafik(canvasId, labels, data) {
+  if (typeof Chart === 'undefined') {
+    console.warn('Chart.js yüklenemedi (CDN engellenmiş olabilir) — grafik atlandı:', canvasId);
+    return;
+  }
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  if (charts[canvasId]) charts[canvasId].destroy();
+  charts[canvasId] = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: labels, datasets: [{ label: 'Hacim', data: data, backgroundColor: '#38BDF855' }] },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#94A3B8' } } },
+      scales: temelEksenAyarlari(),
+    },
+  });
+}
+
+analizBtn.addEventListener('click', analizCalistir);
+window.addEventListener('DOMContentLoaded', analizCalistir);
+</script>
+{% endblock %}

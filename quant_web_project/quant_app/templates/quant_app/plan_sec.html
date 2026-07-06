@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Seç — Sovereign Cockpit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'quant_app/css/style.css' %}">
+<style>
+  body { background: var(--bg-deep); }
+  .plan-container { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+  .plan-baslik { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; color: var(--text-main); text-align: center; margin-bottom: 0.5rem; }
+  .plan-alt-baslik { color: var(--text-muted); text-align: center; margin-bottom: 2.5rem; font-size: 0.95rem; }
+  .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; max-width: 760px; width: 100%; }
+  .plan-karti { background: var(--bg-panel); border: 2px solid var(--border-faint); border-radius: 1.25rem; padding: 2rem 1.5rem; cursor: pointer; text-align: center; transition: all 0.18s; position: relative; }
+  .plan-karti:hover { border-color: var(--accent-sky); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(56,189,248,0.12); }
+  .plan-karti.secili { border-color: var(--accent-sky); background: rgba(56,189,248,0.06); }
+  .plan-karti.populer { border-color: var(--accent-green); }
+  .populer-etiket { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent-green); color: var(--bg-deep); font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 1rem; white-space: nowrap; }
+  .plan-karti.populer:hover { border-color: var(--accent-green); box-shadow: 0 8px 32px rgba(52,211,153,0.15); }
+  .plan-karti.populer.secili { border-color: var(--accent-green); background: rgba(52,211,153,0.06); }
+  .plan-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .plan-ad { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem; }
+  .plan-fiyat { font-size: 2.2rem; font-weight: 700; color: var(--text-main); }
+  .plan-fiyat-alt { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
+  .plan-ozellikler { list-style: none; padding: 0; margin: 0 0 1.5rem; text-align: left; }
+  .plan-ozellikler li { font-size: 0.85rem; color: var(--text-muted); padding: 0.3rem 0; }
+  .plan-ozellikler li::before { content: "✓ "; color: var(--accent-green); font-weight: bold; }
+  .plan-btn { width: 100%; padding: 0.75rem; border: none; border-radius: 0.6rem; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: opacity 0.12s; }
+  .plan-btn-ucretsiz { background: var(--bg-deep); color: var(--text-main); border: 1px solid var(--border-faint); }
+  .plan-btn-ucretsiz:hover { border-color: var(--accent-sky); color: var(--accent-sky); }
+  .plan-btn-ucretli { background: var(--accent-sky); color: var(--bg-deep); }
+  .plan-btn-populer { background: var(--accent-green); color: var(--bg-deep); }
+  .plan-btn:hover { opacity: 0.88; }
+  .indirim-etiketi { display: inline-block; background: rgba(52,211,153,0.15); color: var(--accent-green); font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 0.3rem; margin-top: 0.25rem; }
+</style>
+</head>
+<body>
+<div class="plan-container">
+  <div class="plan-baslik">🏛️ Planını Seç</div>
+  <p class="plan-alt-baslik">İstediğin zaman değiştirebilirsin. Ücretli plan seçersen ödeme sayfasına yönlendirilirsin.</p>
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div style="background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); color:var(--accent-sky); padding:0.75rem 1.25rem; border-radius:0.5rem; margin-bottom:1.5rem; font-size:0.9rem;">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="plan-grid">
+    {% for plan in planlar %}
+    <form method="POST" style="display:contents;">
+      {% csrf_token %}
+      <input type="hidden" name="plan" value="{{ plan.ad }}">
+
+      {% if plan.ad == 'ucretsiz' %}
+      <div class="plan-karti" onclick="this.closest('form').submit()">
+        <div class="plan-icon">🆓</div>
+        <div class="plan-ad">Ücretsiz</div>
+        <div class="plan-fiyat">0₺</div>
+        <div class="plan-fiyat-alt">sonsuza kadar</div>
+        <ul class="plan-ozellikler">
+          <li>Günde 5 analiz hakkı</li>
+          <li>Pazar listesi ve tarama</li>
+          <li>Temel göstergeler</li>
+        </ul>
+        <button type="submit" class="plan-btn plan-btn-ucretsiz">Ücretsiz Devam Et</button>
+      </div>
+
+      {% elif plan.ad == 'aylik' %}
+      <div class="plan-karti" onclick="this.closest('form').submit()">
+        <div class="plan-icon">⚡</div>
+        <div class="plan-ad">Aylık Plan</div>
+        <div class="plan-fiyat">{{ plan.fiyat_tl }}₺</div>
+        <div class="plan-fiyat-alt">/ ay</div>
+        <ul class="plan-ozellikler">
+          <li>Sınırsız analiz</li>
+          <li>Tüm göstergeler</li>
+          <li>Gelişmiş tarama</li>
+          <li>Öncelikli destek</li>
+        </ul>
+        <button type="submit" class="plan-btn plan-btn-ucretli">Aylık Başla</button>
+      </div>
+
+      {% elif plan.ad == 'yillik' %}
+      <div class="plan-karti populer" onclick="this.closest('form').submit()">
+        <div class="populer-etiket">🔥 En Popüler</div>
+        <div class="plan-icon">👑</div>
+        <div class="plan-ad">Yıllık Plan</div>
+        <div class="plan-fiyat">{{ plan.fiyat_tl }}₺</div>
+        <div class="plan-fiyat-alt">/ yıl</div>
+        <div class="indirim-etiketi">~%37 indirim</div>
+        <ul class="plan-ozellikler" style="margin-top:0.75rem;">
+          <li>Sınırsız analiz</li>
+          <li>Tüm göstergeler</li>
+          <li>Gelişmiş tarama</li>
+          <li>Öncelikli destek</li>
+        </ul>
+        <button type="submit" class="plan-btn plan-btn-populer">Yıllık Başla</button>
+      </div>
+      {% endif %}
+    </form>
+    {% endfor %}
+  </div>
+
+  <p style="margin-top: 2rem; font-size: 0.8rem; color: var(--text-dim); text-align: center;">
+    Planını daha sonra <strong>Ayarlar</strong> sayfasından değiştirebilirsin.
+  </p>
+</div>
+</body>
+</html>

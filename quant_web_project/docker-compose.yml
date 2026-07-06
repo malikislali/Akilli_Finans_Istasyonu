@@ -1,0 +1,66 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    volumes:
+      - redis_data:/data
+
+  web:
+    build: .
+    restart: always
+    #command: gunicorn --bind 0.0.0.0:8000 quant_web_project.wsgi:application
+    command: gunicorn --bind 0.0.0.0:8000 --timeout 120 quant_web_project.wsgi:application
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+  celery:
+    build: .
+    restart: always
+    #command: celery -A quant_web_project worker --loglevel=info
+    command: celery -A quant_web_project.celery:app worker --loglevel=info
+
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+  celery-beat:
+    build: .
+    restart: always
+    #command: celery -A quant_web_project beat --loglevel=info
+    command: celery -A quant_web_project.celery:app beat --loglevel=info
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  postgres_data:
+  redis_data:
+  static_volume:

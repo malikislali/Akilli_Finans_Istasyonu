@@ -1,0 +1,269 @@
+{
+  "basarili_test_sayisi": 28,
+  "toplam_test_sayisi": 28,
+  "win_rate_gercek_ortalama": 51.69053559265932,
+  "win_rate_permutasyon_ortalama": 51.226482405753984,
+  "ortalama_fark": 0.464053186905336,
+  "test_1_vs_50yuzde": {
+    "p_degeri": 0.10362542852124344,
+    "anlamli_mi": false
+  },
+  "test_2_vs_permutasyon": {
+    "p_degeri": 0.6606034191507958,
+    "anlamli_mi": false
+  },
+  "detaylar": [
+    {
+      "sembol": "BTC-USD",
+      "pazar": "KRIPTO",
+      "interval": "1d",
+      "win_rate_gercek": 57.9,
+      "win_rate_permutasyon": 50.2,
+      "fark": 7.8,
+      "sharpe": 1.65
+    },
+    {
+      "sembol": "ETH-USD",
+      "pazar": "KRIPTO",
+      "interval": "1d",
+      "win_rate_gercek": 49.7,
+      "win_rate_permutasyon": 55.2,
+      "fark": -5.5,
+      "sharpe": 0.04
+    },
+    {
+      "sembol": "SOL-USD",
+      "pazar": "KRIPTO",
+      "interval": "1d",
+      "win_rate_gercek": 55.2,
+      "win_rate_permutasyon": 52.6,
+      "fark": 2.6,
+      "sharpe": 2.17
+    },
+    {
+      "sembol": "AVAX-USD",
+      "pazar": "KRIPTO",
+      "interval": "1d",
+      "win_rate_gercek": 41.2,
+      "win_rate_permutasyon": 54.7,
+      "fark": -13.6,
+      "sharpe": -1.84
+    },
+    {
+      "sembol": "XRP-USD",
+      "pazar": "KRIPTO",
+      "interval": "1d",
+      "win_rate_gercek": 52.4,
+      "win_rate_permutasyon": 52.8,
+      "fark": -0.3,
+      "sharpe": 1.1
+    },
+    {
+      "sembol": "DOGE-USD",
+      "pazar": "KRIPTO",
+      "interval": "1d",
+      "win_rate_gercek": 55.6,
+      "win_rate_permutasyon": 57.3,
+      "fark": -1.7,
+      "sharpe": 1.66
+    },
+    {
+      "sembol": "LINK-USD",
+      "pazar": "KRIPTO",
+      "interval": "1d",
+      "win_rate_gercek": 57.8,
+      "win_rate_permutasyon": 55.2,
+      "fark": 2.6,
+      "sharpe": 2.24
+    },
+    {
+      "sembol": "FIL-USD",
+      "pazar": "KRIPTO",
+      "interval": "1d",
+      "win_rate_gercek": 50.8,
+      "win_rate_permutasyon": 48.3,
+      "fark": 2.4,
+      "sharpe": 1.08
+    },
+    {
+      "sembol": "THYAO.IS",
+      "pazar": "TR_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 60.1,
+      "win_rate_permutasyon": 51.0,
+      "fark": 9.1,
+      "sharpe": 2.22
+    },
+    {
+      "sembol": "GARAN.IS",
+      "pazar": "TR_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 54.5,
+      "win_rate_permutasyon": 48.0,
+      "fark": 6.6,
+      "sharpe": 0.65
+    },
+    {
+      "sembol": "BIMAS.IS",
+      "pazar": "TR_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 55.6,
+      "win_rate_permutasyon": 47.5,
+      "fark": 8.1,
+      "sharpe": 2.21
+    },
+    {
+      "sembol": "ASELS.IS",
+      "pazar": "TR_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 39.9,
+      "win_rate_permutasyon": 42.4,
+      "fark": -2.5,
+      "sharpe": -4.31
+    },
+    {
+      "sembol": "EREGL.IS",
+      "pazar": "TR_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 45.5,
+      "win_rate_permutasyon": 51.8,
+      "fark": -6.3,
+      "sharpe": -1.06
+    },
+    {
+      "sembol": "SISE.IS",
+      "pazar": "TR_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 55.6,
+      "win_rate_permutasyon": 53.8,
+      "fark": 1.8,
+      "sharpe": 0.69
+    },
+    {
+      "sembol": "TUPRS.IS",
+      "pazar": "TR_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 49.0,
+      "win_rate_permutasyon": 52.5,
+      "fark": -3.5,
+      "sharpe": -1.5
+    },
+    {
+      "sembol": "KCHOL.IS",
+      "pazar": "TR_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 51.5,
+      "win_rate_permutasyon": 47.5,
+      "fark": 4.0,
+      "sharpe": -0.18
+    },
+    {
+      "sembol": "AKBNK.IS",
+      "pazar": "TR_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 54.0,
+      "win_rate_permutasyon": 50.3,
+      "fark": 3.8,
+      "sharpe": 0.34
+    },
+    {
+      "sembol": "AAPL",
+      "pazar": "ABD_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 53.9,
+      "win_rate_permutasyon": 51.4,
+      "fark": 2.6,
+      "sharpe": -0.73
+    },
+    {
+      "sembol": "MSFT",
+      "pazar": "ABD_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 48.0,
+      "win_rate_permutasyon": 48.9,
+      "fark": -0.9,
+      "sharpe": -1.8
+    },
+    {
+      "sembol": "TSLA",
+      "pazar": "ABD_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 59.0,
+      "win_rate_permutasyon": 52.3,
+      "fark": 6.7,
+      "sharpe": 0.83
+    },
+    {
+      "sembol": "AMZN",
+      "pazar": "ABD_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 50.6,
+      "win_rate_permutasyon": 51.7,
+      "fark": -1.2,
+      "sharpe": -1.53
+    },
+    {
+      "sembol": "META",
+      "pazar": "ABD_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 52.1,
+      "win_rate_permutasyon": 52.0,
+      "fark": 0.1,
+      "sharpe": -1.35
+    },
+    {
+      "sembol": "GOOGL",
+      "pazar": "ABD_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 51.0,
+      "win_rate_permutasyon": 50.5,
+      "fark": 0.5,
+      "sharpe": -1.0
+    },
+    {
+      "sembol": "NVDA",
+      "pazar": "ABD_HISSE",
+      "interval": "1d",
+      "win_rate_gercek": 50.8,
+      "win_rate_permutasyon": 52.9,
+      "fark": -2.0,
+      "sharpe": -1.74
+    },
+    {
+      "sembol": "GC=F",
+      "pazar": "EMTIA",
+      "interval": "1d",
+      "win_rate_gercek": 40.5,
+      "win_rate_permutasyon": 50.9,
+      "fark": -10.3,
+      "sharpe": -3.53
+    },
+    {
+      "sembol": "CL=F",
+      "pazar": "EMTIA",
+      "interval": "1d",
+      "win_rate_gercek": 56.5,
+      "win_rate_permutasyon": 48.5,
+      "fark": 8.1,
+      "sharpe": 1.77
+    },
+    {
+      "sembol": "SI=F",
+      "pazar": "EMTIA",
+      "interval": "1d",
+      "win_rate_gercek": 51.4,
+      "win_rate_permutasyon": 52.8,
+      "fark": -1.4,
+      "sharpe": -0.88
+    },
+    {
+      "sembol": "NG=F",
+      "pazar": "EMTIA",
+      "interval": "1d",
+      "win_rate_gercek": 47.2,
+      "win_rate_permutasyon": 51.6,
+      "fark": -4.5,
+      "sharpe": -1.68
+    }
+  ]
+}

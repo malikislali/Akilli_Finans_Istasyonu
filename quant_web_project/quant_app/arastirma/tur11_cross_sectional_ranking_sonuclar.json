@@ -1,0 +1,49 @@
+{
+  "basarili_pazar_sayisi": 4,
+  "toplam_pazar_sayisi": 4,
+  "spearman_gercek_ortalama": 0.05804845524517741,
+  "spearman_permutasyon_ortalama": 0.00659034730768485,
+  "ortalama_fark": 0.05145810793749256,
+  "test_1_spearman_vs_sifir": {
+    "p_degeri": 0.11360034155455372,
+    "anlamli_mi": false
+  },
+  "test_2_gercek_vs_permutasyon": {
+    "p_degeri": 0.25302318180157785,
+    "anlamli_mi": false
+  },
+  "detaylar": [
+    {
+      "pazar": "KRIPTO",
+      "n_varlik": 9,
+      "n_gun": 886,
+      "spearman_gercek": 0.1166,
+      "spearman_permutasyon": -0.0088,
+      "fark": 0.1255
+    },
+    {
+      "pazar": "TR_HISSE",
+      "n_varlik": 8,
+      "n_gun": 536,
+      "spearman_gercek": 0.0876,
+      "spearman_permutasyon": -0.0001,
+      "fark": 0.0877
+    },
+    {
+      "pazar": "ABD_HISSE",
+      "n_varlik": 7,
+      "n_gun": 1045,
+      "spearman_gercek": 0.0086,
+      "spearman_permutasyon": -0.0271,
+      "fark": 0.0356
+    },
+    {
+      "pazar": "EMTIA",
+      "n_varlik": 4,
+      "n_gun": 761,
+      "spearman_gercek": 0.0194,
+      "spearman_permutasyon": 0.0624,
+      "fark": -0.043
+    }
+  ]
+}

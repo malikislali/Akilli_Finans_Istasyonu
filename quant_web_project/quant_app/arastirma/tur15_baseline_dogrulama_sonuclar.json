@@ -1,0 +1,267 @@
+{
+  "basarili_test_sayisi": 28,
+  "toplam_test_sayisi": 28,
+  "spearman_gercek_ortalama": 0.24608926009091,
+  "spearman_gercek_std": 0.15101660848734347,
+  "anlamli_varlik_sayisi": 25,
+  "anlamli_varlik_orani": 0.8928571428571429,
+  "test_1_ortalama_spearman_vs_sifir": {
+    "aciklama": "Tüm varlıklardaki ortalama Spearman korelasyonu sıfırdan anlamlı şekilde farklı mı?",
+    "p_degeri": 4.430783509945766e-09,
+    "anlamli_mi": true
+  },
+  "detaylar": [
+    {
+      "sembol": "BTC-USD",
+      "pazar": "KRIPTO",
+      "n_gozlem": 876,
+      "spearman_gercek": 0.338,
+      "spearman_permutasyon_ort": -0.001,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "ETH-USD",
+      "pazar": "KRIPTO",
+      "n_gozlem": 876,
+      "spearman_gercek": 0.138,
+      "spearman_permutasyon_ort": -0.002,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "SOL-USD",
+      "pazar": "KRIPTO",
+      "n_gozlem": 876,
+      "spearman_gercek": 0.2,
+      "spearman_permutasyon_ort": -0.002,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "AVAX-USD",
+      "pazar": "KRIPTO",
+      "n_gozlem": 876,
+      "spearman_gercek": 0.129,
+      "spearman_permutasyon_ort": -0.006,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "XRP-USD",
+      "pazar": "KRIPTO",
+      "n_gozlem": 876,
+      "spearman_gercek": 0.319,
+      "spearman_permutasyon_ort": -0.003,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "DOGE-USD",
+      "pazar": "KRIPTO",
+      "n_gozlem": 876,
+      "spearman_gercek": 0.253,
+      "spearman_permutasyon_ort": -0.004,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "LINK-USD",
+      "pazar": "KRIPTO",
+      "n_gozlem": 876,
+      "spearman_gercek": 0.224,
+      "spearman_permutasyon_ort": -0.005,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "FIL-USD",
+      "pazar": "KRIPTO",
+      "n_gozlem": 876,
+      "spearman_gercek": -0.022,
+      "spearman_permutasyon_ort": -0.004,
+      "ampirik_p": 0.725,
+      "varlik_bazinda_anlamli_mi": false
+    },
+    {
+      "sembol": "THYAO.IS",
+      "pazar": "TR_HISSE",
+      "n_gozlem": 529,
+      "spearman_gercek": -0.05,
+      "spearman_permutasyon_ort": 0.001,
+      "ampirik_p": 0.9,
+      "varlik_bazinda_anlamli_mi": false
+    },
+    {
+      "sembol": "GARAN.IS",
+      "pazar": "TR_HISSE",
+      "n_gozlem": 529,
+      "spearman_gercek": 0.168,
+      "spearman_permutasyon_ort": 0.003,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "BIMAS.IS",
+      "pazar": "TR_HISSE",
+      "n_gozlem": 529,
+      "spearman_gercek": 0.089,
+      "spearman_permutasyon_ort": 0.002,
+      "ampirik_p": 0.02,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "ASELS.IS",
+      "pazar": "TR_HISSE",
+      "n_gozlem": 529,
+      "spearman_gercek": 0.256,
+      "spearman_permutasyon_ort": 0.003,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "EREGL.IS",
+      "pazar": "TR_HISSE",
+      "n_gozlem": 529,
+      "spearman_gercek": 0.37,
+      "spearman_permutasyon_ort": -0.001,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "SISE.IS",
+      "pazar": "TR_HISSE",
+      "n_gozlem": 529,
+      "spearman_gercek": 0.015,
+      "spearman_permutasyon_ort": 0.004,
+      "ampirik_p": 0.415,
+      "varlik_bazinda_anlamli_mi": false
+    },
+    {
+      "sembol": "TUPRS.IS",
+      "pazar": "TR_HISSE",
+      "n_gozlem": 529,
+      "spearman_gercek": 0.231,
+      "spearman_permutasyon_ort": 0.006,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "KCHOL.IS",
+      "pazar": "TR_HISSE",
+      "n_gozlem": 529,
+      "spearman_gercek": 0.198,
+      "spearman_permutasyon_ort": 0.003,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "AKBNK.IS",
+      "pazar": "TR_HISSE",
+      "n_gozlem": 529,
+      "spearman_gercek": 0.119,
+      "spearman_permutasyon_ort": -0.001,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "AAPL",
+      "pazar": "ABD_HISSE",
+      "n_gozlem": 1035,
+      "spearman_gercek": 0.387,
+      "spearman_permutasyon_ort": 0.004,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "MSFT",
+      "pazar": "ABD_HISSE",
+      "n_gozlem": 1035,
+      "spearman_gercek": 0.326,
+      "spearman_permutasyon_ort": 0.0,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "TSLA",
+      "pazar": "ABD_HISSE",
+      "n_gozlem": 1035,
+      "spearman_gercek": 0.366,
+      "spearman_permutasyon_ort": -0.002,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "AMZN",
+      "pazar": "ABD_HISSE",
+      "n_gozlem": 1035,
+      "spearman_gercek": 0.305,
+      "spearman_permutasyon_ort": -0.001,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "META",
+      "pazar": "ABD_HISSE",
+      "n_gozlem": 1035,
+      "spearman_gercek": 0.273,
+      "spearman_permutasyon_ort": -0.001,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "GOOGL",
+      "pazar": "ABD_HISSE",
+      "n_gozlem": 1035,
+      "spearman_gercek": 0.187,
+      "spearman_permutasyon_ort": -0.001,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "NVDA",
+      "pazar": "ABD_HISSE",
+      "n_gozlem": 1035,
+      "spearman_gercek": 0.445,
+      "spearman_permutasyon_ort": -0.002,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "GC=F",
+      "pazar": "EMTIA",
+      "n_gozlem": 778,
+      "spearman_gercek": 0.592,
+      "spearman_permutasyon_ort": -0.0,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "CL=F",
+      "pazar": "EMTIA",
+      "n_gozlem": 778,
+      "spearman_gercek": 0.501,
+      "spearman_permutasyon_ort": -0.005,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "SI=F",
+      "pazar": "EMTIA",
+      "n_gozlem": 751,
+      "spearman_gercek": 0.419,
+      "spearman_permutasyon_ort": -0.003,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    },
+    {
+      "sembol": "NG=F",
+      "pazar": "EMTIA",
+      "n_gozlem": 779,
+      "spearman_gercek": 0.116,
+      "spearman_permutasyon_ort": 0.006,
+      "ampirik_p": 0.0,
+      "varlik_bazinda_anlamli_mi": true
+    }
+  ]
+}

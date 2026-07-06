@@ -1,0 +1,336 @@
+{
+  "basarili_test_sayisi": 28,
+  "toplam_test_sayisi": 28,
+  "r2_gercek_ortalama": -3.176535200875836,
+  "r2_permutasyon_ortalama": -1.1936168882155793,
+  "r2_baseline_ortalama": -0.8614415532187069,
+  "mae_gercek_ortalama": 0.0133484943888758,
+  "mae_baseline_ortalama": 0.010986509134877392,
+  "spearman_gercek_ortalama": 0.07903554587681406,
+  "spearman_baseline_ortalama": 0.13266585216060026,
+  "test_1_model_vs_permutasyon": {
+    "aciklama": "Model, RASTGELE etiketle eğitilenden daha mı iyi? (model gerçekten bir şey öğreniyor mu)",
+    "p_degeri": 0.05269857918590254,
+    "anlamli_mi": false
+  },
+  "test_2_model_vs_baseline": {
+    "aciklama": "Model, BASİT 'geçmiş volatilite = gelecek volatilite' baseline'ından daha mı iyi? (ML kullanmaya DEĞER mi, yoksa basit kural yeterli mi)",
+    "p_degeri": 0.01662568903955605,
+    "anlamli_mi": true
+  },
+  "test_3_spearman_vs_sifir": {
+    "aciklama": "Model tahmini, gerçek volatiliteyle SIRALAMA/TREND olarak ilişkili mi? (R² düşük çıksa bile, model TRENDİ doğru yakalıyor mu — bkz. araştırma notları)",
+    "p_degeri": 0.016893130962953716,
+    "anlamli_mi": true
+  },
+  "detaylar": [
+    {
+      "sembol": "BTC-USD",
+      "pazar": "KRIPTO",
+      "r2_gercek": -1.413,
+      "r2_permutasyon": -0.169,
+      "r2_baseline": -0.749,
+      "spearman_gercek": -0.136,
+      "spearman_baseline": 0.199,
+      "fark_vs_permutasyon": -1.244,
+      "fark_vs_baseline": -0.664
+    },
+    {
+      "sembol": "ETH-USD",
+      "pazar": "KRIPTO",
+      "r2_gercek": -0.239,
+      "r2_permutasyon": -0.242,
+      "r2_baseline": -0.89,
+      "spearman_gercek": 0.063,
+      "spearman_baseline": 0.105,
+      "fark_vs_permutasyon": 0.003,
+      "fark_vs_baseline": 0.652
+    },
+    {
+      "sembol": "SOL-USD",
+      "pazar": "KRIPTO",
+      "r2_gercek": -0.134,
+      "r2_permutasyon": -0.54,
+      "r2_baseline": -0.741,
+      "spearman_gercek": 0.324,
+      "spearman_baseline": 0.176,
+      "fark_vs_permutasyon": 0.406,
+      "fark_vs_baseline": 0.607
+    },
+    {
+      "sembol": "AVAX-USD",
+      "pazar": "KRIPTO",
+      "r2_gercek": -0.248,
+      "r2_permutasyon": -0.121,
+      "r2_baseline": -0.967,
+      "spearman_gercek": 0.101,
+      "spearman_baseline": 0.065,
+      "fark_vs_permutasyon": -0.127,
+      "fark_vs_baseline": 0.719
+    },
+    {
+      "sembol": "XRP-USD",
+      "pazar": "KRIPTO",
+      "r2_gercek": -0.978,
+      "r2_permutasyon": -1.038,
+      "r2_baseline": -0.841,
+      "spearman_gercek": 0.115,
+      "spearman_baseline": 0.217,
+      "fark_vs_permutasyon": 0.06,
+      "fark_vs_baseline": -0.137
+    },
+    {
+      "sembol": "DOGE-USD",
+      "pazar": "KRIPTO",
+      "r2_gercek": -0.347,
+      "r2_permutasyon": -0.09,
+      "r2_baseline": -0.851,
+      "spearman_gercek": 0.095,
+      "spearman_baseline": 0.09,
+      "fark_vs_permutasyon": -0.257,
+      "fark_vs_baseline": 0.503
+    },
+    {
+      "sembol": "LINK-USD",
+      "pazar": "KRIPTO",
+      "r2_gercek": -0.8,
+      "r2_permutasyon": -0.516,
+      "r2_baseline": -0.727,
+      "spearman_gercek": -0.114,
+      "spearman_baseline": 0.202,
+      "fark_vs_permutasyon": -0.284,
+      "fark_vs_baseline": -0.073
+    },
+    {
+      "sembol": "FIL-USD",
+      "pazar": "KRIPTO",
+      "r2_gercek": -14.414,
+      "r2_permutasyon": -3.458,
+      "r2_baseline": -2.569,
+      "spearman_gercek": 0.078,
+      "spearman_baseline": -0.068,
+      "fark_vs_permutasyon": -10.956,
+      "fark_vs_baseline": -11.845
+    },
+    {
+      "sembol": "THYAO.IS",
+      "pazar": "TR_HISSE",
+      "r2_gercek": -1.352,
+      "r2_permutasyon": -0.213,
+      "r2_baseline": -0.938,
+      "spearman_gercek": -0.012,
+      "spearman_baseline": 0.026,
+      "fark_vs_permutasyon": -1.139,
+      "fark_vs_baseline": -0.414
+    },
+    {
+      "sembol": "GARAN.IS",
+      "pazar": "TR_HISSE",
+      "r2_gercek": -4.361,
+      "r2_permutasyon": -0.402,
+      "r2_baseline": -0.656,
+      "spearman_gercek": -0.098,
+      "spearman_baseline": 0.155,
+      "fark_vs_permutasyon": -3.958,
+      "fark_vs_baseline": -3.704
+    },
+    {
+      "sembol": "BIMAS.IS",
+      "pazar": "TR_HISSE",
+      "r2_gercek": -10.81,
+      "r2_permutasyon": -0.297,
+      "r2_baseline": -0.976,
+      "spearman_gercek": 0.036,
+      "spearman_baseline": 0.091,
+      "fark_vs_permutasyon": -10.512,
+      "fark_vs_baseline": -9.833
+    },
+    {
+      "sembol": "ASELS.IS",
+      "pazar": "TR_HISSE",
+      "r2_gercek": -2.663,
+      "r2_permutasyon": -0.339,
+      "r2_baseline": -0.937,
+      "spearman_gercek": -0.199,
+      "spearman_baseline": 0.107,
+      "fark_vs_permutasyon": -2.324,
+      "fark_vs_baseline": -1.726
+    },
+    {
+      "sembol": "EREGL.IS",
+      "pazar": "TR_HISSE",
+      "r2_gercek": -0.029,
+      "r2_permutasyon": -2.164,
+      "r2_baseline": -0.36,
+      "spearman_gercek": 0.524,
+      "spearman_baseline": 0.367,
+      "fark_vs_permutasyon": 2.135,
+      "fark_vs_baseline": 0.332
+    },
+    {
+      "sembol": "SISE.IS",
+      "pazar": "TR_HISSE",
+      "r2_gercek": -1.117,
+      "r2_permutasyon": -0.173,
+      "r2_baseline": -1.273,
+      "spearman_gercek": -0.083,
+      "spearman_baseline": -0.141,
+      "fark_vs_permutasyon": -0.944,
+      "fark_vs_baseline": 0.156
+    },
+    {
+      "sembol": "TUPRS.IS",
+      "pazar": "TR_HISSE",
+      "r2_gercek": -0.39,
+      "r2_permutasyon": -0.279,
+      "r2_baseline": -0.918,
+      "spearman_gercek": 0.152,
+      "spearman_baseline": 0.086,
+      "fark_vs_permutasyon": -0.111,
+      "fark_vs_baseline": 0.528
+    },
+    {
+      "sembol": "KCHOL.IS",
+      "pazar": "TR_HISSE",
+      "r2_gercek": -1.591,
+      "r2_permutasyon": -0.244,
+      "r2_baseline": -0.722,
+      "spearman_gercek": -0.264,
+      "spearman_baseline": 0.218,
+      "fark_vs_permutasyon": -1.347,
+      "fark_vs_baseline": -0.869
+    },
+    {
+      "sembol": "AKBNK.IS",
+      "pazar": "TR_HISSE",
+      "r2_gercek": -2.253,
+      "r2_permutasyon": -0.22,
+      "r2_baseline": -0.792,
+      "spearman_gercek": 0.162,
+      "spearman_baseline": 0.114,
+      "fark_vs_permutasyon": -2.034,
+      "fark_vs_baseline": -1.462
+    },
+    {
+      "sembol": "AAPL",
+      "pazar": "ABD_HISSE",
+      "r2_gercek": -21.71,
+      "r2_permutasyon": -0.368,
+      "r2_baseline": -0.776,
+      "spearman_gercek": 0.225,
+      "spearman_baseline": 0.146,
+      "fark_vs_permutasyon": -21.342,
+      "fark_vs_baseline": -20.934
+    },
+    {
+      "sembol": "MSFT",
+      "pazar": "ABD_HISSE",
+      "r2_gercek": -4.841,
+      "r2_permutasyon": -0.798,
+      "r2_baseline": -0.806,
+      "spearman_gercek": 0.148,
+      "spearman_baseline": 0.114,
+      "fark_vs_permutasyon": -4.043,
+      "fark_vs_baseline": -4.035
+    },
+    {
+      "sembol": "TSLA",
+      "pazar": "ABD_HISSE",
+      "r2_gercek": -0.871,
+      "r2_permutasyon": -1.165,
+      "r2_baseline": -0.804,
+      "spearman_gercek": 0.146,
+      "spearman_baseline": 0.13,
+      "fark_vs_permutasyon": 0.294,
+      "fark_vs_baseline": -0.066
+    },
+    {
+      "sembol": "AMZN",
+      "pazar": "ABD_HISSE",
+      "r2_gercek": -5.503,
+      "r2_permutasyon": -2.329,
+      "r2_baseline": -0.916,
+      "spearman_gercek": 0.129,
+      "spearman_baseline": 0.074,
+      "fark_vs_permutasyon": -3.174,
+      "fark_vs_baseline": -4.587
+    },
+    {
+      "sembol": "META",
+      "pazar": "ABD_HISSE",
+      "r2_gercek": -3.489,
+      "r2_permutasyon": -0.757,
+      "r2_baseline": -0.924,
+      "spearman_gercek": 0.158,
+      "spearman_baseline": 0.113,
+      "fark_vs_permutasyon": -2.733,
+      "fark_vs_baseline": -2.565
+    },
+    {
+      "sembol": "GOOGL",
+      "pazar": "ABD_HISSE",
+      "r2_gercek": -0.983,
+      "r2_permutasyon": -0.78,
+      "r2_baseline": -1.062,
+      "spearman_gercek": -0.038,
+      "spearman_baseline": 0.042,
+      "fark_vs_permutasyon": -0.203,
+      "fark_vs_baseline": 0.078
+    },
+    {
+      "sembol": "NVDA",
+      "pazar": "ABD_HISSE",
+      "r2_gercek": -6.285,
+      "r2_permutasyon": -1.954,
+      "r2_baseline": -0.899,
+      "spearman_gercek": 0.183,
+      "spearman_baseline": 0.106,
+      "fark_vs_permutasyon": -4.331,
+      "fark_vs_baseline": -5.386
+    },
+    {
+      "sembol": "GC=F",
+      "pazar": "EMTIA",
+      "r2_gercek": -0.582,
+      "r2_permutasyon": -1.935,
+      "r2_baseline": -0.249,
+      "spearman_gercek": 0.258,
+      "spearman_baseline": 0.379,
+      "fark_vs_permutasyon": 1.354,
+      "fark_vs_baseline": -0.333
+    },
+    {
+      "sembol": "CL=F",
+      "pazar": "EMTIA",
+      "r2_gercek": -0.739,
+      "r2_permutasyon": -1.367,
+      "r2_baseline": -0.154,
+      "spearman_gercek": 0.034,
+      "spearman_baseline": 0.419,
+      "fark_vs_permutasyon": 0.628,
+      "fark_vs_baseline": -0.585
+    },
+    {
+      "sembol": "SI=F",
+      "pazar": "EMTIA",
+      "r2_gercek": -0.634,
+      "r2_permutasyon": -6.411,
+      "r2_baseline": -0.638,
+      "spearman_gercek": 0.043,
+      "spearman_baseline": 0.137,
+      "fark_vs_permutasyon": 5.777,
+      "fark_vs_baseline": 0.004
+    },
+    {
+      "sembol": "NG=F",
+      "pazar": "EMTIA",
+      "r2_gercek": -0.168,
+      "r2_permutasyon": -5.054,
+      "r2_baseline": -0.984,
+      "spearman_gercek": 0.183,
+      "spearman_baseline": 0.046,
+      "fark_vs_permutasyon": 4.886,
+      "fark_vs_baseline": 0.816
+    }
+  ]
+}

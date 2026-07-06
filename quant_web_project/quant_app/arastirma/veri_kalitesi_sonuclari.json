@@ -1,0 +1,202 @@
+{
+  "detayli_sonuclar": [
+    {
+      "sembol": "THYAO.IS",
+      "pazar": "TR_HISSE",
+      "basarili": true,
+      "gercek_mum_sayisi": 255,
+      "beklenen_mum_sayisi_kabaca": 252.7,
+      "eksik_mum_orani": 0.0,
+      "donmus_bar_orani": 0.0471,
+      "asiri_sicrama_orani": 0.0,
+      "asiri_sicrama_sayisi": 0,
+      "ortalama_gunluk_volatilite_pct": 2.628
+    },
+    {
+      "sembol": "GARAN.IS",
+      "pazar": "TR_HISSE",
+      "basarili": true,
+      "gercek_mum_sayisi": 255,
+      "beklenen_mum_sayisi_kabaca": 252.7,
+      "eksik_mum_orani": 0.0,
+      "donmus_bar_orani": 0.0275,
+      "asiri_sicrama_orani": 0.0,
+      "asiri_sicrama_sayisi": 0,
+      "ortalama_gunluk_volatilite_pct": 3.294
+    },
+    {
+      "sembol": "BIMAS.IS",
+      "pazar": "TR_HISSE",
+      "basarili": true,
+      "gercek_mum_sayisi": 257,
+      "beklenen_mum_sayisi_kabaca": 252.7,
+      "eksik_mum_orani": 0.0,
+      "donmus_bar_orani": 0.0428,
+      "asiri_sicrama_orani": 0.0,
+      "asiri_sicrama_sayisi": 0,
+      "ortalama_gunluk_volatilite_pct": 3.065
+    },
+    {
+      "sembol": "EREGL.IS",
+      "pazar": "TR_HISSE",
+      "basarili": true,
+      "gercek_mum_sayisi": 255,
+      "beklenen_mum_sayisi_kabaca": 252.7,
+      "eksik_mum_orani": 0.0,
+      "donmus_bar_orani": 0.0235,
+      "asiri_sicrama_orani": 0.0,
+      "asiri_sicrama_sayisi": 0,
+      "ortalama_gunluk_volatilite_pct": 2.992
+    },
+    {
+      "sembol": "SISE.IS",
+      "pazar": "TR_HISSE",
+      "basarili": true,
+      "gercek_mum_sayisi": 255,
+      "beklenen_mum_sayisi_kabaca": 252.7,
+      "eksik_mum_orani": 0.0,
+      "donmus_bar_orani": 0.0314,
+      "asiri_sicrama_orani": 0.0,
+      "asiri_sicrama_sayisi": 0,
+      "ortalama_gunluk_volatilite_pct": 3.278
+    },
+    {
+      "sembol": "ASELS.IS",
+      "pazar": "TR_HISSE",
+      "basarili": true,
+      "gercek_mum_sayisi": 255,
+      "beklenen_mum_sayisi_kabaca": 252.7,
+      "eksik_mum_orani": 0.0,
+      "donmus_bar_orani": 0.0157,
+      "asiri_sicrama_orani": 0.0,
+      "asiri_sicrama_sayisi": 0,
+      "ortalama_gunluk_volatilite_pct": 3.869
+    },
+    {
+      "sembol": "BTC-USD",
+      "pazar": "KRIPTO",
+      "basarili": true,
+      "gercek_mum_sayisi": 1095,
+      "beklenen_mum_sayisi_kabaca": 1095,
+      "eksik_mum_orani": 0.0,
+      "donmus_bar_orani": 0.0,
+      "asiri_sicrama_orani": 0.0,
+      "asiri_sicrama_sayisi": 0,
+      "ortalama_gunluk_volatilite_pct": 3.6
+    },
+    {
+      "sembol": "ETH-USD",
+      "pazar": "KRIPTO",
+      "basarili": true,
+      "gercek_mum_sayisi": 1095,
+      "beklenen_mum_sayisi_kabaca": 1095,
+      "eksik_mum_orani": 0.0,
+      "donmus_bar_orani": 0.0,
+      "asiri_sicrama_orani": 0.0009,
+      "asiri_sicrama_sayisi": 1,
+      "ortalama_gunluk_volatilite_pct": 5.037
+    },
+    {
+      "sembol": "SOL-USD",
+      "pazar": "KRIPTO",
+      "basarili": true,
+      "gercek_mum_sayisi": 1095,
+      "beklenen_mum_sayisi_kabaca": 1095,
+      "eksik_mum_orani": 0.0,
+      "donmus_bar_orani": 0.0018,
+      "asiri_sicrama_orani": 0.0027,
+      "asiri_sicrama_sayisi": 3,
+      "ortalama_gunluk_volatilite_pct": 6.832
+    },
+    {
+      "sembol": "AAPL",
+      "pazar": "ABD_HISSE",
+      "basarili": true,
+      "gercek_mum_sayisi": 1253,
+      "beklenen_mum_sayisi_kabaca": 1260.0,
+      "eksik_mum_orani": 0.0056,
+      "donmus_bar_orani": 0.0016,
+      "asiri_sicrama_orani": 0.0,
+      "asiri_sicrama_sayisi": 0,
+      "ortalama_gunluk_volatilite_pct": 2.296
+    },
+    {
+      "sembol": "MSFT",
+      "pazar": "ABD_HISSE",
+      "basarili": true,
+      "gercek_mum_sayisi": 1253,
+      "beklenen_mum_sayisi_kabaca": 1260.0,
+      "eksik_mum_orani": 0.0056,
+      "donmus_bar_orani": 0.0008,
+      "asiri_sicrama_orani": 0.0,
+      "asiri_sicrama_sayisi": 0,
+      "ortalama_gunluk_volatilite_pct": 2.207
+    },
+    {
+      "sembol": "TSLA",
+      "pazar": "ABD_HISSE",
+      "basarili": true,
+      "gercek_mum_sayisi": 1253,
+      "beklenen_mum_sayisi_kabaca": 1260.0,
+      "eksik_mum_orani": 0.0056,
+      "donmus_bar_orani": 0.0008,
+      "asiri_sicrama_orani": 0.0016,
+      "asiri_sicrama_sayisi": 2,
+      "ortalama_gunluk_volatilite_pct": 4.915
+    },
+    {
+      "sembol": "GC=F",
+      "pazar": "EMTIA",
+      "basarili": true,
+      "gercek_mum_sayisi": 1004,
+      "beklenen_mum_sayisi_kabaca": 1008.7,
+      "eksik_mum_orani": 0.0047,
+      "donmus_bar_orani": 0.0538,
+      "asiri_sicrama_orani": 0.0,
+      "asiri_sicrama_sayisi": 0,
+      "ortalama_gunluk_volatilite_pct": 1.33
+    },
+    {
+      "sembol": "CL=F",
+      "pazar": "EMTIA",
+      "basarili": true,
+      "gercek_mum_sayisi": 1004,
+      "beklenen_mum_sayisi_kabaca": 1008.7,
+      "eksik_mum_orani": 0.0047,
+      "donmus_bar_orani": 0.004,
+      "asiri_sicrama_orani": 0.0,
+      "asiri_sicrama_sayisi": 0,
+      "ortalama_gunluk_volatilite_pct": 3.653
+    }
+  ],
+  "pazar_ozet": {
+    "TR_HISSE": {
+      "varlik_sayisi": 6,
+      "ortalama_eksik_mum_orani": 0.0,
+      "ortalama_donmus_bar_orani": 0.03133333333333333,
+      "ortalama_asiri_sicrama_orani": 0.0,
+      "ortalama_volatilite_pct": 3.187666666666667
+    },
+    "KRIPTO": {
+      "varlik_sayisi": 3,
+      "ortalama_eksik_mum_orani": 0.0,
+      "ortalama_donmus_bar_orani": 0.0006,
+      "ortalama_asiri_sicrama_orani": 0.0012,
+      "ortalama_volatilite_pct": 5.156333333333333
+    },
+    "ABD_HISSE": {
+      "varlik_sayisi": 3,
+      "ortalama_eksik_mum_orani": 0.0056,
+      "ortalama_donmus_bar_orani": 0.0010666666666666667,
+      "ortalama_asiri_sicrama_orani": 0.0005333333333333334,
+      "ortalama_volatilite_pct": 3.139333333333333
+    },
+    "EMTIA": {
+      "varlik_sayisi": 2,
+      "ortalama_eksik_mum_orani": 0.0047,
+      "ortalama_donmus_bar_orani": 0.028900000000000002,
+      "ortalama_asiri_sicrama_orani": 0.0,
+      "ortalama_volatilite_pct": 2.4915000000000003
+    }
+  }
+}

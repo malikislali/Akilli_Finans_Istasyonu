@@ -1,0 +1,148 @@
+{% extends "quant_app/base_v2.html" %}
+{% block title %}Anasayfa — Sovereign Cockpit{% endblock %}
+
+{% block content %}
+<div id="anasayfa-icerik">
+  <div style="margin-bottom: 1.5rem;">
+    <div class="font-display text-2xl font-bold text-white">Market Genel Görünümü</div>
+    <div class="text-sm text-muted font-mono">Her pazardan en büyük 5 varlığın anlık fiyat bilgisi.</div>
+  </div>
+
+  {% for pazar in pazarlar %}
+  <div class="anasayfa-pazar-bolumu" data-pazar="{{ pazar }}">
+    <div class="anasayfa-pazar-baslik">
+      <h2 id="pazar-baslik-{{ pazar }}"></h2>
+      <a href="/market/{{ pazar }}/" class="anasayfa-tumunu-gor">Tümünü Gör →</a>
+    </div>
+
+    <!-- ---- Lider linkleri: En Çok Artan / Azalan / Hacim Liderleri ---- -->
+    <div class="pazar-lider-linkleri" id="lider-linkleri-{{ pazar }}">
+      <button class="lider-link" data-pazar="{{ pazar }}" data-tur="artan">📈 En Çok Artan</button>
+      <button class="lider-link" data-pazar="{{ pazar }}" data-tur="azalan">📉 En Çok Azalan</button>
+      <button class="lider-link" data-pazar="{{ pazar }}" data-tur="hacim">🔊 Hacim Liderleri</button>
+    </div>
+
+    <div class="varlik-kart-grid" id="kart-grid-{{ pazar }}">
+      <!-- 5 placeholder kart - JS doldurana kadar iskelet görünüm -->
+      {% for i in "12345" %}
+      <div class="varlik-karti varlik-karti-yukleniyor">
+        <div class="varlik-karti-ust">
+          <span class="varlik-karti-sembol">···</span>
+        </div>
+        <div class="varlik-karti-fiyat">—</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+const PAZAR_BILGISI = {{ pazar_bilgisi_json|safe }};
+
+function pazarBasliklariniDoldur() {
+  for (const pazar in PAZAR_BILGISI) {
+    const el = document.getElementById(`pazar-baslik-${pazar}`);
+    if (el) {
+      const bilgi = PAZAR_BILGISI[pazar];
+      el.innerHTML = `${bilgi.emoji} ${bilgi.ad.toUpperCase()}`;
+    }
+  }
+}
+
+function fmt(deger, ondalik = 2) {
+  if (deger === null || deger === undefined || isNaN(deger)) return '—';
+  return Number(deger).toLocaleString('tr-TR', { minimumFractionDigits: ondalik, maximumFractionDigits: ondalik });
+}
+
+function hacimKisalt(hacim) {
+  if (!hacim) return '—';
+  if (hacim >= 1e9) return (hacim / 1e9).toFixed(1) + 'B';
+  if (hacim >= 1e6) return (hacim / 1e6).toFixed(1) + 'M';
+  if (hacim >= 1e3) return (hacim / 1e3).toFixed(1) + 'K';
+  return hacim.toFixed(0);
+}
+
+function varlikKartiHtmlUret(v, pazar) {
+  if (!v.basarili) {
+    return `<div class="varlik-karti"><div class="varlik-karti-ust"><span class="varlik-karti-sembol">${v.sembol}</span></div><div class="varlik-karti-hata">Veri alınamadı</div></div>`;
+  }
+  const degisimSinif = v.degisim_yuzde >= 0 ? 'pozitif' : 'negatif';
+  const degisimIsareti = v.degisim_yuzde >= 0 ? '+' : '';
+  return `
+    <div class="varlik-karti" style="cursor:pointer;" onclick="window.location.href='/market/${pazar}/?sembol=${encodeURIComponent(v.sembol)}'">
+      <div class="varlik-karti-ust">
+        <span class="varlik-karti-sembol">${v.sembol}</span>
+        <button class="yildiz-buton" onclick="event.stopPropagation(); takipListesineEkle('${v.sembol}', '${pazar}')" title="Takip listesine ekle">⭐</button>
+      </div>
+      <div class="varlik-karti-fiyat">${paraBirimiFormatla(v.fiyat, pazar)}</div>
+      <div class="varlik-karti-degisim ${degisimSinif}">${degisimIsareti}${fmt(v.degisim_yuzde)}%</div>
+      <div class="varlik-karti-detaylar">
+        <span><b>Hacim:</b> ${hacimKisalt(v.hacim)}</span>
+        <span><b>Açılış:</b> ${paraBirimiFormatla(v.acilis, pazar)}</span>
+      </div>
+    </div>
+  `;
+}
+
+async function anasayfaFiyatlariniYukle() {
+  try {
+    const resp = await fetch('/api/anasayfa-fiyatlar/');
+    const veri = await resp.json();
+    if (!veri.basarili) return;
+
+    for (const pazar in veri.pazarlar) {
+      const grid = document.getElementById(`kart-grid-${pazar}`);
+      if (!grid) continue;
+      grid.innerHTML = veri.pazarlar[pazar].map(v => varlikKartiHtmlUret(v, pazar)).join('');
+    }
+  } catch (err) {
+    console.error('Anasayfa fiyatları yüklenemedi:', err);
+  }
+}
+
+// =====================================================================
+// 🆕 PAZAR LİDERLERİ — En Çok Artan / En Çok Azalan / Hacim Liderleri
+// Tıklanınca, o pazarın kart grid'i GEÇİCİ OLARAK 10 liderlik kartına
+// döner. Aynı linke tekrar tıklayınca normal "ilk 5" görünümüne geri
+// döner (toggle davranışı).
+// =====================================================================
+const aktifLiderModu = {};  // { KRIPTO: 'artan' | null, TR_HISSE: ..., ... }
+
+async function pazarLiderleriniGoster(pazar, tur) {
+  const grid = document.getElementById(`kart-grid-${pazar}`);
+  const linkler = document.querySelectorAll(`#lider-linkleri-${pazar} .lider-link`);
+
+  // Aynı türe tekrar tıklandıysa -> normale (ilk 5) geri dön
+  if (aktifLiderModu[pazar] === tur) {
+    aktifLiderModu[pazar] = null;
+    linkler.forEach(l => l.classList.remove('aktif'));
+    anasayfaFiyatlariniYukle();
+    return;
+  }
+
+  aktifLiderModu[pazar] = tur;
+  linkler.forEach(l => l.classList.toggle('aktif', l.dataset.tur === tur));
+
+  grid.innerHTML = '<div class="text-xs text-muted" style="padding: 1rem; grid-column: 1 / -1;">Yükleniyor...</div>';
+  try {
+    const resp = await fetch(`/api/pazar-lider/${pazar}/?tur=${tur}`);
+    const veri = await resp.json();
+    if (!veri.basarili) {
+      grid.innerHTML = '<div class="text-xs text-red" style="grid-column: 1 / -1;">Yüklenemedi.</div>';
+      return;
+    }
+    grid.innerHTML = veri.varliklar.map(v => varlikKartiHtmlUret(v, pazar)).join('');
+  } catch (err) {
+    grid.innerHTML = '<div class="text-xs text-red" style="grid-column: 1 / -1;">Yüklenemedi.</div>';
+  }
+}
+
+document.querySelectorAll('.lider-link').forEach(btn => {
+  btn.addEventListener('click', () => pazarLiderleriniGoster(btn.dataset.pazar, btn.dataset.tur));
+});
+
+pazarBasliklariniDoldur();
+anasayfaFiyatlariniYukle();
+</script>
+{% endblock %}

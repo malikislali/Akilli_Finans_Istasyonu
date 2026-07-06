@@ -1,0 +1,344 @@
+<!-- ============================================================
+     YENİ SOL SIDEBAR — Pazar kartları + Takip Listem
+     Bu component anasayfa.html ve market.html tarafından dahil
+     edilir. Laboratuvar (dashboard.html) KENDİ ESKİ sidebar'ını
+     korur, bu component'i kullanmaz.
+     ============================================================ -->
+<aside class="yeni-sidebar">
+  <div class="yeni-sidebar-logo">
+    <span class="font-display text-xl font-bold" style="color:var(--text-main);">🏛️ Sovereign</span>
+    <div class="font-mono text-[10px] text-muted tracking-widest mt-1">QUANT COCKPIT</div>
+  </div>
+
+  <!-- ---------------- TEMA DEĞİŞTİRİCİ ---------------- -->
+  <div class="tema-secici" id="tema-secici">
+    <button class="tema-buton aktif" data-tema="dark">🌙 Dark</button>
+    <button class="tema-buton" data-tema="light">☀️ Light</button>
+  </div>
+
+    <!-- ---------------- USD TRY değiştirici ---------------- -->
+
+  <div class="tema-secici" id="para-birimi-secici" style="margin-top:0.5rem;">
+    <button class="tema-buton" data-mod="karma">Karma</button>
+    <button class="tema-buton" data-mod="usd">$</button>
+    <button class="tema-buton" data-mod="try">₺</button>
+  </div>
+
+ <div class="yeni-sidebar-kullanici">
+    <span>{{ request.user.username }}</span>
+    <a href="{% url 'logout' %}" class="text-red">Çıkış</a>
+  </div>
+
+
+  <!-- ---------------- PAZAR KARTLARI ---------------- -->
+  <nav class="pazar-kart-listesi">
+    <a href="{% url 'market' pazar='KRIPTO' %}" class="pazar-karti pazar-kripto {% if aktif_pazar == 'KRIPTO' %}aktif{% endif %}">
+      <span class="pazar-emoji">🟠</span> <span>KRİPTO</span>
+    </a>
+    <a href="{% url 'market' pazar='TR_HISSE' %}" class="pazar-karti pazar-tr {% if aktif_pazar == 'TR_HISSE' %}aktif{% endif %}">
+      <span class="pazar-emoji">🔵</span> <span>TR HİSSE</span>
+    </a>
+    <a href="{% url 'market' pazar='ABD_HISSE' %}" class="pazar-karti pazar-abd {% if aktif_pazar == 'ABD_HISSE' %}aktif{% endif %}">
+      <span class="pazar-emoji">🟢</span> <span>ABD HİSSE</span>
+    </a>
+    <a href="{% url 'market' pazar='EMTIA' %}" class="pazar-karti pazar-emtia {% if aktif_pazar == 'EMTIA' %}aktif{% endif %}">
+      <span class="pazar-emoji">🟡</span> <span>EMTİA</span>
+    </a>
+  </nav>
+
+  <!-- ---------------- TAKİP LİSTEM ---------------- -->
+  <div class="takip-listesi-bolumu">
+    <div class="takip-listesi-baslik-satiri">
+      <div class="takip-listesi-baslik">⭐ TAKİP LİSTEM</div>
+      <button id="takip-ekle-ac-buton" class="takip-ekle-ac-buton" title="Takip listesine varlık ekle">+</button>
+    </div>
+
+    <!-- ---- Ekleme paneli (varsayılan gizli, + ile açılır) ---- -->
+    <div id="takip-ekle-paneli" class="takip-ekle-paneli gizli">
+      <div class="takip-ekle-pazar-secici" id="takip-ekle-pazar-secici">
+        <!-- JS ile doldurulur -->
+      </div>
+      <input type="text" id="takip-ekle-arama" class="takip-ekle-arama-input"
+             placeholder="Varlık ara..." autocomplete="off">
+      <div id="takip-ekle-sonuclar" class="takip-ekle-sonuclar"></div>
+    </div>
+
+    <div id="takip-listesi-icerik" class="takip-listesi-icerik">
+      <div class="text-xs text-muted" style="padding: 0.5rem 0;">Yükleniyor...</div>
+    </div>
+  </div>
+
+  <!-- ---------------- ücretsiz üye hak bilgisi  ---------------- -->
+  <div id="sidebar-hak-bilgisi" class="hidden" style="display:flex; flex-direction:column; gap:0.4rem; padding:0.6rem 0;"></div>
+
+
+  <!-- ---------------- LABORATUVAR LİNKİ ---------------- -->
+  <div class="yeni-sidebar-laboratuvar">
+    <a href="{% url 'dashboard' %}" class="laboratuvar-link">🧪 Laboratuvar</a>
+    <div class="text-[10px] text-muted" style="margin-top: 0.3rem; line-height: 1.4;">
+      Eski detaylı ML analiz ekranı (Backtest, Triple Barrier, Konsensüs Kararı vb.)
+    </div>
+  </div>
+</aside>
+
+<script>
+// ---------------- TAKİP LİSTESİ — ortak JS mantığı ----------------
+// Bu script hem anasayfa.html hem market.html'de çalışır (sidebar
+// include edildiği her sayfada). TÜM pazarların varlık listesi
+// (varlik_havuzu_json), ekleme panelindeki arama için kullanılır —
+// her sayfanın context'inde bu değişken garanti bulunur (bkz. views.py).
+const TUM_VARLIK_HAVUZU = {{ varlik_havuzu_json|safe }};
+const PAZAR_EMOJI = { KRIPTO: '🟠', TR_HISSE: '🔵', ABD_HISSE: '🟢', EMTIA: '🟡' };
+const PAZAR_ETIKET = { KRIPTO: 'Kripto', TR_HISSE: 'TR Hisse', ABD_HISSE: 'ABD Hisse', EMTIA: 'Emtia' };
+
+async function sidebarHakBilgisiYukle() {
+  const kutu = document.getElementById('sidebar-hak-bilgisi');
+  if (!kutu) return;
+  try {
+    const resp = await fetch('/api/limit-durumu/');
+    const veri = await resp.json();
+    if (!veri.basarili) return;
+    if (veri.premium) { kutu.classList.add('hidden'); kutu.innerHTML = ''; return; }
+    kutu.classList.remove('hidden');
+    kutu.innerHTML =
+      hakEtiketiHtmlUret('📊', 'Analiz', veri.analiz) +
+      hakEtiketiHtmlUret('🔎', 'Tarama', veri.tarama) +
+      hakEtiketiHtmlUret('⭐', 'Takip', veri.takip_listesi);
+  } catch (err) {
+    console.error('Sidebar hak bilgisi yüklenemedi:', err);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', sidebarHakBilgisiYukle);
+
+async function takipListesiYukle() {
+  const container = document.getElementById('takip-listesi-icerik');
+  try {
+    const resp = await fetch('/api/takip-listesi/');
+    const veri = await resp.json();
+    if (!veri.basarili || veri.ogeler.length === 0) {
+      container.innerHTML = '<div class="text-xs text-muted" style="padding: 0.5rem 0;">Henüz bir varlık eklenmedi.</div>';
+      return;
+    }
+    container.innerHTML = veri.ogeler.map(o => `
+      <div class="takip-ogesi" data-id="${o.id}">
+        <a href="/market/${o.pazar}/?sembol=${encodeURIComponent(o.sembol)}" class="takip-ogesi-link">
+          <span class="takip-ogesi-emoji">${PAZAR_EMOJI[o.pazar] || '⚪'}</span>
+          <span>${sembolGoster(o.sembol, o.pazar)}</span>
+        </a>
+        <button class="takip-ogesi-sil" onclick="takipListesindenSil(${o.id})" title="Listeden çıkar">✕</button>
+      </div>
+    `).join('');
+ } catch (err) {
+    container.innerHTML = '<div class="text-xs text-red" style="padding: 0.5rem 0;">Yüklenemedi.</div>';
+  }
+  sidebarHakBilgisiYukle();
+}
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+async function takipListesineEkle(sembol, pazar) {
+  try {
+    const resp = await fetch('/api/takip-listesi/ekle/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+      body: JSON.stringify({ sembol, pazar }),
+    });
+    const veri = await resp.json();
+    if (veri.basarili) {
+      takipListesiYukle();
+    } else if (veri.limit_asimi && typeof limitModalAc === 'function') {
+      limitModalAc(veri.hata_mesaji, typeof PLAN_SEC_URL !== 'undefined' ? PLAN_SEC_URL : '/plan-sec/');
+    }
+    return veri;
+  } catch (err) {
+    console.error('Takip listesine eklenemedi:', err);
+  }
+}
+
+// =====================================================================
+// 🆕 TAKİP LİSTESİ EKLEME PANELİ (+ butonu ile açılır/kapanır)
+// =====================================================================
+const takipEkleAcButon = document.getElementById('takip-ekle-ac-buton');
+const takipEklePaneli = document.getElementById('takip-ekle-paneli');
+const takipEklePazarSecici = document.getElementById('takip-ekle-pazar-secici');
+const takipEkleArama = document.getElementById('takip-ekle-arama');
+const takipEkleSonuclar = document.getElementById('takip-ekle-sonuclar');
+
+let takipEkleSeciliPazar = null;
+
+function takipEklePazarButonlariniDoldur() {
+  takipEklePazarSecici.innerHTML = Object.keys(TUM_VARLIK_HAVUZU).map(pazar => `
+    <button class="takip-ekle-pazar-buton" data-pazar="${pazar}">
+      ${PAZAR_EMOJI[pazar]} ${PAZAR_ETIKET[pazar]}
+    </button>
+  `).join('');
+
+  takipEklePazarSecici.querySelectorAll('.takip-ekle-pazar-buton').forEach(btn => {
+    btn.addEventListener('click', () => {
+      takipEklePazarSecici.querySelectorAll('.takip-ekle-pazar-buton').forEach(b => b.classList.remove('aktif'));
+      btn.classList.add('aktif');
+      takipEkleSeciliPazar = btn.dataset.pazar;
+      takipEkleArama.value = '';
+      takipEkleSonuclariGuncelle('');
+      takipEkleArama.focus();
+    });
+  });
+}
+
+function takipEkleSonuclariGuncelle(sorgu) {
+  if (!takipEkleSeciliPazar) {
+    takipEkleSonuclar.innerHTML = '<div class="text-xs text-muted" style="padding: 0.5rem;">Önce bir pazar seçin.</div>';
+    return;
+  }
+  const liste = TUM_VARLIK_HAVUZU[takipEkleSeciliPazar] || [];
+  const sorguUpper = sorgu.trim().toUpperCase();
+  const eslesenler = sorguUpper ? liste.filter(v => v.toUpperCase().includes(sorguUpper)) : liste;
+
+  if (eslesenler.length === 0) {
+    takipEkleSonuclar.innerHTML = '<div class="text-xs text-muted" style="padding: 0.5rem;">Sonuç bulunamadı.</div>';
+    return;
+  }
+
+  takipEkleSonuclar.innerHTML = eslesenler.map(v => `
+    <div class="takip-ekle-sonuc-ogesi" data-sembol="${v}">${sembolGoster(v, takipEkleSeciliPazar)}</div>
+  `).join('');
+
+  takipEkleSonuclar.querySelectorAll('.takip-ekle-sonuc-ogesi').forEach(el => {
+    el.addEventListener('click', async () => {
+      const sembol = el.dataset.sembol;
+      el.textContent = 'Ekleniyor...';
+      await takipListesineEkle(sembol, takipEkleSeciliPazar);
+      takipEklePaneliKapat();
+    });
+  });
+}
+
+function takipEklePaneliAc() {
+  takipEklePaneli.classList.remove('gizli');
+  if (!takipEklePazarSecici.children.length) takipEklePazarButonlariniDoldur();
+}
+
+function takipEklePaneliKapat() {
+  takipEklePaneli.classList.add('gizli');
+  takipEkleSeciliPazar = null;
+  takipEkleArama.value = '';
+  takipEkleSonuclar.innerHTML = '';
+  takipEklePazarSecici.querySelectorAll('.takip-ekle-pazar-buton').forEach(b => b.classList.remove('aktif'));
+}
+
+takipEkleAcButon.addEventListener('click', () => {
+  if (takipEklePaneli.classList.contains('gizli')) {
+    takipEklePaneliAc();
+  } else {
+    takipEklePaneliKapat();
+  }
+});
+
+takipEkleArama.addEventListener('input', () => takipEkleSonuclariGuncelle(takipEkleArama.value));
+
+document.addEventListener('DOMContentLoaded', takipListesiYukle);
+
+// =====================================================================
+// 🆕 TEMA DEĞİŞTİRİCİ (Dark / Light)
+// Tercih localStorage'da saklanır, sayfa yenilenince/değişince hatırlanır.
+// Uygulama: body[data-theme="light"] -> style.css'teki CSS değişkenleri
+// otomatik değişir (ek bir tema dosyası gerekmez, bkz. style.css :root).
+// =====================================================================
+const TEMA_LOCALSTORAGE_ANAHTARI = 'sovereign_tema';
+
+function temayiUygula(tema) {
+  if (tema === 'light') {
+    document.body.setAttribute('data-theme', 'light');
+  } else {
+    document.body.removeAttribute('data-theme');
+  }
+  document.querySelectorAll('#tema-secici .tema-buton').forEach(btn => {
+    btn.classList.toggle('aktif', btn.dataset.tema === tema);
+  });
+}
+
+function temayiYukleVeUygula() {
+  let kayitliTema = 'dark';
+  try {
+    kayitliTema = localStorage.getItem(TEMA_LOCALSTORAGE_ANAHTARI) || 'dark';
+  } catch (err) { /* localStorage erişilemezse varsayılan: dark */ }
+  temayiUygula(kayitliTema);
+}
+
+document.querySelectorAll('#tema-secici .tema-buton').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tema = btn.dataset.tema;
+    temayiUygula(tema);
+    try {
+      localStorage.setItem(TEMA_LOCALSTORAGE_ANAHTARI, tema);
+    } catch (err) { /* sessiz geç */ }
+  });
+});
+
+temayiYukleVeUygula();
+
+// =====================================================================
+// 🆕 SİDEBAR TOGGLE (aç/kapat)
+// Tercih localStorage'da saklanır (anahtar: 'sovereign_sidebar_durumu').
+// Toggle butonu base_v2.html'de sidebar'ın DIŞINDA tanımlandı — bu
+// sayede sidebar kapandığında buton kaybolmuyor (overflow:hidden içinde
+// değil), her zaman ekranda görünür kalıyor.
+// =====================================================================
+const SIDEBAR_LOCALSTORAGE_ANAHTARI = 'sovereign_sidebar_durumu';
+const sidebarEl = document.querySelector('.yeni-sidebar');
+const toggleButon = document.getElementById('sidebar-toggle-buton-fixed');
+
+function sidebarDurumunuUygula(kapali) {
+  if (!sidebarEl || !toggleButon) return;
+  if (kapali) {
+    sidebarEl.classList.add('kapali');
+    toggleButon.style.left = '0.5rem';
+  } else {
+    sidebarEl.classList.remove('kapali');
+    toggleButon.style.left = '';  // CSS'teki varsayılan değere dön
+  }
+}
+
+function sidebarDurumunuYukle() {
+  try {
+    return localStorage.getItem(SIDEBAR_LOCALSTORAGE_ANAHTARI) === 'kapali';
+  } catch { return false; }
+}
+
+sidebarDurumunuUygula(sidebarDurumunuYukle());
+
+if (toggleButon) {
+  toggleButon.addEventListener('click', () => {
+    const simdikiDurum = sidebarEl.classList.contains('kapali');
+    sidebarDurumunuUygula(!simdikiDurum);
+    try {
+      localStorage.setItem(SIDEBAR_LOCALSTORAGE_ANAHTARI, !simdikiDurum ? 'kapali' : 'acik');
+    } catch { }
+  });
+}
+
+
+// ---------------- PARA BİRİMİ ANAHTARI ----------------
+function paraBirimiButonlariniUygula() {
+  document.querySelectorAll('#para-birimi-secici .tema-buton').forEach(btn => {
+    btn.classList.toggle('aktif', btn.dataset.mod === PARA_BIRIMI_MODU);
+  });
+}
+
+document.querySelectorAll('#para-birimi-secici .tema-buton').forEach(btn => {
+  btn.addEventListener('click', () => {
+    PARA_BIRIMI_MODU = btn.dataset.mod;
+    paraBirimiModunuKaydet();
+    window.location.reload();
+  });
+});
+
+paraBirimiModunuYukle();
+paraBirimiButonlariniUygula();
+
+</script>

@@ -1,0 +1,592 @@
+{
+  "olusturulma_tarihi": "2026-06-23T12:09:24.199580",
+  "hipotez1_orijinal_max20": {
+    "toplam_test_sayisi": 32,
+    "basarili_test_sayisi": 31,
+    "basarisiz_test_sayisi": 1,
+    "win_rate_gercek_ortalama": 54.92796994960529,
+    "win_rate_gercek_std": 6.822949855253775,
+    "win_rate_permutasyon_ortalama": 51.42111097604639,
+    "win_rate_permutasyon_std": 3.5387485339574027,
+    "ortalama_fark_gercek_eksi_permutasyon": 3.5068589735588964,
+    "test_1_gercek_vs_50yuzde": {
+      "aciklama": "Gerçek Win Rate'ler %50'den (yazı-tura şansından) istatistiksel olarak FARKLI mı? (DİKKAT: bu test tek başına YETERSİZ, bkz. test_3_baseline_karsilastirma)",
+      "t_istatistigi": 3.956001965964942,
+      "p_degeri": 0.0004308649196832084,
+      "anlamli_mi_0.05": true
+    },
+    "test_2_gercek_vs_permutasyon": {
+      "aciklama": "Gerçek etiketlerle elde edilen performans, RASTGELE etiketlerle elde edilenden anlamlı şekilde farklı mı?",
+      "t_istatistigi": 2.4636479759355994,
+      "p_degeri": 0.019707440563427048,
+      "anlamli_mi_0.05": true
+    },
+    "kombinasyon_detaylari": [
+      {
+        "sembol": "BTC-USD",
+        "pazar": "KRIPTO",
+        "interval": "1d",
+        "win_rate_gercek": 55.3,
+        "win_rate_permutasyon": 54.8,
+        "fark": 0.4,
+        "sharpe_gercek": 0.84
+      },
+      {
+        "sembol": "BTC-USD",
+        "pazar": "KRIPTO",
+        "interval": "4h",
+        "win_rate_gercek": 51.7,
+        "win_rate_permutasyon": 52.2,
+        "fark": -0.5,
+        "sharpe_gercek": -0.13
+      },
+      {
+        "sembol": "BTC-USD",
+        "pazar": "KRIPTO",
+        "interval": "1h",
+        "win_rate_gercek": 54.7,
+        "win_rate_permutasyon": 53.2,
+        "fark": 1.4,
+        "sharpe_gercek": 0.38
+      },
+      {
+        "sembol": "ETH-USD",
+        "pazar": "KRIPTO",
+        "interval": "1d",
+        "win_rate_gercek": 52.4,
+        "win_rate_permutasyon": 55.3,
+        "fark": -2.8,
+        "sharpe_gercek": 1.55
+      },
+      {
+        "sembol": "ETH-USD",
+        "pazar": "KRIPTO",
+        "interval": "4h",
+        "win_rate_gercek": 53.7,
+        "win_rate_permutasyon": 51.2,
+        "fark": 2.5,
+        "sharpe_gercek": 0.66
+      },
+      {
+        "sembol": "ETH-USD",
+        "pazar": "KRIPTO",
+        "interval": "1h",
+        "win_rate_gercek": 53.9,
+        "win_rate_permutasyon": 55.4,
+        "fark": -1.4,
+        "sharpe_gercek": 0.6
+      },
+      {
+        "sembol": "SOL-USD",
+        "pazar": "KRIPTO",
+        "interval": "1d",
+        "win_rate_gercek": 54.4,
+        "win_rate_permutasyon": 53.5,
+        "fark": 0.9,
+        "sharpe_gercek": 1.92
+      },
+      {
+        "sembol": "SOL-USD",
+        "pazar": "KRIPTO",
+        "interval": "4h",
+        "win_rate_gercek": 50.7,
+        "win_rate_permutasyon": 55.1,
+        "fark": -4.4,
+        "sharpe_gercek": 0.38
+      },
+      {
+        "sembol": "AVAX-USD",
+        "pazar": "KRIPTO",
+        "interval": "1d",
+        "win_rate_gercek": 44.6,
+        "win_rate_permutasyon": 47.5,
+        "fark": -3.0,
+        "sharpe_gercek": -0.9
+      },
+      {
+        "sembol": "XRP-USD",
+        "pazar": "KRIPTO",
+        "interval": "1d",
+        "win_rate_gercek": 57.1,
+        "win_rate_permutasyon": 49.0,
+        "fark": 8.0,
+        "sharpe_gercek": 2.17
+      },
+      {
+        "sembol": "DOGE-USD",
+        "pazar": "KRIPTO",
+        "interval": "1d",
+        "win_rate_gercek": 56.0,
+        "win_rate_permutasyon": 54.4,
+        "fark": 1.6,
+        "sharpe_gercek": 2.19
+      },
+      {
+        "sembol": "LINK-USD",
+        "pazar": "KRIPTO",
+        "interval": "1d",
+        "win_rate_gercek": 59.6,
+        "win_rate_permutasyon": 51.9,
+        "fark": 7.7,
+        "sharpe_gercek": 3.1
+      },
+      {
+        "sembol": "THYAO.IS",
+        "pazar": "TR_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 61.3,
+        "win_rate_permutasyon": 41.9,
+        "fark": 19.4,
+        "sharpe_gercek": 3.42
+      },
+      {
+        "sembol": "THYAO.IS",
+        "pazar": "TR_HISSE",
+        "interval": "4h",
+        "win_rate_gercek": 55.2,
+        "win_rate_permutasyon": 52.5,
+        "fark": 2.7,
+        "sharpe_gercek": -0.62
+      },
+      {
+        "sembol": "GARAN.IS",
+        "pazar": "TR_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 69.4,
+        "win_rate_permutasyon": 51.6,
+        "fark": 17.7,
+        "sharpe_gercek": 7.77
+      },
+      {
+        "sembol": "ASELS.IS",
+        "pazar": "TR_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 53.2,
+        "win_rate_permutasyon": 58.1,
+        "fark": -4.8,
+        "sharpe_gercek": -2.02
+      },
+      {
+        "sembol": "EREGL.IS",
+        "pazar": "TR_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 64.5,
+        "win_rate_permutasyon": 50.0,
+        "fark": 14.5,
+        "sharpe_gercek": 7.08
+      },
+      {
+        "sembol": "BIMAS.IS",
+        "pazar": "TR_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 71.0,
+        "win_rate_permutasyon": 46.8,
+        "fark": 24.2,
+        "sharpe_gercek": 8.63
+      },
+      {
+        "sembol": "SISE.IS",
+        "pazar": "TR_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 69.4,
+        "win_rate_permutasyon": 56.5,
+        "fark": 12.9,
+        "sharpe_gercek": 8.64
+      },
+      {
+        "sembol": "TUPRS.IS",
+        "pazar": "TR_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 40.3,
+        "win_rate_permutasyon": 54.8,
+        "fark": -14.5,
+        "sharpe_gercek": -7.01
+      },
+      {
+        "sembol": "AAPL",
+        "pazar": "ABD_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 53.6,
+        "win_rate_permutasyon": 48.2,
+        "fark": 5.4,
+        "sharpe_gercek": -0.72
+      },
+      {
+        "sembol": "NVDA",
+        "pazar": "ABD_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 49.0,
+        "win_rate_permutasyon": 48.3,
+        "fark": 0.8,
+        "sharpe_gercek": -2.22
+      },
+      {
+        "sembol": "TSLA",
+        "pazar": "ABD_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 57.5,
+        "win_rate_permutasyon": 54.1,
+        "fark": 3.4,
+        "sharpe_gercek": 0.4
+      },
+      {
+        "sembol": "MSFT",
+        "pazar": "ABD_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 48.5,
+        "win_rate_permutasyon": 46.3,
+        "fark": 2.3,
+        "sharpe_gercek": -1.88
+      },
+      {
+        "sembol": "AMZN",
+        "pazar": "ABD_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 52.5,
+        "win_rate_permutasyon": 51.1,
+        "fark": 1.4,
+        "sharpe_gercek": -0.6
+      },
+      {
+        "sembol": "META",
+        "pazar": "ABD_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 56.5,
+        "win_rate_permutasyon": 49.9,
+        "fark": 6.6,
+        "sharpe_gercek": 0.86
+      },
+      {
+        "sembol": "GOOGL",
+        "pazar": "ABD_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 53.6,
+        "win_rate_permutasyon": 49.2,
+        "fark": 4.4,
+        "sharpe_gercek": -0.18
+      },
+      {
+        "sembol": "GC=F",
+        "pazar": "EMTIA",
+        "interval": "1d",
+        "win_rate_gercek": 44.6,
+        "win_rate_permutasyon": 46.2,
+        "fark": -1.7,
+        "sharpe_gercek": -2.04
+      },
+      {
+        "sembol": "SI=F",
+        "pazar": "EMTIA",
+        "interval": "1d",
+        "win_rate_gercek": 55.3,
+        "win_rate_permutasyon": 50.8,
+        "fark": 4.5,
+        "sharpe_gercek": 1.07
+      },
+      {
+        "sembol": "CL=F",
+        "pazar": "EMTIA",
+        "interval": "1d",
+        "win_rate_gercek": 55.1,
+        "win_rate_permutasyon": 50.1,
+        "fark": 5.0,
+        "sharpe_gercek": 1.66
+      },
+      {
+        "sembol": "NG=F",
+        "pazar": "EMTIA",
+        "interval": "1d",
+        "win_rate_gercek": 48.2,
+        "win_rate_permutasyon": 54.2,
+        "fark": -6.0,
+        "sharpe_gercek": -1.2
+      }
+    ],
+    "test_3_baseline_karsilastirma": {
+      "aciklama": "ASIL CEVAP: gerçek piyasa farkı, rastgele yürüyüş baseline'ını AŞIYOR MU? Aşmıyorsa gözlemlenen sinyal muhtemelen sahte (matematiksel artefakt).",
+      "rastgele_yuruyus_baseline_farki": 0.12,
+      "gercek_piyasa_farki": 3.51,
+      "baseline_asildi_mi": true,
+      "asim_miktari": 3.39
+    }
+  },
+  "test_a_farkli_hisseler": {
+    "baseline": {
+      "toplam_test_sayisi": 10,
+      "basarili_test_sayisi": 10,
+      "basarisiz_test_sayisi": 0,
+      "win_rate_gercek_ortalama": 51.383333333333326,
+      "win_rate_gercek_std": 5.949346369326821,
+      "win_rate_permutasyon_ortalama": 51.266666666666666,
+      "win_rate_permutasyon_std": 2.1936777845030515,
+      "ortalama_fark_gercek_eksi_permutasyon": 0.11666666666666643,
+      "test_1_gercek_vs_50yuzde": {
+        "aciklama": "Gerçek Win Rate'ler %50'den (yazı-tura şansından) istatistiksel olarak FARKLI mı? (DİKKAT: bu test tek başına YETERSİZ, bkz. test_3_baseline_karsilastirma)",
+        "t_istatistigi": 0.6975556207983159,
+        "p_degeri": 0.503075644996214,
+        "anlamli_mi_0.05": false
+      },
+      "test_2_gercek_vs_permutasyon": {
+        "aciklama": "Gerçek etiketlerle elde edilen performans, RASTGELE etiketlerle elde edilenden anlamlı şekilde farklı mı?",
+        "t_istatistigi": 0.051732769357721246,
+        "p_degeri": 0.9598716462293833,
+        "anlamli_mi_0.05": false
+      },
+      "kombinasyon_detaylari": [
+        {
+          "sembol": "SENTETIK_0",
+          "pazar": "KRIPTO",
+          "interval": "1d",
+          "win_rate_gercek": 45.2,
+          "win_rate_permutasyon": 48.2,
+          "fark": -3.0,
+          "sharpe_gercek": -2.4
+        },
+        {
+          "sembol": "SENTETIK_1",
+          "pazar": "KRIPTO",
+          "interval": "1d",
+          "win_rate_gercek": 52.2,
+          "win_rate_permutasyon": 53.7,
+          "fark": -1.5,
+          "sharpe_gercek": -0.33
+        },
+        {
+          "sembol": "SENTETIK_2",
+          "pazar": "KRIPTO",
+          "interval": "1d",
+          "win_rate_gercek": 47.7,
+          "win_rate_permutasyon": 49.8,
+          "fark": -2.2,
+          "sharpe_gercek": -1.46
+        },
+        {
+          "sembol": "SENTETIK_3",
+          "pazar": "KRIPTO",
+          "interval": "1d",
+          "win_rate_gercek": 52.5,
+          "win_rate_permutasyon": 52.3,
+          "fark": 0.2,
+          "sharpe_gercek": -1.06
+        },
+        {
+          "sembol": "SENTETIK_4",
+          "pazar": "KRIPTO",
+          "interval": "1d",
+          "win_rate_gercek": 38.8,
+          "win_rate_permutasyon": 54.2,
+          "fark": -15.3,
+          "sharpe_gercek": -4.73
+        },
+        {
+          "sembol": "SENTETIK_5",
+          "pazar": "KRIPTO",
+          "interval": "1d",
+          "win_rate_gercek": 59.8,
+          "win_rate_permutasyon": 51.2,
+          "fark": 8.7,
+          "sharpe_gercek": 1.71
+        },
+        {
+          "sembol": "SENTETIK_6",
+          "pazar": "KRIPTO",
+          "interval": "1d",
+          "win_rate_gercek": 53.7,
+          "win_rate_permutasyon": 47.8,
+          "fark": 5.8,
+          "sharpe_gercek": 1.42
+        },
+        {
+          "sembol": "SENTETIK_7",
+          "pazar": "KRIPTO",
+          "interval": "1d",
+          "win_rate_gercek": 50.0,
+          "win_rate_permutasyon": 54.2,
+          "fark": -4.2,
+          "sharpe_gercek": -1.09
+        },
+        {
+          "sembol": "SENTETIK_8",
+          "pazar": "KRIPTO",
+          "interval": "1d",
+          "win_rate_gercek": 57.5,
+          "win_rate_permutasyon": 51.0,
+          "fark": 6.5,
+          "sharpe_gercek": 3.1
+        },
+        {
+          "sembol": "SENTETIK_9",
+          "pazar": "KRIPTO",
+          "interval": "1d",
+          "win_rate_gercek": 56.5,
+          "win_rate_permutasyon": 50.3,
+          "fark": 6.2,
+          "sharpe_gercek": 2.7
+        }
+      ]
+    },
+    "piyasa": {
+      "toplam_test_sayisi": 8,
+      "basarili_test_sayisi": 7,
+      "basarisiz_test_sayisi": 1,
+      "win_rate_gercek_ortalama": 54.60829493087557,
+      "win_rate_gercek_std": 15.624090790935194,
+      "win_rate_permutasyon_ortalama": 52.07373271889401,
+      "win_rate_permutasyon_std": 5.829083244550007,
+      "ortalama_fark_gercek_eksi_permutasyon": 2.534562211981568,
+      "test_1_gercek_vs_50yuzde": {
+        "aciklama": "Gerçek Win Rate'ler %50'den (yazı-tura şansından) istatistiksel olarak FARKLI mı? (DİKKAT: bu test tek başına YETERSİZ, bkz. test_3_baseline_karsilastirma)",
+        "t_istatistigi": 0.7224721947627507,
+        "p_degeri": 0.49718556475403924,
+        "anlamli_mi_0.05": false
+      },
+      "test_2_gercek_vs_permutasyon": {
+        "aciklama": "Gerçek etiketlerle elde edilen performans, RASTGELE etiketlerle elde edilenden anlamlı şekilde farklı mı?",
+        "t_istatistigi": 0.43594994669221215,
+        "p_degeri": 0.6781209627461708,
+        "anlamli_mi_0.05": false
+      },
+      "kombinasyon_detaylari": [
+        {
+          "sembol": "KCHOL.IS",
+          "pazar": "TR_HISSE",
+          "interval": "1d",
+          "win_rate_gercek": 66.1,
+          "win_rate_permutasyon": 54.8,
+          "fark": 11.3,
+          "sharpe_gercek": 8.49
+        },
+        {
+          "sembol": "AKBNK.IS",
+          "pazar": "TR_HISSE",
+          "interval": "1d",
+          "win_rate_gercek": 56.5,
+          "win_rate_permutasyon": 56.5,
+          "fark": 0.0,
+          "sharpe_gercek": 4.04
+        },
+        {
+          "sembol": "PETKM.IS",
+          "pazar": "TR_HISSE",
+          "interval": "1d",
+          "win_rate_gercek": 17.7,
+          "win_rate_permutasyon": 45.2,
+          "fark": -27.4,
+          "sharpe_gercek": -23.07
+        },
+        {
+          "sembol": "PGSUS.IS",
+          "pazar": "TR_HISSE",
+          "interval": "1d",
+          "win_rate_gercek": 54.8,
+          "win_rate_permutasyon": 61.3,
+          "fark": -6.5,
+          "sharpe_gercek": 2.68
+        },
+        {
+          "sembol": "VESTL.IS",
+          "pazar": "TR_HISSE",
+          "interval": "1d",
+          "win_rate_gercek": 58.1,
+          "win_rate_permutasyon": 43.5,
+          "fark": 14.5,
+          "sharpe_gercek": 3.04
+        },
+        {
+          "sembol": "TOASO.IS",
+          "pazar": "TR_HISSE",
+          "interval": "1d",
+          "win_rate_gercek": 62.9,
+          "win_rate_permutasyon": 50.0,
+          "fark": 12.9,
+          "sharpe_gercek": 3.41
+        },
+        {
+          "sembol": "ENKAI.IS",
+          "pazar": "TR_HISSE",
+          "interval": "1d",
+          "win_rate_gercek": 66.1,
+          "win_rate_permutasyon": 53.2,
+          "fark": 12.9,
+          "sharpe_gercek": 8.83
+        }
+      ],
+      "test_3_baseline_karsilastirma": {
+        "aciklama": "ASIL CEVAP: gerçek piyasa farkı, rastgele yürüyüş baseline'ını AŞIYOR MU? Aşmıyorsa gözlemlenen sinyal muhtemelen sahte (matematiksel artefakt).",
+        "rastgele_yuruyus_baseline_farki": 0.12,
+        "gercek_piyasa_farki": 2.53,
+        "baseline_asildi_mi": true,
+        "asim_miktari": 2.42
+      }
+    }
+  },
+  "test_b_farkli_donem": {
+    "toplam_test_sayisi": 5,
+    "basarili_test_sayisi": 5,
+    "basarisiz_test_sayisi": 0,
+    "win_rate_gercek_ortalama": 58.70967741935484,
+    "win_rate_gercek_std": 4.029030966708648,
+    "win_rate_permutasyon_ortalama": 56.774193548387096,
+    "win_rate_permutasyon_std": 11.869915801918772,
+    "ortalama_fark_gercek_eksi_permutasyon": 1.9354838709677409,
+    "test_1_gercek_vs_50yuzde": {
+      "aciklama": "Gerçek Win Rate'ler %50'den (yazı-tura şansından) istatistiksel olarak FARKLI mı? (DİKKAT: bu test tek başına YETERSİZ, bkz. test_3_baseline_karsilastirma)",
+      "t_istatistigi": 4.323460152737349,
+      "p_degeri": 0.012413498620416689,
+      "anlamli_mi_0.05": true
+    },
+    "test_2_gercek_vs_permutasyon": {
+      "aciklama": "Gerçek etiketlerle elde edilen performans, RASTGELE etiketlerle elde edilenden anlamlı şekilde farklı mı?",
+      "t_istatistigi": 0.28734788556634516,
+      "p_degeri": 0.7881176570369857,
+      "anlamli_mi_0.05": false
+    },
+    "kombinasyon_detaylari": [
+      {
+        "sembol": "BIMAS.IS",
+        "pazar": "TR_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 54.8,
+        "win_rate_permutasyon": 59.7,
+        "fark": -4.8,
+        "sharpe_gercek": 0.12
+      },
+      {
+        "sembol": "THYAO.IS",
+        "pazar": "TR_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 62.9,
+        "win_rate_permutasyon": 58.1,
+        "fark": 4.8,
+        "sharpe_gercek": 4.75
+      },
+      {
+        "sembol": "GARAN.IS",
+        "pazar": "TR_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 53.2,
+        "win_rate_permutasyon": 54.8,
+        "fark": -1.6,
+        "sharpe_gercek": 1.89
+      },
+      {
+        "sembol": "EREGL.IS",
+        "pazar": "TR_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 62.9,
+        "win_rate_permutasyon": 37.1,
+        "fark": 25.8,
+        "sharpe_gercek": 5.92
+      },
+      {
+        "sembol": "SISE.IS",
+        "pazar": "TR_HISSE",
+        "interval": "1d",
+        "win_rate_gercek": 59.7,
+        "win_rate_permutasyon": 74.2,
+        "fark": -14.5,
+        "sharpe_gercek": 6.13
+      }
+    ]
+  }
+}

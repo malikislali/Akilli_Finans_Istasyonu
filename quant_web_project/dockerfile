@@ -1,0 +1,23 @@
+FROM python:3.13-slim
+
+# Sistem bağımlılıkları
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Önce requirements'ı kopyala (Docker cache için)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Sonra proje dosyalarını kopyala
+COPY . .
+
+# Statik dosyaları topla
+RUN python manage.py collectstatic --noinput
+
+EXPOSE 8000
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "quant_web_project.wsgi:application"]
