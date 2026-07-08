@@ -10,6 +10,7 @@ quant_app/urls.py — App seviyesi route'lar.
                        arayüzü)
 """
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
@@ -22,6 +23,27 @@ urlpatterns = [
     path('odeme/baslat/', views.iyzico_odeme_baslat, name='iyzico_odeme_baslat'),
     path('odeme/callback/', views.iyzico_callback, name='iyzico_callback'),
     path('login/', views.login_view, name='login'),
+
+    path('sifremi-unuttum/', auth_views.PasswordResetView.as_view(
+        template_name='quant_app/sifre_sifirla_form.html',
+        email_template_name='quant_app/sifre_sifirla_email.html',
+        subject_template_name='quant_app/sifre_sifirla_konu.txt',
+        success_url='/sifremi-unuttum/gonderildi/'
+    ), name='password_reset'),
+
+    path('sifremi-unuttum/gonderildi/', auth_views.PasswordResetDoneView.as_view(
+        template_name='quant_app/sifre_sifirla_gonderildi.html'
+    ), name='password_reset_done'),
+
+    path('sifre-sifirla/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+        template_name='quant_app/sifre_sifirla_onay.html',
+        success_url='/sifre-sifirla/tamamlandi/'
+    ), name='password_reset_confirm'),
+
+    path('sifre-sifirla/tamamlandi/', auth_views.PasswordResetCompleteView.as_view(
+        template_name='quant_app/sifre_sifirla_tamamlandi.html'
+    ), name='password_reset_complete'),
+    
     path('logout/', views.logout_view, name='logout'),
 
     path('analiz/', views.analiz_api_view, name='analiz_api'),

@@ -1,0 +1,20 @@
+{% extends "quant_app/base.html" %}
+{% block title %}Şifre Güncellendi — Piyasa Pusulam{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen" style="padding: 1rem;">
+  <div class="max-w-md w-full">
+    <div class="text-center mb-8">
+      <div class="font-display text-3xl font-bold text-white tracking-tight">🧭 PİYASA PUSULAM</div>
+    </div>
+    <div class="panel glow-sky rounded-2xl p-8 text-center">
+      <div style="font-size: 2.5rem; margin-bottom: 1rem;">✅</div>
+      <div class="font-display text-lg font-bold text-white" style="margin-bottom: 0.75rem;">Şifren Güncellendi</div>
+      <p class="text-sm text-muted">Artık yeni şifrenle giriş yapabilirsin.</p>
+      <div style="margin-top: 1.5rem;">
+        <a href="{% url 'login' %}" class="btn btn-sky" style="display:inline-block; text-decoration:none;">Giriş Yap</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

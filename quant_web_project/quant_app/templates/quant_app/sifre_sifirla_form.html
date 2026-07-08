@@ -1,0 +1,32 @@
+{% extends "quant_app/base.html" %}
+{% block title %}Şifremi Unuttum — Piyasa Pusulam{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen" style="padding: 1rem;">
+  <div class="max-w-md w-full">
+    <div class="text-center mb-8">
+      <div class="font-display text-3xl font-bold text-white tracking-tight">🧭 PİYASA PUSULAM</div>
+      <div class="font-mono text-xs text-muted tracking-widest mt-1">ŞİFREMİ UNUTTUM</div>
+    </div>
+    <div class="panel glow-sky rounded-2xl p-8">
+      <p class="text-sm text-muted" style="margin-bottom: 1.5rem;">
+        Hesabına kayıtlı e-posta adresini gir, sana bir şifre sıfırlama bağlantısı gönderelim.
+      </p>
+      {% if form.errors %}
+        <div class="message-error">Lütfen geçerli bir e-posta adresi girin.</div>
+      {% endif %}
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-6">
+          <label class="field-label">E-posta Adresi</label>
+          <input type="email" name="email" required autofocus class="field">
+        </div>
+        <button type="submit" class="btn btn-sky">Sıfırlama Bağlantısı Gönder</button>
+      </form>
+      <div class="text-center text-sm text-muted" style="margin-top: 1.5rem;">
+        <a href="{% url 'login' %}">← Girişe dön</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

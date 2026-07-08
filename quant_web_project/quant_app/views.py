@@ -162,7 +162,7 @@ def iyzico_odeme_baslat(request):
         },
         'basketItems': [{
             'id': f'plan-{plan.ad}',
-            'name': f'Sovereign Cockpit {plan.get_ad_display()} Abonelik',
+            'name': f'Piyasa Pusulam {plan.get_ad_display()} Abonelik',
             'category1': 'Yazılım',
             'itemType': 'VIRTUAL',
             'price': str(plan.fiyat_tl),

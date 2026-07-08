@@ -1,0 +1,10 @@
+Merhaba {{ user.get_username }},
+
+Piyasa Pusulam hesabın için bir şifre sıfırlama isteği aldık.
+
+Şifreni sıfırlamak için aşağıdaki bağlantıya tıkla:
+{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+
+Bu isteği sen yapmadıysan, bu e-postayı görmezden gelebilirsin — şifren değişmeyecek.
+
+Piyasa Pusulam Ekibi

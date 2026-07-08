@@ -1,6 +1,6 @@
 """
 =====================================================================
-🏛️ QUANT AI - SOVEREIGN CORE (quant_ml_core.py)
+🧭 QUANT AI - PİYASA PUSULAM CORE (quant_ml_core.py)
 =====================================================================
 Bu dosya, Streamlit dashboard V61.2'nin TÜM motor mantığını
 (veri çekme, gösterge hesaplama, ML pipeline, kalibrasyon, backtest)

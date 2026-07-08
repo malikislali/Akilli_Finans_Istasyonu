@@ -20,8 +20,8 @@ from .models import (
 )
 
 # ── Site başlığını özelleştir ──
-admin.site.site_header = "🏛️ Sovereign Cockpit — Admin"
-admin.site.site_title = "Sovereign Admin"
+admin.site.site_header = "🧭 Piyasa Pusulam — Admin"
+admin.site.site_title = "Piyasa Pusulam Admin"
 admin.site.index_title = "Yönetim Paneli"
 
 
