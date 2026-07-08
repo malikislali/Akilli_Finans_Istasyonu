@@ -450,3 +450,71 @@ input, select, textarea, button { font-family: inherit; }
   border-radius: 0.5rem; display: inline-flex; align-items: center; gap: 0.4rem;
 }
 .hak-bilgisi-etiketi.tukendi { color: #F87171; border-color: rgba(248,113,113,0.4); }
+
+/* ── Tarama filtre grupları: kutular halinde, masaüstünde 2 sütun, mobilde 1 sütun ── */
+.tarama-filtre-gruplari {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+.tarama-filtre-grup {
+  background: var(--bg-deep);
+  border: 1px solid var(--border-faint);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+@media (max-width: 640px) {
+  .tarama-filtre-gruplari {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Market liste satırı: mobilde taşmasın, alt alta dizilsin ── */
+@media (max-width: 480px) {
+  .market-varlik-satiri {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 0.4rem;
+  }
+  .market-varlik-satiri > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ── Takip listesi: mobilde uzun sembol isimleri taşmasın ── */
+@media (max-width: 480px) {
+  .takip-ogesi {
+    flex-wrap: wrap;
+  }
+  .takip-ogesi-link {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* ── Periyot seçici: düzenli 5x2 grid (masaüstü), mobilde 3 sütun ── */
+.periyot-secici {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.4rem;
+}
+@media (max-width: 640px) {
+  .periyot-secici {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ── Sıralama butonları: düzenli grid ── */
+#market-siralama-secici {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+}
+@media (max-width: 640px) {
+  #market-siralama-secici {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

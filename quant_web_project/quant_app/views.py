@@ -427,7 +427,6 @@ def market_fiyatlar_api(request, pazar):
 
     return JsonResponse({'basarili': True, 'pazar': pazar, 'interval': interval, 'varliklar': sonuclar})
 
-
 CACHE_SURESI_SANIYE = 5 * 60  # 5 dakika
 
 SIRALAMA_ANAHTAR_FONKSIYONLARI = {

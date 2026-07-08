@@ -16,12 +16,14 @@
     <span style="font-size: 1.8rem;">{{ pazar_bilgisi.emoji }}</span>
     <h1>{{ pazar_bilgisi.ad }}</h1>
   </div>
-
-  <!-- ---------------- ARAMA KUTUSU (autocomplete) ---------------- -->
+<!-- ---------------- ARAMA KUTUSU (autocomplete) ---------------- -->
   <div class="market-arama-kutusu">
     <input type="text" id="market-arama-input" class="market-arama-input"
            placeholder="Varlık ara (örn. B yazınca B ile başlayanlar gelir)..." autocomplete="off">
     <div id="market-arama-sonuclari" class="market-arama-sonuclari gizli"></div>
+  </div>
+  <div id="analiz-bilgi-notu" class="text-xs text-muted font-mono hidden" style="margin-top:0.5rem;">
+    Yukarıdaki arama kutusundan bir varlık seçtiğinizde burada detaylı analiz açılır.
   </div>
 
 <!-- ---------------- PERİYOT SEÇİCİ ---------------- -->
@@ -52,6 +54,7 @@
       <button class="siralama-buton" data-siralama="hacim_azalan">📉🔊 Hacim Azalan</button>
     </div>
     <div style="display:flex; align-items:center; gap:0.5rem;">
+      <span id="periyot-veri-etiketi" class="son-guncelleme-etiketi"></span>
       <span id="son-guncelleme-etiketi" class="son-guncelleme-etiketi"></span>
       <div class="gorunum-modu-secici" id="gorunum-modu-secici">
         <button class="gorunum-modu-buton aktif" data-mod="liste" title="Liste görünümü">☰</button>
@@ -159,7 +162,6 @@
     <div class="flex items-center justify-between" style="flex-wrap: wrap; gap: 0.75rem;">
       <div id="analiz-secili-varlik-baslik">
         <div class="font-display text-lg font-bold text-white" id="analiz-secili-varlik">Bir varlık seçin</div>
-        <div class="text-xs text-muted font-mono">Yukarıdaki arama kutusundan bir varlık seçtiğinizde burada detaylı analiz açılır.</div>
       </div>
     <!--  <a href="{% url 'dashboard' %}" class="laboratuvar-link" style="width: auto; padding: 0.6rem 1.1rem;">🧪 Laboratuvar'da Aç</a>-->
     </div>
@@ -190,8 +192,8 @@
   </div>
 
   <!-- ---- ANA FİYAT GRAFİĞİ ---- -->
-  <div class="panel rounded-xl p-5 mb-4">
-    <canvas id="ana-fiyat-grafik" height="100"></canvas>
+  <div class="panel rounded-xl p-5 mb-4" style="position:relative; height: 340px;">
+    <canvas id="ana-fiyat-grafik"></canvas>
   </div>
 
   <!-- ---- OSİLATÖR SEÇİMİ ---- -->
@@ -303,8 +305,17 @@ document.querySelectorAll('.alt-nav-buton').forEach(btn => {
     btn.classList.add('aktif');
     document.querySelectorAll('.market-sekme-panel').forEach(p => p.style.display = 'none');
     document.getElementById(btn.dataset.sekme).style.display = 'block';
+    analizBilgiNotuGuncelle();
   });
 });
+
+function analizBilgiNotuGuncelle() {
+  const notu = document.getElementById('analiz-bilgi-notu');
+  if (!notu) return;
+  const analizAktif = document.getElementById('analiz-sekme').style.display !== 'none';
+  const varlikSecili = document.getElementById('analiz-secili-varlik').textContent !== 'Bir varlık seçin';
+  notu.classList.toggle('hidden', !(analizAktif && !varlikSecili));
+}
 
 // ---------------- PERİYOT SEÇİCİ DOLDUR ----------------
 let aktifPeriyot = null;
@@ -382,6 +393,7 @@ function analizSekmesineGec(sembol) {
   document.getElementById('analiz-bos-durum').style.display = 'none';
   document.getElementById('analiz-secili-varlik-karti-wrapper').style.display = 'block';
   analizVerisiYukleVeCiz(sembol);
+  analizBilgiNotuGuncelle();
 }
 
 // =====================================================================
@@ -651,12 +663,11 @@ function osilatorPanelleriniCiz(veri) {
   const aktifOsilatorler = Object.keys(gostergeTercihleri.osilator).filter(k => gostergeTercihleri.osilator[k]);
 
   container.innerHTML = aktifOsilatorler.map(anahtar => `
-    <div class="panel rounded-xl p-5 mb-4">
+    <div class="panel rounded-xl p-5 mb-4" style="position:relative; height: 220px;">
       <div class="font-display text-sm font-bold text-white mb-3">${OSILATOR_ETIKETLERI[anahtar]}</div>
-      <canvas id="osilator-grafik-${anahtar}" height="70"></canvas>
+      <canvas id="osilator-grafik-${anahtar}"></canvas>
     </div>
   `).join('');
-
   if (typeof Chart === 'undefined') return;
 
   aktifOsilatorler.forEach(anahtar => {
@@ -777,14 +788,14 @@ document.getElementById('market-varlik-listesi').innerHTML = '';
 async function marketVarlikListesiniYukle(arka_plan_yenileme = false) {
   const container = document.getElementById('market-varlik-listesi');
   const etiket = document.getElementById('son-guncelleme-etiketi');
+  const periyotEtiketEl = document.getElementById('periyot-veri-etiketi');
 
-  // İlk yükleme (container boşsa) → "Yükleniyor..." göster
-  // Arka plan yenileme → mevcut veriyi bozma, sessizce güncelle
-  if (!arka_plan_yenileme && container.children.length === 0) {
+  // Manuel değişiklikte (periyot/sıralama tıklaması) HER ZAMAN yükleniyor göster
+  // — eski veri ekranda "takılı" kalmasın.
+  if (!arka_plan_yenileme) {
     container.className = aktifGorunumModu === 'kutu' ? 'varlik-kart-grid' : 'market-varlik-listesi';
-    //container.innerHTML = '<div class="text-sm text-muted" style="padding:1rem;">Yükleniyor...</div>';
     container.innerHTML = `
-  <div style="padding:1rem;">
+  <div style="padding:1rem; grid-column: 1 / -1;">
     <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
       <span class="text-xs text-muted">Varlıklar yükleniyor...</span>
       <span id="varlik-progress-yuzde" class="text-xs font-mono" style="color:var(--accent-sky);">%0</span>
@@ -794,15 +805,15 @@ async function marketVarlikListesiniYukle(arka_plan_yenileme = false) {
     </div>
   </div>`;
 
-  // BURAYA EKLE:
     let simYuzde = 0;
+    clearInterval(window._varlikProgressInterval);
     window._varlikProgressInterval = setInterval(() => {
       simYuzde = Math.min(simYuzde + 5, 90);
       const b = document.getElementById('varlik-progress-bar');
       const y = document.getElementById('varlik-progress-yuzde');
       if (b) b.style.width = simYuzde + '%';
       if (y) y.textContent = '%' + simYuzde;
-    }, 100);
+    }, 150);
   }
 
   if (etiket && !arka_plan_yenileme) etiket.textContent = '↻ Yükleniyor...';
@@ -812,33 +823,29 @@ async function marketVarlikListesiniYukle(arka_plan_yenileme = false) {
     const siralamaParam = aktifSiralama ? `&siralama=${aktifSiralama}` : '';
     const resp = await fetch(`/api/market-fiyatlar/${PAZAR}/?interval=${periyot}${siralamaParam}`);
     const veri = await resp.json();
+
+    clearInterval(window._varlikProgressInterval);
+
     if (!veri.basarili) {
       if (!arka_plan_yenileme) container.innerHTML = '<div class="text-sm text-red">Yüklenemedi.</div>';
       return;
     }
 
-    // Boş liste → arka planda hazırlanıyor, mesaj göster
+    // Boş liste → cache henüz dolmamış, kısa süre sonra otomatik tekrar dene
     if (veri.varliklar.length === 0) {
-      if (!arka_plan_yenileme) {
-        container.innerHTML = '<div class="text-sm text-muted" style="padding:1rem;">⏳ Veri arka planda hazırlanıyor, lütfen bekleyin...</div>';
-      }
+      container.innerHTML = '<div class="text-sm text-muted" style="padding:1rem; grid-column: 1 / -1;">⏳ Bu periyot için veri hazırlanıyor, birkaç saniye içinde tekrar denenecek...</div>';
+      setTimeout(() => marketVarlikListesiniYukle(true), 3000);
       return;
     }
 
-    // Veri başarıyla geldi — listeyi güncelle
     container.className = aktifGorunumModu === 'kutu' ? 'varlik-kart-grid' : 'market-varlik-listesi';
     const uretici = aktifGorunumModu === 'kutu' ? kutu_karti_html_uret : liste_satiri_html_uret;
-    //container.innerHTML = veri.varliklar.map(uretici).join('');
-
-
-    clearInterval(window._varlikProgressInterval);
-    const bar = document.getElementById('varlik-progress-bar');
-    const yuzde = document.getElementById('varlik-progress-yuzde');
-    if (bar) { bar.style.width = '100%'; }
-    if (yuzde) { yuzde.textContent = '%100'; }
-    container.className = aktifGorunumModu === 'kutu' ? 'varlik-kart-grid' : 'market-varlik-listesi';
     container.innerHTML = veri.varliklar.map(uretici).join('');
 
+    if (periyotEtiketEl) {
+      const eslesen = INTERVAL_SECENEKLERI.find(([_, deger]) => deger === (veri.interval || periyot));
+      periyotEtiketEl.textContent = eslesen ? `📅 ${eslesen[0]}` : '';
+    }
 
     sonGuncellemeZamani = Date.now();
     sonGuncellemeEtiketiniGuncelle();

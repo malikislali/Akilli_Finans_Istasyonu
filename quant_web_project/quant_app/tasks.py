@@ -15,8 +15,7 @@ from . import quant_ml_core as core
 # Her pazar için ön-ısıtılacak periyot(lar). Şimdilik sadece '1d'
 # (varsayılan/en çok kullanılan) — istersen sonra '4h' gibi ek
 # periyotlar da buraya eklenebilir.
-ON_ISITILACAK_PERIYOTLAR = ['1d', '4h', '1h', '30m', '15m', '5m']
-
+ON_ISITILACAK_PERIYOTLAR = ['15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '1wk']
 
 @shared_task(name='quant_app.market_cache_yenile')
 def market_cache_yenile():
