@@ -603,9 +603,39 @@ function seciliVarlikKartiniDoldur(sembol, veri) {
   `;
 }
 
-function temelEksenAyarlari() {
+function kisaTarihEtiketleri(tarihler) {
+  return tarihler.map(t => {
+    const duzeltilmisMetin = typeof t === 'string' ? t.replace(' ', 'T') : t;
+    const tarih = new Date(duzeltilmisMetin);
+    if (isNaN(tarih)) return t;
+    return tarih.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' })
+      + ' ' + tarih.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+  });
+}
+
+function osilatorEksenAyarlari() {
   return {
-    x: { ticks: { color: '#64748B', maxTicksLimit: 8 }, grid: { color: '#1E293B' } },
+    x: {
+      ticks: { color: '#64748B', maxTicksLimit: 4, maxRotation: 0, minRotation: 0, autoSkip: true },
+      grid: { color: '#1E293B' },
+    },
+    y: { ticks: { color: '#64748B' }, grid: { color: '#1E293B' } },
+  };
+}
+
+function temelEksenAyarlari() {
+  const mobil = window.innerWidth < 640;
+  return {
+    x: {
+      ticks: {
+        color: '#64748B',
+        maxTicksLimit: mobil ? 4 : 8,
+        maxRotation: mobil ? 0 : 45,
+        minRotation: 0,
+        autoSkip: true,
+      },
+      grid: { color: '#1E293B' },
+    },
     y: { ticks: { color: '#64748B' }, grid: { color: '#1E293B' } },
   };
 }
@@ -630,14 +660,19 @@ function anaFiyatGrafiginiCiz(veri) {
 
   grafikNesneleri['ana'] = new Chart(ctx, {
     type: 'line',
-    data: { labels: veri.tarihler, datasets: datasetler },
+    data: { labels: kisaTarihEtiketleri(veri.tarihler), datasets: datasetler },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
       plugins: { legend: { labels: { color: '#94A3B8' } } },
       scales: temelEksenAyarlari(),
     },
   });
+
+  setTimeout(() => {
+    if (grafikNesneleri['ana']) grafikNesneleri['ana'].resize();
+  }, 100);
 }
 
 const OSILATOR_VERI_HARITASI = {
@@ -663,7 +698,7 @@ function osilatorPanelleriniCiz(veri) {
   const aktifOsilatorler = Object.keys(gostergeTercihleri.osilator).filter(k => gostergeTercihleri.osilator[k]);
 
   container.innerHTML = aktifOsilatorler.map(anahtar => `
-    <div class="panel rounded-xl p-5 mb-4" style="position:relative; height: 220px;">
+   <div class="panel rounded-xl p-5 mb-4" style="position:relative; height: 280px;">
       <div class="font-display text-sm font-bold text-white mb-3">${OSILATOR_ETIKETLERI[anahtar]}</div>
       <canvas id="osilator-grafik-${anahtar}"></canvas>
     </div>
@@ -684,14 +719,19 @@ function osilatorPanelleriniCiz(veri) {
 
     grafikNesneleri[canvasId] = new Chart(canvasEl.getContext('2d'), {
       type: 'line',
-      data: { labels: veri.tarihler, datasets: datasetler },
+      data: { labels: kisaTarihEtiketleri(veri.tarihler), datasets: datasetler },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
-        plugins: { legend: { labels: { color: '#94A3B8' } } },
-        scales: temelEksenAyarlari(),
+        plugins: { legend: { labels: { color: '#94A3B8', boxWidth: 20, padding: 8 } } },
+        scales: osilatorEksenAyarlari(),
       },
     });
+
+    setTimeout(() => {
+      if (grafikNesneleri[canvasId]) grafikNesneleri[canvasId].resize();
+    }, 100);
   });
 }
 
