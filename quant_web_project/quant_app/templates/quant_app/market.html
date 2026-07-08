@@ -522,13 +522,17 @@ function seciliVarlikKartiniDoldur(sembol, veri) {
     : 'linear-gradient(135deg, rgba(248,113,113,0.2) 0%, rgba(220,38,38,0.35) 100%)';
   kart1.style.borderColor = degisimYuzde >= 0 ? 'rgba(52,211,153,0.3)' : 'rgba(248,113,113,0.3)';
 
+  const _periyotDeger = aktifPeriyot || '1d';
+  const _periyotEslesen = INTERVAL_SECENEKLERI.find(([_, deger]) => deger === _periyotDeger);
+  const periyotEtiketMetni = _periyotEslesen ? _periyotEslesen[0] : _periyotDeger;
+
   kart1.innerHTML = `
     <div class="varlik-karti-ust">
       <span class="varlik-karti-sembol">${sembolGoster(sembol, PAZAR)}</span>
       <button class="yildiz-buton" onclick="takipListesineEkle('${sembol}', '${PAZAR}')">⭐</button>
     </div>
     <div class="varlik-karti-fiyat">${paraBirimiFormatla(fiyat, PAZAR)}</div>
-    <div class="varlik-karti-degisim ${degisimSinif}">${isaret}${fmt(degisimYuzde)}%</div>
+    <div class="varlik-karti-degisim ${degisimSinif}">${isaret}${fmt(degisimYuzde)}% <span style="font-size:0.7rem; opacity:0.75; font-weight:400;">(${periyotEtiketMetni})</span></div>
     <div class="varlik-karti-detaylar">
       <span><b>Hacim:</b> ${hacimKisalt(hacim)}</span>
       <span><b>Açılış:</b> ${paraBirimiFormatla(acilis, PAZAR)}</span>

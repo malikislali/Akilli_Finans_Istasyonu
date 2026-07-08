@@ -451,10 +451,10 @@ input, select, textarea, button { font-family: inherit; }
 }
 .hak-bilgisi-etiketi.tukendi { color: #F87171; border-color: rgba(248,113,113,0.4); }
 
-/* ── Tarama filtre grupları: kutular halinde, masaüstünde 2 sütun, mobilde 1 sütun ── */
+/* ── Tarama filtre grupları: gerçek responsive 4→2→1 ── */
 .tarama-filtre-gruplari {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
 }
 .tarama-filtre-grup {
@@ -463,7 +463,12 @@ input, select, textarea, button { font-family: inherit; }
   border-radius: 0.75rem;
   padding: 1rem;
 }
-@media (max-width: 640px) {
+@media (max-width: 900px) {
+  .tarama-filtre-gruplari {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
   .tarama-filtre-gruplari {
     grid-template-columns: 1fr;
   }
@@ -517,4 +522,39 @@ input, select, textarea, button { font-family: inherit; }
   #market-siralama-secici {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/* ── Takip Listesi Ekleme Paneli — çakışma/taşma düzeltmesi ── */
+#takip-ekle-paneli {
+  position: static !important;
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--border-faint) !important;
+  border-radius: 0.6rem !important;
+  padding: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+  z-index: 5 !important;
+}
+#takip-ekle-paneli.gizli {
+  display: none !important;
+}
+#takip-ekle-sonuclar {
+  max-height: 220px !important;
+  overflow-y: auto !important;
+  margin-top: 0.5rem !important;
+}
+.takip-ekle-pazar-secici {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 0.4rem !important;
+  margin-bottom: 0.5rem !important;
+}
+.takip-ekle-arama-input {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  position: static !important;
+}
+.yeni-sidebar-laboratuvar {
+  position: relative !important;
+  margin-top: 1rem !important;
+  clear: both !important;
 }
