@@ -93,10 +93,13 @@
   margin-bottom: 0.75rem;
 }
 .takip-listesi-icerik {
+  max-height: 45vh !important;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  overflow-y: auto;
+  overflow-y: auto !important;
+  flex-shrink: 0 !important;
+  min-height: min-content !important;
 }
 .takip-ogesi {
   display: flex;
