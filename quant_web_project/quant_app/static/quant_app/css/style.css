@@ -568,3 +568,11 @@ input, select, textarea, button { font-family: inherit; }
   padding-top: 0.5rem;
   padding-bottom: 0.25rem;
 }
+/* ── position:sticky'nin çalışabilmesi için üst elementlerin overflow'unu serbest bırak ── */
+.yeni-layout,
+.yeni-ana-icerik {
+  overflow: visible !important;
+}
+html, body {
+  overflow-x: hidden;
+}
