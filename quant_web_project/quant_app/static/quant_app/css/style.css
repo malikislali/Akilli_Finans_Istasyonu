@@ -483,7 +483,14 @@ input, select, textarea, button { font-family: inherit; }
   }
   .market-varlik-satiri > div {
     width: 100%;
+  }
+  .market-varlik-satiri > div:first-child {
+    justify-content: flex-start;
+  }
+  .market-varlik-satiri > div:last-child {
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 }
 
@@ -612,26 +619,40 @@ input, select, textarea, button { font-family: inherit; }
 /* ── Mobilde alt navigasyon (Anasayfa/Tarama/Analiz) ekranın en altına sabitlenir ── */
 @media (max-width: 640px) {
   .alt-navigasyon {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    z-index: 9999 !important;
     background: var(--bg-panel);
     border-top: 1px solid var(--border-faint);
-    display: flex;
+    display: flex !important;
     justify-content: space-around;
-    margin: 0;
-    padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+    align-items: center;
+    margin: 0 !important;
+    padding: 0.4rem 0 calc(0.4rem + env(safe-area-inset-bottom));
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
   }
   .alt-nav-buton {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
     text-align: center;
-    font-size: 0.78rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.3rem 0;
+    border-radius: 0.5rem;
+    color: var(--text-muted);
+  }
+  .alt-nav-buton.aktif {
+    color: var(--accent-sky);
   }
   /* İçerik, alt sabit navigasyonun altında kalmasın diye boşluk bırak */
   .yeni-ana-icerik {
-    padding-bottom: 4.5rem !important;
+    padding-bottom: 5rem !important;
   }
 }
 
