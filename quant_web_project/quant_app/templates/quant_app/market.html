@@ -16,7 +16,7 @@
     <h1>{{ pazar_bilgisi.ad }}</h1>
   </div>
 <!-- ---------------- ARAMA KUTUSU (autocomplete) ---------------- -->
-  <div class="market-arama-kutusu">
+  <div class="market-arama-kutusu" id="market-arama-kutusu">
     <input type="text" id="market-arama-input" class="market-arama-input"
            placeholder="Varlık ara (örn. B yazınca B ile başlayanlar gelir)..." autocomplete="off">
     <div id="market-arama-sonuclari" class="market-arama-sonuclari gizli"></div>
@@ -308,6 +308,12 @@ async function limitDurumunuYukle() {
 }
 
 // ---------------- ALT NAVİGASYON SEKME GEÇİŞİ ----------------
+function aramaKutusuGorunurluguGuncelle(aktifSekme) {
+  const aramaKutusu = document.getElementById('market-arama-kutusu');
+  if (!aramaKutusu) return;
+  aramaKutusu.style.display = (aktifSekme === 'anasayfa-sekme') ? 'none' : 'block';
+}
+
 document.querySelectorAll('.alt-nav-buton').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.alt-nav-buton').forEach(b => b.classList.remove('aktif'));
@@ -315,8 +321,11 @@ document.querySelectorAll('.alt-nav-buton').forEach(btn => {
     document.querySelectorAll('.market-sekme-panel').forEach(p => p.style.display = 'none');
     document.getElementById(btn.dataset.sekme).style.display = 'block';
     analizBilgiNotuGuncelle();
+    aramaKutusuGorunurluguGuncelle(btn.dataset.sekme);
   });
 });
+
+aramaKutusuGorunurluguGuncelle('anasayfa-sekme'); // Sayfa ilk açıldığında Anasayfa aktif olduğu için gizle
 
 function analizBilgiNotuGuncelle() {
   const notu = document.getElementById('analiz-bilgi-notu');
@@ -425,6 +434,7 @@ function analizSekmesineGec(sembol) {
   document.getElementById('analiz-secili-varlik-karti-wrapper').style.display = 'block';
   analizVerisiYukleVeCiz(sembol);
   analizBilgiNotuGuncelle();
+  aramaKutusuGorunurluguGuncelle('analiz-sekme');
 }
 
 // =====================================================================
