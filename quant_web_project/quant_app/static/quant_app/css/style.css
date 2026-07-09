@@ -573,3 +573,70 @@ input, select, textarea, button { font-family: inherit; }
 .yeni-ana-icerik {
   overflow: visible !important;
 }
+
+/* ── Mobilde periyot seçici katlanır, masaüstünde her zaman açık ── */
+.periyot-mobil-toggle {
+  display: none;
+  width: 100%;
+  text-align: left;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-faint);
+  border-radius: 0.6rem;
+  padding: 0.6rem 0.9rem;
+  color: var(--text-main);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.periyot-mobil-ok {
+  float: right;
+  transition: transform 0.15s ease;
+}
+.periyot-mobil-toggle.acik .periyot-mobil-ok {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 640px) {
+  .periyot-mobil-toggle {
+    display: block;
+  }
+  #periyot-secici {
+    display: none !important;
+  }
+  #periyot-secici.mobil-acik {
+    display: grid !important;
+  }
+}
+
+/* ── Mobilde alt navigasyon (Anasayfa/Tarama/Analiz) ekranın en altına sabitlenir ── */
+@media (max-width: 640px) {
+  .alt-navigasyon {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border-faint);
+    display: flex;
+    justify-content: space-around;
+    margin: 0;
+    padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+  }
+  .alt-nav-buton {
+    flex: 1;
+    text-align: center;
+    font-size: 0.78rem;
+  }
+  /* İçerik, alt sabit navigasyonun altında kalmasın diye boşluk bırak */
+  .yeni-ana-icerik {
+    padding-bottom: 4.5rem !important;
+  }
+}
+
+/* ── Body'de olası boşluk kalmasın (mobil sabit nav tam tabana yapışsın) ── */
+html, body {
+  margin: 0;
+  padding: 0;
+}

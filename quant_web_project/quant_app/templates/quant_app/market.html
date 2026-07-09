@@ -26,6 +26,9 @@
   </div>
 
 <!-- ---------------- PERİYOT SEÇİCİ ---------------- -->
+  <button id="periyot-mobil-toggle" class="periyot-mobil-toggle" type="button">
+    📅 Periyot: <span id="periyot-mobil-secili">—</span> <span class="periyot-mobil-ok">▾</span>
+  </button>
   <div class="periyot-secici" id="periyot-secici">
     <!-- JS ile dolduruluyor (pazara göre farklı periyot setleri) -->
   </div>
@@ -335,16 +338,20 @@ function periyotSeciciDoldur() {
   container.querySelectorAll('.periyot-buton').forEach(btn => {
     if (btn.classList.contains('aktif')) aktifPeriyot = btn.dataset.deger;
     btn.addEventListener('click', () => {
+      
       if (btn.dataset.kilitli) { ucretliToastGoster(); return; }
       container.querySelectorAll('.periyot-buton').forEach(b => b.classList.remove('aktif'));
-
-
       btn.classList.add('aktif');
       aktifPeriyot = btn.dataset.deger;
-
-      // Anasayfa sekmesindeki liste de SEÇİLİ PERİYODA göre değişim/hacim
+      periyotMobilEtiketiGuncelle();
+      periyotSeciciEl.classList.remove('mobil-acik');
+      if (periyotMobilToggle) periyotMobilToggle.classList.remove('acik');
+      
+       // Anasayfa sekmesindeki liste de SEÇİLİ PERİYODA göre değişim/hacim
       // gösterdiği için, periyot değişince yeniden çekilmesi gerekir.
       marketVarlikListesiniYukle();
+      
+      
 
       // Analiz sekmesinde bir varlık seçiliyse, periyot değişince veriyi yeniden çek
       const seciliVarlik = document.getElementById('analiz-secili-varlik').textContent;
@@ -355,6 +362,24 @@ function periyotSeciciDoldur() {
   });
 }
 periyotSeciciDoldur();
+
+// ---------------- MOBİL PERİYOT AÇ/KAPA ----------------
+const periyotMobilToggle = document.getElementById('periyot-mobil-toggle');
+const periyotSeciciEl = document.getElementById('periyot-secici');
+const periyotMobilSeciliEtiket = document.getElementById('periyot-mobil-secili');
+
+function periyotMobilEtiketiGuncelle() {
+  const aktifBtn = periyotSeciciEl.querySelector('.periyot-buton.aktif');
+  if (aktifBtn && periyotMobilSeciliEtiket) periyotMobilSeciliEtiket.textContent = aktifBtn.textContent;
+}
+periyotMobilEtiketiGuncelle();
+
+if (periyotMobilToggle) {
+  periyotMobilToggle.addEventListener('click', () => {
+    periyotSeciciEl.classList.toggle('mobil-acik');
+    periyotMobilToggle.classList.toggle('acik');
+  });
+}
 
 // ---------------- ARAMA (autocomplete) ----------------
 const aramaInput = document.getElementById('market-arama-input');
