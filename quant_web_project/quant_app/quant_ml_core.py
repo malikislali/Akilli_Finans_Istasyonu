@@ -283,6 +283,65 @@ def fetch_yahoo(symbol: str, period: str, interval: str) -> FetchResult:
     )
 
 
+TWELVE_DATA_API_KEY = os.environ.get('TWELVE_DATA_API_KEY', '')
+TWELVE_DATA_INTERVAL_MAP = {
+    '1m': '1min', '5m': '5min', '15m': '15min', '30m': '30min',
+    '60m': '1h', '1h': '1h', '2h': '2h', '4h': '4h',
+    '1d': '1day', '1wk': '1week', '1mo': '1month',
+}
+
+
+def fetch_twelvedata(symbol: str, interval: str) -> FetchResult:
+    """
+    Twelve Data'dan veri çeker — Yahoo Finance'in ABD hisseleri için bazı
+    intraday periyotlarda veri döndürmediği durumlarda YEDEK (fallback)
+    olarak kullanılır.
+    """
+    td_interval = TWELVE_DATA_INTERVAL_MAP.get(interval)
+    if not td_interval or not TWELVE_DATA_API_KEY:
+        return FetchResult(
+            df=pd.DataFrame(), source="twelvedata", requested_interval=interval,
+            actual_native_interval="", is_resampled=False,
+            warning="Twelve Data bu periyodu desteklemiyor ya da API anahtarı tanımlı değil.",
+        )
+    try:
+        resp = requests.get(
+            "https://api.twelvedata.com/time_series",
+            params={
+                "symbol": symbol,
+                "interval": td_interval,
+                "outputsize": 300,
+                "apikey": TWELVE_DATA_API_KEY,
+            },
+            timeout=10,
+        )
+        data = resp.json()
+        if data.get("status") == "error" or "values" not in data:
+            return FetchResult(
+                df=pd.DataFrame(), source="twelvedata", requested_interval=interval,
+                actual_native_interval=td_interval, is_resampled=False,
+                warning=f"Twelve Data '{symbol}' için veri döndürmedi: {data.get('message', 'bilinmeyen hata')}",
+            )
+        df = pd.DataFrame(data["values"])
+        df['datetime'] = pd.to_datetime(df['datetime'])
+        df = df.set_index('datetime').sort_index()
+        df = df.rename(columns={
+            'open': 'Open', 'high': 'High', 'low': 'Low', 'close': 'Close', 'volume': 'Volume',
+        })
+        for kolon in ['Open', 'High', 'Low', 'Close', 'Volume']:
+            if kolon in df.columns:
+                df[kolon] = pd.to_numeric(df[kolon], errors='coerce')
+        return FetchResult(
+            df=df, source="twelvedata", requested_interval=interval,
+            actual_native_interval=td_interval, is_resampled=False, warning="",
+        )
+    except Exception as exc:
+        return FetchResult(
+            df=pd.DataFrame(), source="twelvedata", requested_interval=interval,
+            actual_native_interval=td_interval, is_resampled=False,
+            warning=f"Twelve Data isteğinde hata: {exc}",
+        )
+
 USD_TRY_CACHE_KEY = "usd_try_kuru"
 USD_TRY_CACHE_SURESI_SANIYE = 600  # 10 dakika
 
@@ -482,7 +541,15 @@ MARKET_SOURCE_MAP = {
 
 
 def get_market_data(symbol: str, period: str, interval: str, market: str,
-                     prefer_source: Optional[str] = None) -> FetchResult:
+                     prefer_source: Optional[str] = None,
+                     izin_twelvedata: bool = False) -> FetchResult:
+    """
+    izin_twelvedata=True SADECE tek varlık sorgularında (kullanıcı bir
+    hisseye tıkladığında, gosterge_serileri_api) kullanılmalı. Toplu
+    liste çekiminde (market_fiyatlarini_cacheli_getir / Celery ısıtma)
+    KESİNLİKLE False kalmalı — yoksa Twelve Data'nın günlük 800 kredi
+    limiti dakikalar içinde tükeniyor.
+    """
     source = prefer_source or MARKET_SOURCE_MAP.get(market, "yahoo")
 
     if source == "binance":
@@ -494,8 +561,15 @@ def get_market_data(symbol: str, period: str, interval: str, market: str,
                 return fallback
         return result
 
-    return fetch_yahoo(symbol, period, interval)
+    result = fetch_yahoo(symbol, period, interval)
 
+    if result.df.empty and market == "ABD_HISSE" and prefer_source is None and izin_twelvedata:
+        fallback = fetch_twelvedata(symbol, interval)
+        if not fallback.df.empty:
+            fallback.warning = ((result.warning or "") + " | Yahoo'da bulunamadı, Twelve Data'ya düşüldü.").strip(" |")
+            return fallback
+
+    return result
 
 @dataclass
 class HafifFiyatSonucu:
@@ -654,7 +728,7 @@ def gosterge_serileri_getir(sembol: str, pazar: str, interval: str = "1d") -> Go
     görsel göstergeleri (ML ÇALIŞTIRMADAN) zaman serisi olarak döner."""
     try:
         period = suggest_period(pazar, interval)
-        fetch_result = get_market_data(sembol, period, interval, pazar)
+        fetch_result = get_market_data(sembol, period, interval, pazar, izin_twelvedata=True)
         df_raw = fetch_result.df
 
         # 🆕 Kripto'da 15m/30m Yahoo'da çalışmıyor (Yahoo kripto intraday
@@ -1422,7 +1496,7 @@ def analiz_yap(sembol: str, pazar: str, interval: str) -> AnalizSonucu:
     annual_factor = get_annual_factor(pazar, interval)
     komisyon_orani = get_commission_rate(pazar)
 
-    fetch_result = get_market_data(sembol, period, interval, pazar)
+    fetch_result = get_market_data(sembol, period, interval, pazar, izin_twelvedata=True)
     df_raw = fetch_result.df
 
     if df_raw.empty:

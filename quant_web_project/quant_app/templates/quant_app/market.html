@@ -238,6 +238,14 @@
 const PAZAR = "{{ pazar }}";
 const VARLIK_LISTESI = {{ varlik_listesi_json|safe }};
 const INTERVAL_SECENEKLERI = {{ interval_secenekleri_json|safe }};
+
+// Bu periyotlar, toplu liste çekiminde (Anasayfa/Tarama) Twelve Data'nın
+// ücretsiz limitine takıldığı için "parçalı" veri veriyor — o yüzden
+// sadece Anasayfa/Tarama sekmelerinde gizleniyorlar. Analiz sekmesinde
+// (tek varlık sorgusu) sorunsuz çalıştıkları için hep görünürler.
+const TOPLU_LISTEDE_SORUNLU_PERIYOTLAR = {
+  ABD_HISSE: ['15m', '30m', '60m'],
+};
 const PLAN_SEC_URL = "{% url 'plan_sec' %}";
 
 const UCRETSIZ_ACIK_PERIYOTLAR = ['4h', '1d', '1wk'];
@@ -322,6 +330,7 @@ document.querySelectorAll('.alt-nav-buton').forEach(btn => {
     document.getElementById(btn.dataset.sekme).style.display = 'block';
     analizBilgiNotuGuncelle();
     aramaKutusuGorunurluguGuncelle(btn.dataset.sekme);
+    periyotButonlariniFiltrele(btn.dataset.sekme);
   });
 });
 
@@ -362,14 +371,34 @@ function periyotSeciciDoldur() {
       
 
       // Analiz sekmesinde bir varlık seçiliyse, periyot değişince veriyi yeniden çek
-      const seciliVarlik = document.getElementById('analiz-secili-varlik').textContent;
-      if (seciliVarlik && seciliVarlik !== 'Bir varlık seçin') {
-        analizVerisiYukleVeCiz(seciliVarlik);
+     const hamSembol = document.getElementById('analiz-secili-varlik').dataset.hamSembol;
+      if (hamSembol) {
+        analizVerisiYukleVeCiz(hamSembol);
       }
     });
   });
 }
 periyotSeciciDoldur();
+
+function periyotButonlariniFiltrele(aktifSekme) {
+  const sorunlular = TOPLU_LISTEDE_SORUNLU_PERIYOTLAR[PAZAR] || [];
+  const container = document.getElementById('periyot-secici');
+  if (!container || sorunlular.length === 0) return;
+  const kisitliMi = (aktifSekme === 'anasayfa-sekme' || aktifSekme === 'tarama-sekme');
+  let seciliGizlendiMi = false;
+  container.querySelectorAll('.periyot-buton').forEach(btn => {
+    const deger = btn.dataset.deger;
+    const sorunlu = sorunlular.includes(deger);
+    const gizle = kisitliMi && sorunlu;
+    btn.style.display = gizle ? 'none' : '';
+    if (gizle && btn.classList.contains('aktif')) seciliGizlendiMi = true;
+  });
+  if (seciliGizlendiMi) {
+    const guvenliBtn = Array.from(container.querySelectorAll('.periyot-buton')).find(b => b.style.display !== 'none');
+    if (guvenliBtn) guvenliBtn.click();
+  }
+}
+periyotButonlariniFiltrele('anasayfa-sekme');
 
 // ---------------- MOBİL PERİYOT AÇ/KAPA ----------------
 const periyotMobilToggle = document.getElementById('periyot-mobil-toggle');
@@ -397,7 +426,12 @@ aramaInput.addEventListener('input', () => {
   const sorgu = aramaInput.value.trim().toUpperCase();
   if (!sorgu) { aramaSonuclari.classList.add('gizli'); return; }
 
-  const eslesenler = VARLIK_LISTESI.filter(v => v.toUpperCase().startsWith(sorgu));
+  const eslesenler = VARLIK_LISTESI.filter(v => {
+    const hamEslesme = v.toUpperCase().startsWith(sorgu);
+    const gorunenIsim = sembolGoster(v, PAZAR).toUpperCase();
+    const gorunenEslesme = gorunenIsim.startsWith(sorgu);
+    return hamEslesme || gorunenEslesme;
+  });
   if (eslesenler.length === 0) { aramaSonuclari.classList.add('gizli'); return; }
 
   aramaSonuclari.innerHTML = eslesenler.map(v => `
@@ -423,18 +457,19 @@ document.addEventListener('click', (e) => {
     aramaSonuclari.classList.add('gizli');
   }
 });
-
 function analizSekmesineGec(sembol) {
   document.querySelectorAll('.alt-nav-buton').forEach(b => b.classList.remove('aktif'));
   document.querySelector('[data-sekme="analiz-sekme"]').classList.add('aktif');
   document.querySelectorAll('.market-sekme-panel').forEach(p => p.style.display = 'none');
   document.getElementById('analiz-sekme').style.display = 'block';
   document.getElementById('analiz-secili-varlik').textContent = sembolGoster(sembol, PAZAR);
+  document.getElementById('analiz-secili-varlik').dataset.hamSembol = sembol;
   document.getElementById('analiz-bos-durum').style.display = 'none';
   document.getElementById('analiz-secili-varlik-karti-wrapper').style.display = 'block';
   analizVerisiYukleVeCiz(sembol);
   analizBilgiNotuGuncelle();
   aramaKutusuGorunurluguGuncelle('analiz-sekme');
+  periyotButonlariniFiltrele('analiz-sekme');
 }
 
 // =====================================================================
