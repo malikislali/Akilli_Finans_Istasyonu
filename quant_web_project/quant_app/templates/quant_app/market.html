@@ -979,10 +979,12 @@ function osilatorPanelleriniCiz(veri) {
         <span class="text-xs text-muted" style="line-height:1.5;">${aciklama.metin}</span>
       </div>` : '';
     return `
-    <div class="panel rounded-xl p-5 mb-4" style="position:relative; height: 380px;">
+    <div class="panel rounded-xl p-5 mb-4">
       <div class="font-display text-sm font-bold text-white mb-3">${OSILATOR_ETIKETLERI[anahtar]}</div>
       ${aciklamaHtml}
-      <canvas id="osilator-grafik-${anahtar}"></canvas>
+      <div style="position:relative; height: 260px;">
+        <canvas id="osilator-grafik-${anahtar}"></canvas>
+      </div>
     </div>
   `;
   }).join('');

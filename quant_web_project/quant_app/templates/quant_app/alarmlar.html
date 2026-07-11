@@ -141,6 +141,8 @@ document.getElementById('alarm-kur-buton').addEventListener('click', async () =>
   }
 });
 
+const PAZAR_RENK_ALARM = { KRIPTO: '#F97316', TR_HISSE: '#3B82F6', ABD_HISSE: '#22C55E', EMTIA: '#EAB308' };
+
 async function alarmListesiniYukle() {
   const container = document.getElementById('alarm-listesi');
   try {
@@ -154,15 +156,22 @@ async function alarmListesiniYukle() {
       const durumRengi = a.tetiklendi_mi ? '#34D399' : 'var(--text-muted)';
       const durumYazi = a.tetiklendi_mi ? '✅ Tetiklendi' : '⏳ Aktif';
       const gorunenSembol = (typeof sembolGoster === 'function') ? sembolGoster(a.sembol, a.pazar) : a.sembol;
+      const pazarRengi = PAZAR_RENK_ALARM[a.pazar] || 'var(--border-faint)';
+      const yonRengi = a.yon === 'ustune' ? '#34D399' : '#F87171';
+      const yonArkaplan = a.yon === 'ustune' ? 'rgba(52,211,153,0.15)' : 'rgba(248,113,113,0.15)';
       return `
-        <div class="market-varlik-satiri">
-          <div style="display:flex; align-items:center; gap:0.6rem;">
-            <span class="font-mono font-bold text-white">${gorunenSembol}</span>
-            <span class="text-xs text-muted">${a.hedef_fiyat} - ${a.yon_gorunen} </span>
-          </div>
-          <div style="display:flex; gap:1rem; align-items:center;">
-            <span class="text-xs" style="color:${durumRengi};">${durumYazi}</span>
-            <button class="yildiz-buton" onclick="alarmSil(${a.id})" title="Alarmı sil">✕</button>
+        <div style="display:flex; align-items:stretch; gap:0; margin-bottom:0.6rem; background:var(--bg-panel); border:1px solid var(--border-faint); border-radius:0.6rem; overflow:hidden;">
+          <div style="width:5px; background:${pazarRengi}; flex-shrink:0;"></div>
+          <div style="flex:1; padding:0.85rem 1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem;">
+            <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+              <span class="font-mono font-bold text-white" style="font-size:1.05rem; width:6.5rem; flex-shrink:0;">${gorunenSembol}</span>
+              <span style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:1.2rem; color:var(--text-muted); width:6rem; flex-shrink:0; text-align:right;">${a.hedef_fiyat}</span>
+              <span style="font-size:0.75rem; font-weight:700; color:${yonRengi}; background:${yonArkaplan}; padding:0.25rem 0.65rem; border-radius:0.4rem; width:9.5rem; flex-shrink:0; text-align:center;">${a.yon_gorunen}</span>
+            </div>
+            <div style="display:flex; gap:1rem; align-items:center;">
+              <span class="text-xs" style="color:${durumRengi};">${durumYazi}</span>
+              <button class="yildiz-buton" onclick="alarmSil(${a.id})" title="Alarmı sil">✕</button>
+            </div>
           </div>
         </div>`;
     }).join('');
