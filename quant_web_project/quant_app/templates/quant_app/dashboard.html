@@ -27,11 +27,13 @@
 </div>
 <div id="ucretli-toast" class="ucretli-toast hidden">🔒 Ücretli Üyelik Gerektirir</div>
 
+<button id="lab-sidebar-toggle" title="Menüyü aç/kapat">☰</button>
 
 <div class="flex min-h-screen sidebar-layout">
 
   <!-- ===================== SIDEBAR ===================== -->
-  <aside class="w-80 panel flex flex-col gap-6 p-6 sticky top-0 h-screen overflow-y-auto" style="border-right: 1px solid var(--border-faint);">
+  <aside id="lab-sidebar" class="w-80 panel flex flex-col gap-6 p-6 sticky top-0 h-screen overflow-y-auto" style="border-right: 1px solid var(--border-faint);">
+  
     <div>
       <div class="font-display text-xl font-bold text-white">🧭 Piyasa Pusulam</div>
       <div class="font-mono text-[10px] text-muted tracking-widest mt-1">KOKPİT</div>
@@ -86,12 +88,13 @@
 
       <!-- ===================== SEKME BAŞLIKLARI ===================== -->
       <div class="tab-bar">
-        <button data-tab="ozet" class="tab-btn active">🔮 Özet Raporu</button>
-        <button data-tab="teknik" class="tab-btn">📊 Teknik Gösterge</button>
-        <button data-tab="trend" class="tab-btn">⛓️ Trend &amp; Volatilite</button>
-        <button data-tab="grafik" class="tab-btn">📈 Canlı Grafik</button>
-        <button data-tab="backtest" class="tab-btn">🎯 Backtest</button>
-        <button data-tab="risk" class="tab-btn">💸 Risk Analizi</button>
+        <button data-tab="ozet" class="tab-btn active">🔮 <br><br> Özet Raporu</button>
+        <button data-tab="backtest" class="tab-btn">🎯 <br><br> Backtest</button>
+        <button data-tab="teknik" class="tab-btn">📊 <br><br> Teknik Gösterge</button>
+        <button data-tab="trend" class="tab-btn">⛓️ <br><br>  Trend &amp; Volatilite</button>
+        <button data-tab="grafik" class="tab-btn">📈  <br><br>  Canlı Grafik</button>
+       
+        <button data-tab="risk" class="tab-btn">💸 <br><br> Risk Analizi</button>
       </div>
 
       <!-- ===================== SEKME 1: ÖZET ===================== -->
@@ -99,7 +102,7 @@
 
         <!-- 🛡️ DÜRÜSTLÜK UYARISI — kararın HEMEN ÖNCESİNDE, kaçırılamaz -->
         <div class="research-warning">
-          <div class="research-warning-baslik">⚠️ Bu Bir Kazanç inyali DEĞİLDİR</div>
+          <div class="research-warning-baslik">⚠️ Bu Bir Kazanç Sinyali DEĞİLDİR</div>
           <div class="research-warning-metin">
             Bu motor, 6 turluk bağımsız bir istatistiksel araştırmayla (Triple Barrier
             etiketleme + Purged Cross-Validation + permütasyon testi, ~47 varlık/periyot
@@ -996,5 +999,18 @@ function cizBarGrafik(canvasId, labels, data) {
 
 analizBtn.addEventListener('click', analizCalistir);
 window.addEventListener('DOMContentLoaded', analizCalistir);
+
+
+// ---------------- LABORATUVAR SIDEBAR AÇ/KAPA (hem web hem mobil) ----------------
+const labSidebarToggle = document.getElementById('lab-sidebar-toggle');
+const labSidebar = document.getElementById('lab-sidebar');
+if (labSidebarToggle && labSidebar) {
+  labSidebarToggle.addEventListener('click', () => {
+    labSidebar.classList.toggle('kapali');
+    labSidebarToggle.classList.toggle('kapali-durum');
+  });
+}
+
+
 </script>
 {% endblock %}

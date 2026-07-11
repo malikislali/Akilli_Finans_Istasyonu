@@ -39,7 +39,7 @@
 </head>
 <body>
 <div class="plan-container">
-  <div class="plan-baslik">🧭 Planını Seç</div>
+  <div class="plan-baslik">🏛️ Planını Seç</div>
   <p class="plan-alt-baslik">İstediğin zaman değiştirebilirsin. Ücretli plan seçersen ödeme sayfasına yönlendirilirsin.</p>
 
   {% if messages %}
@@ -62,8 +62,12 @@
         <div class="plan-fiyat-alt">sonsuza kadar</div>
         <ul class="plan-ozellikler">
           <li>Günde 5 analiz hakkı</li>
-          <li>Pazar listesi ve tarama</li>
-          <li>Temel göstergeler</li>
+          <li>Günde 5 tarama hakkı</li>
+          <li>Günde 3 Laboratuvar (yapay zeka) analizi</li>
+          <li>En fazla 3 fiyat alarmı</li>
+          <li>Takip listesinde en fazla 5 varlık</li>
+          <li>Kısıtlı periyotlar (4 saat / 1 gün / 1 hafta)</li>
+          <li>Temel göstergeler (RSI, MACD, EMA)</li>
         </ul>
         <button type="submit" class="plan-btn plan-btn-ucretsiz">Ücretsiz Devam Et</button>
       </div>
@@ -75,9 +79,13 @@
         <div class="plan-fiyat">{{ plan.fiyat_tl }}₺</div>
         <div class="plan-fiyat-alt">/ ay</div>
         <ul class="plan-ozellikler">
-          <li>Sınırsız analiz</li>
-          <li>Tüm göstergeler</li>
-          <li>Gelişmiş tarama</li>
+          <li>Sınırsız analiz ve tarama</li>
+          <li>Sınırsız Laboratuvar (yapay zeka) analizi</li>
+          <li>Sınırsız fiyat alarmı</li>
+          <li>Sınırsız takip listesi</li>
+          <li>Tüm periyotlar (15 dakikadan 1 aya kadar)</li>
+          <li>Tüm göstergeler (RSI, MACD, Stochastic, WaveTrend, CCI, ATR, Bollinger)</li>
+          <li>Gelişmiş tarama (gösterge bazlı filtreler)</li>
           <li>Öncelikli destek</li>
         </ul>
         <button type="submit" class="plan-btn plan-btn-ucretli">Aylık Başla</button>
@@ -92,9 +100,9 @@
         <div class="plan-fiyat-alt">/ yıl</div>
         <div class="indirim-etiketi">~%37 indirim</div>
         <ul class="plan-ozellikler" style="margin-top:0.75rem;">
-          <li>Sınırsız analiz</li>
-          <li>Tüm göstergeler</li>
-          <li>Gelişmiş tarama</li>
+          <li>Aylık plandaki her şey</li>
+          <li>12 ay yerine ~7.5 ay fiyatına</li>
+          <li>Fiyat artışlarına karşı 1 yıl garanti</li>
           <li>Öncelikli destek</li>
         </ul>
         <button type="submit" class="plan-btn plan-btn-populer">Yıllık Başla</button>

@@ -646,8 +646,10 @@ def hafif_fiyat_getir(sembol: str, pazar: str, interval: str = "1d") -> HafifFiy
     """
     try:
         period = suggest_period(pazar, interval)
-        fetch_result = get_market_data(sembol, period, interval, pazar)
+        fetch_result = get_market_data(sembol, period, interval, pazar, izin_twelvedata=True)
         df = fetch_result.df
+        if not df.empty and 'Close' in df.columns:
+            df = df.dropna(subset=['Close'])
 
         if df.empty or len(df) < 2:
             return HafifFiyatSonucu(sembol=sembol, pazar=pazar, basarili=False,

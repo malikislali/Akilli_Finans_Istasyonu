@@ -1,0 +1,198 @@
+{% extends "quant_app/base_v2.html" %}
+{% load static %}
+{% block title %}Fiyat Alarmları — Piyasa Pusulam{% endblock %}
+
+{% block content %}
+<div class="market-ust-bar">
+  <div class="market-baslik">
+    <span style="font-size: 1.8rem;">🔔</span>
+    <h1>Fiyat Alarmları</h1>
+  </div>
+</div>
+
+<div id="hak-bilgisi-alarm-bar" class="hidden" style="display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1rem;"></div>
+
+<div class="panel rounded-xl p-5 mb-4">
+  <div class="font-display text-base font-bold mb-3" style="color:var(--text-main);">➕ Yeni Alarm Kur</div>
+
+  <div class="tarama-filtre-gruplari" style="grid-template-columns: repeat(2, 1fr);">
+    <div class="tarama-filtre-grup">
+      <div class="tarama-filtre-grup-baslik">Pazar</div>
+      <div class="tarama-filtre-butonlar" id="alarm-pazar-secici">
+        <button class="tarama-filtre-buton aktif" data-pazar="KRIPTO">🟠 Kripto</button>
+        <button class="tarama-filtre-buton" data-pazar="TR_HISSE">🔵 TR Hisse</button>
+        <button class="tarama-filtre-buton" data-pazar="ABD_HISSE">🟢 ABD Hisse</button>
+        <button class="tarama-filtre-buton" data-pazar="EMTIA">🟡 Emtia</button>
+      </div>
+    </div>
+    <div class="tarama-filtre-grup">
+      <div class="tarama-filtre-grup-baslik">Yön</div>
+      <div class="tarama-filtre-butonlar" id="alarm-yon-secici">
+        <button class="tarama-filtre-buton aktif" data-yon="ustune">📈 Üstüne Çıkınca</button>
+        <button class="tarama-filtre-buton" data-yon="altina">📉 Altına İnince</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end;">
+    <div style="flex: 1; min-width: 180px; position: relative;">
+      <label class="text-xs text-muted" style="display:block; margin-bottom:0.3rem;">Varlık</label>
+      <input type="text" id="alarm-sembol-input" class="market-arama-input" placeholder="Sembol ara..." autocomplete="off" style="width: 100%; box-sizing: border-box;">
+      <div id="alarm-sembol-sonuclari" class="market-arama-sonuclari gizli"></div>
+    </div>
+    <div style="min-width: 140px;">
+      <label class="text-xs text-muted" style="display:block; margin-bottom:0.3rem;">Hedef Fiyat</label>
+      <input type="number" step="any" id="alarm-hedef-fiyat-input" class="market-arama-input" placeholder="Örn. 65000" style="width: 100%; box-sizing: border-box;">
+    </div>
+    <button id="alarm-kur-buton" class="tarama-tara-btn">🔔 Alarm Kur</button>
+  </div>
+  <div id="alarm-form-mesaji" class="text-xs" style="margin-top: 0.5rem;"></div>
+</div>
+
+<div class="panel rounded-xl p-5">
+  <div class="font-display text-base font-bold mb-3" style="color:var(--text-main);">📋 Alarmlarım</div>
+  <div id="alarm-listesi">Yükleniyor...</div>
+</div>
+
+<script>
+const VARLIK_HAVUZU = {{ varlik_havuzu_json|safe }};
+const PLAN_SEC_URL = "{% url 'plan_sec' %}";
+
+let alarmSeciliPazar = 'KRIPTO';
+let alarmSeciliYon = 'ustune';
+let alarmSeciliSembol = null;
+
+document.querySelectorAll('#alarm-pazar-secici .tarama-filtre-buton').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#alarm-pazar-secici .tarama-filtre-buton').forEach(b => b.classList.remove('aktif'));
+    btn.classList.add('aktif');
+    alarmSeciliPazar = btn.dataset.pazar;
+    document.getElementById('alarm-sembol-input').value = '';
+    alarmSeciliSembol = null;
+  });
+});
+
+document.querySelectorAll('#alarm-yon-secici .tarama-filtre-buton').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#alarm-yon-secici .tarama-filtre-buton').forEach(b => b.classList.remove('aktif'));
+    btn.classList.add('aktif');
+    alarmSeciliYon = btn.dataset.yon;
+  });
+});
+
+const alarmSembolInput = document.getElementById('alarm-sembol-input');
+const alarmSembolSonuclari = document.getElementById('alarm-sembol-sonuclari');
+
+alarmSembolInput.addEventListener('input', () => {
+  const sorgu = alarmSembolInput.value.trim().toUpperCase();
+  alarmSeciliSembol = null;
+  if (!sorgu) { alarmSembolSonuclari.classList.add('gizli'); return; }
+  const liste = VARLIK_HAVUZU[alarmSeciliPazar] || [];
+  const eslesenler = liste.filter(v => {
+    const gorunen = (typeof sembolGoster === 'function') ? sembolGoster(v, alarmSeciliPazar).toUpperCase() : v.toUpperCase();
+    return v.toUpperCase().startsWith(sorgu) || gorunen.startsWith(sorgu);
+  });
+  if (eslesenler.length === 0) { alarmSembolSonuclari.classList.add('gizli'); return; }
+  alarmSembolSonuclari.innerHTML = eslesenler.slice(0, 15).map(v => `<div class="market-arama-sonuc-ogesi" data-sembol="${v}">${(typeof sembolGoster === 'function') ? sembolGoster(v, alarmSeciliPazar) : v}</div>`).join('');
+  alarmSembolSonuclari.classList.remove('gizli');
+  alarmSembolSonuclari.querySelectorAll('.market-arama-sonuc-ogesi').forEach(el => {
+    el.addEventListener('click', () => {
+      alarmSeciliSembol = el.dataset.sembol;
+      alarmSembolInput.value = el.textContent;
+      alarmSembolSonuclari.classList.add('gizli');
+    });
+  });
+});
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+document.getElementById('alarm-kur-buton').addEventListener('click', async () => {
+  const mesajEl = document.getElementById('alarm-form-mesaji');
+  const hedefFiyat = document.getElementById('alarm-hedef-fiyat-input').value;
+  if (!alarmSeciliSembol) { mesajEl.textContent = '⚠️ Lütfen listeden bir varlık seçin.'; mesajEl.style.color = '#F87171'; return; }
+  if (!hedefFiyat || isNaN(parseFloat(hedefFiyat))) { mesajEl.textContent = '⚠️ Geçerli bir hedef fiyat girin.'; mesajEl.style.color = '#F87171'; return; }
+
+  try {
+    const resp = await fetch('/api/alarmlar/ekle/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+      body: JSON.stringify({ sembol: alarmSeciliSembol, pazar: alarmSeciliPazar, hedef_fiyat: parseFloat(hedefFiyat), yon: alarmSeciliYon }),
+    });
+    const veri = await resp.json();
+    if (veri.basarili) {
+      mesajEl.textContent = '✅ Alarm kuruldu.';
+      mesajEl.style.color = '#34D399';
+      document.getElementById('alarm-hedef-fiyat-input').value = '';
+      alarmListesiniYukle();
+      alarmHakBilgisiYukle();
+    } else if (veri.limit_asimi) {
+      limitModalAc(veri.hata_mesaji, PLAN_SEC_URL);
+    } else {
+      mesajEl.textContent = '⚠️ ' + (veri.hata_mesaji || 'Bir hata oluştu.');
+      mesajEl.style.color = '#F87171';
+    }
+  } catch (err) {
+    mesajEl.textContent = '⚠️ Bağlantı hatası.';
+    mesajEl.style.color = '#F87171';
+  }
+});
+
+async function alarmListesiniYukle() {
+  const container = document.getElementById('alarm-listesi');
+  try {
+    const resp = await fetch('/api/alarmlar/');
+    const veri = await resp.json();
+    if (!veri.basarili || veri.alarmlar.length === 0) {
+      container.innerHTML = '<div class="text-sm text-muted">Henüz bir alarm kurulmadı.</div>';
+      return;
+    }
+    container.innerHTML = veri.alarmlar.map(a => {
+      const durumRengi = a.tetiklendi_mi ? '#34D399' : 'var(--text-muted)';
+      const durumYazi = a.tetiklendi_mi ? '✅ Tetiklendi' : '⏳ Aktif';
+      const gorunenSembol = (typeof sembolGoster === 'function') ? sembolGoster(a.sembol, a.pazar) : a.sembol;
+      return `
+        <div class="market-varlik-satiri">
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <span class="font-mono font-bold text-white">${gorunenSembol}</span>
+            <span class="text-xs text-muted">${a.hedef_fiyat} - ${a.yon_gorunen} </span>
+          </div>
+          <div style="display:flex; gap:1rem; align-items:center;">
+            <span class="text-xs" style="color:${durumRengi};">${durumYazi}</span>
+            <button class="yildiz-buton" onclick="alarmSil(${a.id})" title="Alarmı sil">✕</button>
+          </div>
+        </div>`;
+    }).join('');
+  } catch (err) {
+    container.innerHTML = '<div class="text-sm text-red">Yüklenemedi.</div>';
+  }
+}
+
+async function alarmSil(id) {
+  if (!confirm('Bu alarmı silmek istediğinize emin misiniz?')) return;
+  await fetch(`/api/alarmlar/sil/${id}/`, { method: 'POST', headers: { 'X-CSRFToken': getCookie('csrftoken') } });
+  alarmListesiniYukle();
+  alarmHakBilgisiYukle();
+}
+
+async function alarmHakBilgisiYukle() {
+  const bar = document.getElementById('hak-bilgisi-alarm-bar');
+  try {
+    const resp = await fetch('/api/limit-durumu/');
+    const veri = await resp.json();
+    if (!veri.basarili || veri.premium) { bar.classList.add('hidden'); return; }
+    bar.classList.remove('hidden');
+    bar.innerHTML = hakEtiketiHtmlUret('🔔', 'Alarm', veri.alarm);
+  } catch (err) { /* sessiz geç */ }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await fetch('/api/alarmlar/gorundu/', { method: 'POST', headers: { 'X-CSRFToken': getCookie('csrftoken') } });
+  alarmListesiniYukle();
+  alarmHakBilgisiYukle();
+});
+</script>
+{% endblock %}

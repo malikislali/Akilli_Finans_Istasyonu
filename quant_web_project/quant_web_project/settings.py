@@ -125,8 +125,21 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'quant_app.market_cache_yenile',
         'schedule': 240.0,
     },
-    'usd-try-kuru-yenile': {
+   'usd-try-kuru-yenile': {
         'task': 'quant_app.usd_try_kuru_yenile',
         'schedule': 480.0,
     },
+    'alarm-kontrol': {
+        'task': 'quant_app.alarmlari_kontrol_et',
+        'schedule': 300.0,  # 5 dakika
+    },
 }
+
+# ── Oturum Zaman Aşımı ──
+# 30 dakika hareketsizlik sonrası oturum otomatik sona erer. Her istekte
+# süre sıfırlanır (SESSION_SAVE_EVERY_REQUEST=True) — yani kullanıcı
+# aktif kullanırken hiç çıkmaz, sadece 30 dk boyunca hiçbir işlem
+# yapmazsa oturumu düşer.
+SESSION_COOKIE_AGE = 1800  # saniye = 30 dakika
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # tarayıcı tamamen kapatılırsa da oturum sonlanır

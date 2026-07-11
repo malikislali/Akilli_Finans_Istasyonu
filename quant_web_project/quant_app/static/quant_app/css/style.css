@@ -661,3 +661,95 @@ html, body {
   margin: 0;
   padding: 0;
 }
+
+/* ── Laboratuvar sidebar aç/kapa (hem web hem mobil) ── */
+#lab-sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 1rem;
+  left: 21rem;
+  z-index: 200;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-faint);
+  border-radius: 0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.2rem;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: left 0.2s ease;
+}
+#lab-sidebar-toggle.kapali-durum {
+  left: 0.5rem !important;
+}
+/* Kapalıyken sidebar tamamen gizlenir (hem web hem mobilde) */
+#lab-sidebar.kapali {
+  display: none !important;
+}
+@media (max-width: 768px) {
+  #lab-sidebar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 150;
+    width: 85vw !important;
+    max-width: 320px;
+  }
+}
+
+/* ── Laboratuvar tab-bar: mobilde alta sabit + yatay kaydırma ── */
+@media (max-width: 640px) {
+  .tab-bar {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 140;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border-faint);
+    border-bottom: none !important;
+    margin: 0 !important;
+    padding: 1rem 0.4rem calc(0.7rem + env(safe-area-inset-bottom)) !important;
+    overflow-x: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
+  }
+  .tab-btn {
+    flex-shrink: 0;
+    font-size: 0.78rem !important;
+    padding: 0.6rem 0.9rem !important;
+    white-space: nowrap;
+  }
+  main.flex-1 {
+    padding-bottom: 5.5rem !important;
+  }
+}
+
+/* ── Sidebar (Anasayfa/Market/Alarmlar): sadece mobilde üstüne-biner, masaüstünde itme davranışı korunur ── */
+.yeni-sidebar.kapali {
+  display: none !important;
+}
+@media (max-width: 768px) {
+  .yeni-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    height: 100vh !important;
+    z-index: 150 !important;
+    width: 85vw !important;
+    max-width: 320px;
+  }
+}
+
+/* ── Sidebar toggle butonu her zaman en üstte kalsın ── */
+.sidebar-toggle-buton-fixed {
+  z-index: 300 !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+}

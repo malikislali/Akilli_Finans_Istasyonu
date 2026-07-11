@@ -64,3 +64,59 @@ def analiz_hesapla_task(self, sembol, pazar, interval):
 def usd_try_kuru_yenile():
     kur = core.usd_try_kuru_getir()
     return {'kur': kur}
+
+
+@shared_task(name='quant_app.alarmlari_kontrol_et')
+def alarmlari_kontrol_et():
+    """Aktif, henüz tetiklenmemiş tüm alarmları güncel fiyatla karşılaştırır.
+    Hedefe ulaşılınca: tetiklendi_mi=True, aktif=False, e-posta gönderir."""
+    from .models import FiyatAlarmi
+    from . import quant_ml_core as core
+    from django.core.mail import send_mail
+    from django.conf import settings as dj_settings
+    from django.utils import timezone
+
+    aktif_alarmlar = FiyatAlarmi.objects.filter(aktif=True, tetiklendi_mi=False).select_related('user')
+    tetiklenen_sayisi = 0
+
+    for alarm in aktif_alarmlar:
+        try:
+            sonuc = core.hafif_fiyat_getir(alarm.sembol, alarm.pazar, interval="1d")
+            if not sonuc.basarili or sonuc.fiyat == 0:
+                continue
+
+            guncel_fiyat = sonuc.fiyat
+            hedef = float(alarm.hedef_fiyat)
+            tetiklendi = (
+                (alarm.yon == 'ustune' and guncel_fiyat >= hedef) or
+                (alarm.yon == 'altina' and guncel_fiyat <= hedef)
+            )
+
+            if tetiklendi:
+                alarm.tetiklendi_mi = True
+                alarm.aktif = False
+                alarm.goruldu_mu = False
+                alarm.tetiklenme_tarihi = timezone.now()
+                alarm.save()
+                tetiklenen_sayisi += 1
+
+                yon_metni = "üstüne çıktı" if alarm.yon == 'ustune' else "altına indi"
+                if alarm.user.email:
+                    try:
+                        send_mail(
+                            subject=f"Piyasa Pusulam — {alarm.sembol} Alarmınız Tetiklendi",
+                            message=(
+                                f"Merhaba {alarm.user.username},\n\n"
+                                f"{alarm.sembol} fiyatı, belirlediğiniz {hedef} hedefinin {yon_metni} "
+                                f"(güncel fiyat: {guncel_fiyat}).\n\nPiyasa Pusulam Ekibi"
+                            ),
+                            from_email=dj_settings.DEFAULT_FROM_EMAIL,
+                            recipient_list=[alarm.user.email],
+                            fail_silently=True,
+                        )
+                    except Exception:
+                        pass
+        except Exception:
+            continue
+
+    return {'tetiklenen': tetiklenen_sayisi}

@@ -166,6 +166,11 @@ class SiteAyari(models.Model):
         verbose_name="Ücretsiz Takip Listesi Limiti",
         help_text="Ücretsiz kullanıcının takip listesine ekleyebileceği maksimum varlık sayısı."
     )
+    ucretsiz_alarm_limiti = models.PositiveIntegerField(
+        default=3,
+        verbose_name="Ücretsiz Alarm Limiti",
+        help_text="Ücretsiz kullanıcının kurabileceği maksimum aktif fiyat alarmı sayısı."
+    )
     guncelleme_tarihi = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -261,4 +266,33 @@ class GunlukAnaliz(models.Model):
     def __str__(self):
         kim = self.user.username if self.user else self.ip_adresi
         return f"{kim} — {self.tarih} — {self.adet} analiz"
+    
+
+class FiyatAlarmi(models.Model):
+    """Kullanıcının bir varlık için kurduğu fiyat alarmı — hedef fiyata
+    ulaşılınca (üstüne çıkınca ya da altına inince) e-posta + site içi
+    bildirim tetiklenir."""
+    YON_CHOICES = [
+        ('ustune', 'Üstüne Çıkınca'),
+        ('altina', 'Altına İnince'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='fiyat_alarmlari', verbose_name="Kullanıcı")
+    sembol = models.CharField(max_length=20, verbose_name="Varlık Sembolü")
+    pazar = models.CharField(max_length=20, verbose_name="Pazar")
+    hedef_fiyat = models.DecimalField(max_digits=18, decimal_places=6, verbose_name="Hedef Fiyat")
+    yon = models.CharField(max_length=10, choices=YON_CHOICES, verbose_name="Yön")
+    aktif = models.BooleanField(default=True, verbose_name="Aktif")
+    tetiklendi_mi = models.BooleanField(default=False, verbose_name="Tetiklendi mi")
+    goruldu_mu = models.BooleanField(default=False, verbose_name="Görüldü mü (bildirim rozeti için)")
+    tetiklenme_tarihi = models.DateTimeField(null=True, blank=True, verbose_name="Tetiklenme Zamanı")
+    olusturulma_tarihi = models.DateTimeField(auto_now_add=True, verbose_name="Oluşturulma Zamanı")
+
+    class Meta:
+        verbose_name = "Fiyat Alarmı"
+        verbose_name_plural = "Fiyat Alarmları"
+        ordering = ['-olusturulma_tarihi']
+
+    def __str__(self):
+        yon_ok = "≥" if self.yon == 'ustune' else "≤"
+        return f"{self.user.username} | {self.sembol} {yon_ok} {self.hedef_fiyat}"
 

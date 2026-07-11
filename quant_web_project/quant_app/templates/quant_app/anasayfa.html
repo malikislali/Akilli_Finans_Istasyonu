@@ -65,14 +65,13 @@ function hacimKisalt(hacim) {
 
 function varlikKartiHtmlUret(v, pazar) {
   if (!v.basarili) {
-    return `<div class="varlik-karti"><div class="varlik-karti-ust"><span class="varlik-karti-sembol">${v.sembol}</span></div><div class="varlik-karti-hata">Veri alınamadı</div></div>`;
-  }
+    return `<div class="varlik-karti"><div class="varlik-karti-ust"><span class="varlik-karti-sembol">${sembolGoster(v.sembol, pazar)}</span></div><div class="varlik-karti-hata">Veri alınamadı</div></div>`;  }
   const degisimSinif = v.degisim_yuzde >= 0 ? 'pozitif' : 'negatif';
   const degisimIsareti = v.degisim_yuzde >= 0 ? '+' : '';
   return `
     <div class="varlik-karti" style="cursor:pointer;" onclick="window.location.href='/market/${pazar}/?sembol=${encodeURIComponent(v.sembol)}'">
       <div class="varlik-karti-ust">
-        <span class="varlik-karti-sembol">${v.sembol}</span>
+        <span class="varlik-karti-sembol">${sembolGoster(v.sembol, pazar)}</span>
         <button class="yildiz-buton" onclick="event.stopPropagation(); takipListesineEkle('${v.sembol}', '${pazar}')" title="Takip listesine ekle">⭐</button>
       </div>
       <div class="varlik-karti-fiyat">${paraBirimiFormatla(v.fiyat, pazar)}</div>

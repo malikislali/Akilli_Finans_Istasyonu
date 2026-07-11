@@ -4,9 +4,14 @@
 {% block title %}{{ pazar_bilgisi.ad }} — Sovereign Cockpit{% endblock %}
 
 {% block extra_head %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-{% endblock %}
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.2.1/dist/chartjs-chart-financial.min.js"></script>
+
+
+
+{% endblock %}
 
 {% block content %}
 <div id="market-sabit-ust-bolge">
@@ -48,6 +53,7 @@
   <button class="alt-nav-buton aktif" data-sekme="anasayfa-sekme"><span class="alt-nav-ikon">🏠</span><span class="alt-nav-yazi">Anasayfa</span></button>
   <button class="alt-nav-buton" data-sekme="tarama-sekme"><span class="alt-nav-ikon">🔎</span><span class="alt-nav-yazi">Tarama</span></button>
   <button class="alt-nav-buton" data-sekme="analiz-sekme"><span class="alt-nav-ikon">📊</span><span class="alt-nav-yazi">Analiz</span></button>
+  <button class="alt-nav-buton" data-sekme="ayarlar-sekme"><span class="alt-nav-ikon">⚙️</span><span class="alt-nav-yazi">Ayarlar</span></button>
 </div>
 </div>
 <!-- ---------------- SEKME: ANASAYFA (bu pazarın TÜM varlık listesi) ---------------- -->
@@ -170,7 +176,7 @@
   <div class="panel rounded-xl p-5 mb-4">
     <div class="flex items-center justify-between" style="flex-wrap: wrap; gap: 0.75rem;">
       <div id="analiz-secili-varlik-baslik">
-        <div class="font-display text-lg font-bold text-white" id="analiz-secili-varlik">Bir varlık seçin</div>
+        <div class="font-display text-lg font-bold text-white" id="analiz-secili-varlik">Yukarıdan bir varlık seçin</div>
       </div>
     <!--  <a href="{% url 'dashboard' %}" class="laboratuvar-link" style="width: auto; padding: 0.6rem 1.1rem;">🧪 Laboratuvar'da Aç</a>-->
     </div>
@@ -190,7 +196,16 @@
 
   <!-- ---- ANA GRAFİK OVERLAY SEÇİMİ (EMA'lar + Bollinger) ---- -->
   <div class="panel rounded-xl p-5 mb-4">
-    <div class="font-display text-sm font-bold text-white mb-3">📈 Ana Grafik Katmanları</div>
+    <div class="flex items-center justify-between mb-3" style="flex-wrap: wrap; gap: 0.5rem;">
+      <div class="font-display text-sm font-bold text-white">📈 Ana Grafik Katmanları</div>
+    
+     <select id="grafik-turu-secici" style="background: var(--bg-deep); border: 1px solid var(--border-faint); border-radius: 0.5rem; color: var(--text-main); padding: 0.4rem 0.7rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+        <option value="cizgi">-Grafik Türü-</option>
+        <option value="cizgi">📉 Çizgi</option>
+        <option value="mum">🕯️ Mum</option>
+      </select>
+    </div>
+    <br>
     <div class="gosterge-toggle-grup" id="overlay-toggle-grup">
       <button class="gosterge-toggle aktif" data-overlay="ema_20" style="--toggle-renk: #34D399;">EMA 20</button>
       <button class="gosterge-toggle aktif" data-overlay="ema_50" style="--toggle-renk: #F87171;">EMA 50</button>
@@ -224,10 +239,35 @@
   <!-- ---- OSİLATÖR PANELLERİ (alt alta, JS ile doldurulur) ---- -->
   <div id="osilator-panelleri"></div>
 
-  <div id="analiz-bos-durum" class="panel rounded-xl p-5">
+<div id="analiz-bos-durum" class="panel rounded-xl p-5">
     <div class="text-sm text-muted" style="text-align: center; padding: 2rem 0;">
       Yukarıdaki arama kutusundan bir varlık seçin.<br>
       Tam ML analizi / Backtest için <a href="{% url 'dashboard' %}" style="color: var(--accent-sky);">Laboratuvar</a>'ı kullanabilirsiniz.
+    </div>
+  </div>
+</div>
+
+<!-- ---------------- SEKME: AYARLAR ---------------- -->
+<div id="ayarlar-sekme" class="market-sekme-panel" style="display: none;">
+  <div class="panel rounded-xl p-5 mb-4">
+    <div class="font-display text-base font-bold mb-3" style="color:var(--text-main);">📞 İletişim</div>
+    <div class="text-sm text-muted" style="line-height: 1.8;">
+      <div><b>Kullanıcı Adı:</b> {{ request.user.username }} <span id="ayarlar-plan-etiketi" style="font-size:0.75rem; color:var(--accent-sky); font-weight:600;"></span></div>
+      <div><b>E-posta:</b> {{ request.user.email|default:"—" }}</div>
+      <div style="margin-top: 0.75rem;">
+        Destek için: <a href="mailto:bilgi@piyasapusulam.com" style="color: var(--accent-sky);">bilgi@piyasapusulam.com</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel rounded-xl p-5 mb-4">
+    <div class="font-display text-base font-bold mb-3" style="color:var(--text-main);">💳 Abonelik</div>
+    <div id="abonelik-bilgi-kutusu" class="text-sm text-muted" style="margin-bottom: 1rem;">Yükleniyor...</div>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+      <a href="{% url 'plan_sec' %}" class="btn btn-sky" style="text-decoration:none; padding: 0.6rem 1.1rem; font-size: 0.85rem;">📅 Aylık Plana Geç</a>
+      <a href="{% url 'plan_sec' %}" class="btn btn-sky" style="text-decoration:none; padding: 0.6rem 1.1rem; font-size: 0.85rem;">👑 Yıllık Plana Geç</a>
+      <button id="ucretsize-gec-buton" class="btn" style="padding: 0.6rem 1.1rem; font-size: 0.85rem; background: var(--bg-deep); border: 1px solid var(--border-faint); color: var(--text-main);">🆓 Ücretsiz Üyeliğe Geç</button>
+      <button id="abonelik-iptal-buton" class="btn" style="padding: 0.6rem 1.1rem; font-size: 0.85rem; background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: #F87171;">✕ Aboneliği İptal Et</button>
     </div>
   </div>
 </div>
@@ -319,7 +359,84 @@ async function limitDurumunuYukle() {
 function aramaKutusuGorunurluguGuncelle(aktifSekme) {
   const aramaKutusu = document.getElementById('market-arama-kutusu');
   if (!aramaKutusu) return;
-  aramaKutusu.style.display = (aktifSekme === 'anasayfa-sekme') ? 'none' : 'block';
+  aramaKutusu.style.display = (aktifSekme === 'analiz-sekme') ? 'block' : 'none';
+}
+
+function periyotAlaniGorunurluguGuncelle(aktifSekme) {
+  const periyotToggle = document.getElementById('periyot-mobil-toggle');
+  const periyotSecici = document.getElementById('periyot-secici');
+  const gizle = (aktifSekme === 'ayarlar-sekme');
+  if (periyotToggle) {
+    if (gizle) periyotToggle.style.setProperty('display', 'none', 'important');
+    else periyotToggle.style.removeProperty('display');
+  }
+  if (periyotSecici) {
+    if (gizle) periyotSecici.style.setProperty('display', 'none', 'important');
+    else periyotSecici.style.removeProperty('display');
+  }
+}
+
+async function abonelikDurumunuYukle() {
+  const kutu = document.getElementById('abonelik-bilgi-kutusu');
+  if (!kutu) return;
+  try {
+    const resp = await fetch('/api/abonelik-durumu/');
+    const veri = await resp.json();
+    if (!veri.basarili) { kutu.textContent = 'Yüklenemedi.'; return; }
+    let metin = `<b>Plan:</b> ${veri.plan_gorunen || 'Ücretsiz'}`;
+    if (veri.durum_gorunen) metin += ` &nbsp;•&nbsp; <b>Durum:</b> ${veri.durum_gorunen}`;
+    if (veri.bitis) metin += ` &nbsp;•&nbsp; <b>Bitiş:</b> ${veri.bitis}`;
+    kutu.innerHTML = metin;
+
+    const planEtiket = document.getElementById('ayarlar-plan-etiketi');
+    if (planEtiket) planEtiket.textContent = `(${veri.plan_gorunen || 'Ücretsiz'})`;
+  } catch (err) {
+    kutu.textContent = 'Yüklenemedi.';
+  }
+}
+
+const abonelikIptalButon = document.getElementById('abonelik-iptal-buton');
+if (abonelikIptalButon) {
+  abonelikIptalButon.addEventListener('click', async () => {
+    if (!confirm('Aboneliğinizi iptal etmek istediğinize emin misiniz? Bu işlem geri alınamaz.')) return;
+    try {
+      const resp = await fetch('/api/abonelik-iptal/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') },
+      });
+      const veri = await resp.json();
+      if (veri.basarili) {
+        abonelikDurumunuYukle();
+        alert('Aboneliğiniz iptal edildi.');
+      } else {
+        alert(veri.hata_mesaji || 'Bir hata oluştu.');
+      }
+    } catch (err) {
+      alert('Bir hata oluştu.');
+    }
+  });
+}
+
+const ucretsizeGecButon = document.getElementById('ucretsize-gec-buton');
+if (ucretsizeGecButon) {
+  ucretsizeGecButon.addEventListener('click', async () => {
+    if (!confirm('Ücretsiz üyeliğe geçmek istediğinize emin misiniz? Ücretli plan avantajlarınız sona erecek.')) return;
+    try {
+      const resp = await fetch('/api/abonelik-ucretsize-gec/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') },
+      });
+      const veri = await resp.json();
+      if (veri.basarili) {
+        abonelikDurumunuYukle();
+        alert('Ücretsiz üyeliğe geçtiniz.');
+      } else {
+        alert(veri.hata_mesaji || 'Bir hata oluştu.');
+      }
+    } catch (err) {
+      alert('Bir hata oluştu.');
+    }
+  });
 }
 
 document.querySelectorAll('.alt-nav-buton').forEach(btn => {
@@ -331,6 +448,8 @@ document.querySelectorAll('.alt-nav-buton').forEach(btn => {
     analizBilgiNotuGuncelle();
     aramaKutusuGorunurluguGuncelle(btn.dataset.sekme);
     periyotButonlariniFiltrele(btn.dataset.sekme);
+    periyotAlaniGorunurluguGuncelle(btn.dataset.sekme);
+    if (btn.dataset.sekme === 'ayarlar-sekme') abonelikDurumunuYukle();
   });
 });
 
@@ -340,7 +459,7 @@ function analizBilgiNotuGuncelle() {
   const notu = document.getElementById('analiz-bilgi-notu');
   if (!notu) return;
   const analizAktif = document.getElementById('analiz-sekme').style.display !== 'none';
-  const varlikSecili = document.getElementById('analiz-secili-varlik').textContent !== 'Bir varlık seçin';
+  const varlikSecili = document.getElementById('analiz-secili-varlik').textContent !== 'Yukarıdan bir varlık seçin';
   notu.classList.toggle('hidden', !(analizAktif && !varlikSecili));
 }
 
@@ -481,6 +600,33 @@ const OSILATOR_ETIKETLERI = {
   rsi: 'RSI', macd: 'MACD', stoch: 'Stochastic', wavetrend: 'WaveTrend', cci: 'CCI', atr: 'ATR',
 };
 
+const OSILATOR_ACIKLAMALARI = {
+  rsi: {
+    ikon: '⚡', renk: '#38BDF8',
+    metin: 'Fiyatın ne kadar hızlı değiştiğini ölçer (0-100). 70 üzeri "aşırı alım", 30 altı "aşırı satım" sayılır — tek başına sinyal değildir, trend yönüyle birlikte değerlendirilmelidir.',
+  },
+  macd: {
+    ikon: '📊', renk: '#F59E0B',
+    metin: 'İki hareketli ortalama arasındaki farkı gösterir. MACD, sinyal çizgisini yukarı keserse momentum artıyor olabilir. Yatay piyasalarda yanıltıcı sinyaller verebilir.',
+  },
+  stoch: {
+    ikon: '🎯', renk: '#A78BFA',
+    metin: 'Kapanış fiyatının, belirli periyottaki en yüksek/en düşük aralığa göre nerede olduğunu gösterir. 80 üzeri aşırı alım, 20 altı aşırı satım kabul edilir.',
+  },
+  wavetrend: {
+    ikon: '🌊', renk: '#34D399',
+    metin: 'Fiyat momentumunu dalga şeklinde gösterir. Aşırı bölgelerdeki WT1/WT2 kesişimleri potansiyel trend değişimlerine işaret edebilir.',
+  },
+  cci: {
+    ikon: '📐', renk: '#F87171',
+    metin: 'Fiyatın istatistiksel ortalamadan sapmasını ölçer. +100 üzeri güçlü yükseliş, -100 altı güçlü düşüş eğilimini gösterebilir.',
+  },
+  atr: {
+    ikon: '📏', renk: '#94A3B8',
+    metin: 'Piyasanın ne kadar oynak (volatil) olduğunu gösterir — yön belirtmez, sadece hareket büyüklüğünü ölçer. Yüksek ATR = büyük hareketler.',
+  },
+};
+
 function gostergeTercihleriniYukle() {
   try {
     const kayitli = localStorage.getItem(LOCALSTORAGE_ANAHTARI);
@@ -501,7 +647,17 @@ function gostergeTercihleriniKaydet() {
 let gostergeTercihleri = gostergeTercihleriniYukle();
 let sonCekilenGostergeVerisi = null;
 let grafikNesneleri = {};
+let aktifGrafikTuru = (localStorage.getItem('sovereign_grafik_turu') || 'cizgi');
 
+const grafikTuruSeciciEl = document.getElementById('grafik-turu-secici');
+if (grafikTuruSeciciEl) {
+  grafikTuruSeciciEl.value = aktifGrafikTuru;
+  grafikTuruSeciciEl.addEventListener('change', () => {
+    aktifGrafikTuru = grafikTuruSeciciEl.value;
+    try { localStorage.setItem('sovereign_grafik_turu', aktifGrafikTuru); } catch (err) {}
+    if (sonCekilenGostergeVerisi) anaFiyatGrafiginiCiz(sonCekilenGostergeVerisi);
+  });
+}
 // ---- Toggle butonlarının görünümünü tercihlere göre ayarla ----
 function toggleButonlariniUygula() {
   document.querySelectorAll('#overlay-toggle-grup .gosterge-toggle').forEach(btn => {
@@ -725,6 +881,44 @@ function anaFiyatGrafiginiCiz(veri) {
   const ctx = document.getElementById('ana-fiyat-grafik').getContext('2d');
   if (grafikNesneleri['ana']) grafikNesneleri['ana'].destroy();
 
+  if (aktifGrafikTuru === 'mum') {
+    if (typeof Chart === 'undefined' || typeof Chart.registry === 'undefined' || !Chart.registry.controllers.get('candlestick')) {
+      console.warn('chartjs-chart-financial yüklenemedi — mum grafiği atlandı, çizgiye düşülüyor.');
+    } else {
+      const ohlcVeri = veri.tarihler.map((tarih, i) => ({
+        x: new Date(tarih).getTime(),
+        o: veri.open[i], h: veri.high[i], l: veri.low[i], c: veri.close[i],
+      }));
+      const overlayDatasetler = [];
+      if (gostergeTercihleri.overlay.ema_20) overlayDatasetler.push({ type: 'line', label: 'EMA 20', data: veri.ema_20.map((v, i) => ({ x: ohlcVeri[i].x, y: v })), borderColor: '#34D399', borderWidth: 1, pointRadius: 0 });
+      if (gostergeTercihleri.overlay.ema_50) overlayDatasetler.push({ type: 'line', label: 'EMA 50', data: veri.ema_50.map((v, i) => ({ x: ohlcVeri[i].x, y: v })), borderColor: '#F87171', borderWidth: 1, pointRadius: 0 });
+      if (gostergeTercihleri.overlay.ema_100) overlayDatasetler.push({ type: 'line', label: 'EMA 100', data: veri.ema_100.map((v, i) => ({ x: ohlcVeri[i].x, y: v })), borderColor: '#A78BFA', borderWidth: 1, pointRadius: 0 });
+      if (gostergeTercihleri.overlay.sma_200) overlayDatasetler.push({ type: 'line', label: 'SMA 200', data: veri.sma_200.map((v, i) => ({ x: ohlcVeri[i].x, y: v })), borderColor: '#94A3B8', borderWidth: 1, pointRadius: 0 });
+
+      grafikNesneleri['ana'] = new Chart(ctx, {
+        type: 'candlestick',
+        data: {
+          datasets: [{
+            label: 'OHLC',
+            data: ohlcVeri,
+            color: { up: '#34D399', down: '#F87171', unchanged: '#94A3B8' },
+            borderColor: { up: '#34D399', down: '#F87171', unchanged: '#94A3B8' },
+          }, ...overlayDatasetler],
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#94A3B8' } } },
+          scales: {
+            x: { type: 'timeseries', ticks: { color: '#64748B', maxTicksLimit: 8 }, grid: { color: '#1E293B' } },
+            y: { ticks: { color: '#64748B' }, grid: { color: '#1E293B' } },
+          },
+        },
+      });
+      setTimeout(() => { if (grafikNesneleri['ana']) grafikNesneleri['ana'].resize(); }, 100);
+      return;
+    }
+  }
+
   const datasetler = [
     { label: 'Close', data: veri.close, borderColor: '#38BDF8', borderWidth: 2, pointRadius: 0, tension: 0.1 },
   ];
@@ -777,12 +971,21 @@ function osilatorPanelleriniCiz(veri) {
   const container = document.getElementById('osilator-panelleri');
   const aktifOsilatorler = Object.keys(gostergeTercihleri.osilator).filter(k => gostergeTercihleri.osilator[k]);
 
-  container.innerHTML = aktifOsilatorler.map(anahtar => `
-   <div class="panel rounded-xl p-5 mb-4" style="position:relative; height: 280px;">
+  container.innerHTML = aktifOsilatorler.map(anahtar => {
+    const aciklama = OSILATOR_ACIKLAMALARI[anahtar];
+    const aciklamaHtml = aciklama ? `
+      <div style="display:flex; gap:0.6rem; align-items:flex-start; background:var(--bg-deep); border-left:3px solid ${aciklama.renk}; border-radius:0.4rem; padding:0.6rem 0.8rem; margin-bottom:0.75rem;">
+        <span style="font-size:1.1rem;">${aciklama.ikon}</span>
+        <span class="text-xs text-muted" style="line-height:1.5;">${aciklama.metin}</span>
+      </div>` : '';
+    return `
+    <div class="panel rounded-xl p-5 mb-4" style="position:relative; height: 380px;">
       <div class="font-display text-sm font-bold text-white mb-3">${OSILATOR_ETIKETLERI[anahtar]}</div>
+      ${aciklamaHtml}
       <canvas id="osilator-grafik-${anahtar}"></canvas>
     </div>
-  `).join('');
+  `;
+  }).join('');
   if (typeof Chart === 'undefined') return;
 
   aktifOsilatorler.forEach(anahtar => {

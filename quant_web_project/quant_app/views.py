@@ -65,15 +65,9 @@ def register_view(request):
 
 @login_required
 def plan_sec_view(request):
-    """Kayıt sonrası plan seçim ekranı."""
+    """Plan seçim/değiştirme ekranı — hem kayıt sonrası ilk seçimde hem
+    Ayarlar sekmesinden plan değiştirmek için kullanılır."""
     from .models import AbonelikPlan, Abonelik
-
-    # Zaten planı varsa anasayfaya yönlendir
-    try:
-        if request.user.abonelik:
-            return redirect('anasayfa')
-    except Exception:
-        pass
 
     planlar = AbonelikPlan.objects.filter(aktif=True).order_by('fiyat_tl')
 
@@ -366,6 +360,17 @@ def anasayfa_fiyatlar_api(request):
         for sembol in semboller[:5]:  # Her pazardan İLK 5 (büyüklüğe göre sıralı liste varsayımıyla)
             tum_gorevler.append((pazar, sembol))
 
+    def _guvenli_float(deger):
+        """NaN/Infinity'yi 0.0'a çevirir — bunlar geçerli JSON değeri değildir,
+        JSON.parse() tarayıcıda tüm response'u bozar."""
+        try:
+            f = float(deger)
+            if f != f or f in (float('inf'), float('-inf')):  # f != f -> NaN kontrolü
+                return 0.0
+            return f
+        except (TypeError, ValueError):
+            return 0.0
+
     def _tek_gorev_calistir(gorev):
         pazar, sembol = gorev
         sonuc = core.hafif_fiyat_getir(sembol, pazar, interval="1d")
@@ -378,10 +383,10 @@ def anasayfa_fiyatlar_api(request):
             sonuclar_by_pazar.setdefault(pazar, []).append({
                 'sembol': sembol,
                 'basarili': sonuc.basarili,
-                'fiyat': float(sonuc.fiyat),
-                'acilis': float(sonuc.acilis),
-                'degisim_yuzde': float(sonuc.degisim_yuzde),
-                'hacim': float(sonuc.hacim),
+                'fiyat': _guvenli_float(sonuc.fiyat),
+                'acilis': _guvenli_float(sonuc.acilis),
+                'degisim_yuzde': _guvenli_float(sonuc.degisim_yuzde),
+                'hacim': _guvenli_float(sonuc.hacim),
                 'hata_mesaji': sonuc.hata_mesaji,
             })
 
@@ -935,6 +940,7 @@ def limit_durumu_api(request):
     if premium:
         return JsonResponse({'basarili': True, 'premium': True})
 
+    from .models import FiyatAlarmi
     ayar = SiteAyari.get()
     kayit = _gunluk_kayit_getir(request)
     takip_sayisi = WatchlistItem.objects.filter(user=request.user).count()
@@ -958,7 +964,140 @@ def limit_durumu_api(request):
             'kullanilan': takip_sayisi, 'limit': ayar.ucretsiz_takip_listesi_limiti,
             'kalan': max(0, ayar.ucretsiz_takip_listesi_limiti - takip_sayisi),
         },
-    })    
+        'alarm': {
+            'kullanilan': FiyatAlarmi.objects.filter(user=request.user, aktif=True, tetiklendi_mi=False).count(),
+            'limit': ayar.ucretsiz_alarm_limiti,
+            'kalan': max(0, ayar.ucretsiz_alarm_limiti - FiyatAlarmi.objects.filter(user=request.user, aktif=True, tetiklendi_mi=False).count()),
+        },
+    })
+
+
+@login_required
+def alarmlar_view(request):
+    """GET /alarmlar/ — Fiyat alarmları sayfası (market sayfası gibi bağımsız)."""
+    context = {
+        'varlik_havuzu_json': json.dumps(core.VARLIK_HAVUZU),
+    }
+    return render(request, 'quant_app/alarmlar.html', context)
+
+
+@login_required
+def alarmlar_api_getir(request):
+    """GET /api/alarmlar/ — kullanıcının tüm alarmlarını döner."""
+    from .models import FiyatAlarmi
+    alarmlar = FiyatAlarmi.objects.filter(user=request.user)
+    veri = [{
+        'id': a.id, 'sembol': a.sembol, 'pazar': a.pazar,
+        'hedef_fiyat': float(a.hedef_fiyat), 'yon': a.yon, 'yon_gorunen': a.get_yon_display(),
+        'aktif': a.aktif, 'tetiklendi_mi': a.tetiklendi_mi, 'goruldu_mu': a.goruldu_mu,
+        'olusturulma_tarihi': a.olusturulma_tarihi.strftime('%d.%m.%Y %H:%M'),
+    } for a in alarmlar]
+    return JsonResponse({'basarili': True, 'alarmlar': veri})
+
+
+@login_required
+def alarmlar_api_ekle(request):
+    """POST /api/alarmlar/ekle/ — yeni alarm oluşturur (ücretsiz limit kontrolü ile)."""
+    if request.method != 'POST':
+        return JsonResponse({'basarili': False, 'hata_mesaji': 'Geçersiz istek.'}, status=405)
+    from .models import FiyatAlarmi, SiteAyari
+
+    try:
+        veri = json.loads(request.body)
+        sembol = veri.get('sembol', '').strip()
+        pazar = veri.get('pazar', '').strip()
+        hedef_fiyat = float(veri.get('hedef_fiyat'))
+        yon = veri.get('yon', '').strip()
+    except (ValueError, TypeError, json.JSONDecodeError):
+        return JsonResponse({'basarili': False, 'hata_mesaji': 'Geçersiz veri.'}, status=400)
+
+    if not sembol or pazar not in core.VARLIK_HAVUZU or yon not in ('ustune', 'altina'):
+        return JsonResponse({'basarili': False, 'hata_mesaji': 'Eksik/geçersiz bilgi.'}, status=400)
+
+    if not _kullanici_premium_mi(request):
+        ayar = SiteAyari.get()
+        aktif_sayisi = FiyatAlarmi.objects.filter(user=request.user, aktif=True, tetiklendi_mi=False).count()
+        if aktif_sayisi >= ayar.ucretsiz_alarm_limiti:
+            return JsonResponse({
+                'basarili': False,
+                'limit_asimi': True,
+                'limit_turu': 'alarm',
+                'hata_mesaji': f"{ayar.ucretsiz_alarm_limiti} alarm limitine sahipsiniz. Sınırsız alarm için Ücretli Planlarımıza geçebilirsiniz.",
+            }, status=429)
+
+    FiyatAlarmi.objects.create(user=request.user, sembol=sembol, pazar=pazar, hedef_fiyat=hedef_fiyat, yon=yon)
+    return JsonResponse({'basarili': True})
+
+
+@login_required
+def alarmlar_api_sil(request, alarm_id):
+    """POST /api/alarmlar/sil/<id>/ — alarmı siler."""
+    if request.method != 'POST':
+        return JsonResponse({'basarili': False, 'hata_mesaji': 'Geçersiz istek.'}, status=405)
+    from .models import FiyatAlarmi
+    FiyatAlarmi.objects.filter(id=alarm_id, user=request.user).delete()
+    return JsonResponse({'basarili': True})
+
+
+@login_required
+def alarmlar_api_gorundu(request):
+    """POST /api/alarmlar/gorundu/ — tetiklenen alarmları 'görüldü' işaretler (rozet sıfırlama)."""
+    if request.method != 'POST':
+        return JsonResponse({'basarili': False, 'hata_mesaji': 'Geçersiz istek.'}, status=405)
+    from .models import FiyatAlarmi
+    FiyatAlarmi.objects.filter(user=request.user, tetiklendi_mi=True, goruldu_mu=False).update(goruldu_mu=True)
+    return JsonResponse({'basarili': True})
+
+
+
+@login_required
+def abonelik_durumu_api(request):
+    """GET /api/abonelik-durumu/ — Ayarlar sekmesi için mevcut abonelik bilgisi."""
+    from .models import Abonelik
+    try:
+        ab = request.user.abonelik
+        return JsonResponse({
+            'basarili': True,
+            'plan': ab.plan.ad,
+            'plan_gorunen': ab.plan.get_ad_display(),
+            'durum': ab.durum,
+            'durum_gorunen': ab.get_durum_display(),
+            'bitis': ab.bitis.strftime('%d.%m.%Y') if ab.bitis else None,
+            'gecerli_mi': ab.gecerli_mi,
+            'premium_mi': ab.premium_mi,
+        })
+    except Abonelik.DoesNotExist:
+        return JsonResponse({'basarili': True, 'plan': 'ucretsiz', 'plan_gorunen': 'Ücretsiz', 'durum': None, 'bitis': None, 'gecerli_mi': False, 'premium_mi': False})
+
+
+@login_required
+def abonelik_iptal_et(request):
+    """POST /api/abonelik-iptal/ — Aboneliği iptal eder (durum='iptal')."""
+    if request.method != 'POST':
+        return JsonResponse({'basarili': False, 'hata_mesaji': 'Geçersiz istek.'}, status=405)
+    from .models import Abonelik
+    try:
+        ab = request.user.abonelik
+        ab.durum = 'iptal'
+        ab.save()
+        return JsonResponse({'basarili': True})
+    except Abonelik.DoesNotExist:
+        return JsonResponse({'basarili': False, 'hata_mesaji': 'Aktif bir aboneliğiniz yok.'}, status=400)
+
+
+@login_required
+def abonelik_ucretsize_gec(request):
+    """POST /api/abonelik-ucretsize-gec/ — Planı doğrudan Ücretsiz'e çevirir (ödeme gerektirmez)."""
+    if request.method != 'POST':
+        return JsonResponse({'basarili': False, 'hata_mesaji': 'Geçersiz istek.'}, status=405)
+    from .models import Abonelik, AbonelikPlan
+    ucretsiz_plan = AbonelikPlan.objects.get(ad='ucretsiz')
+    ab, _ = Abonelik.objects.get_or_create(user=request.user, defaults={'plan': ucretsiz_plan})
+    ab.plan = ucretsiz_plan
+    ab.durum = 'aktif'
+    ab.bitis = None
+    ab.save()
+    return JsonResponse({'basarili': True})
 
 @login_required
 def usd_try_kuru_api(request):

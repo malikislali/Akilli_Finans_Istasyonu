@@ -71,13 +71,34 @@
   <!-- ---------------- ücretsiz üye hak bilgisi  ---------------- -->
   <div id="sidebar-hak-bilgisi" class="hidden" style="display:flex; flex-direction:column; gap:0.4rem; padding:0.6rem 0;"></div>
 
-  <!-- ---------------- MARKET GENEL GÖRÜNÜMÜ LİNKİ ---------------- -->
-  <div class="yeni-sidebar-laboratuvar" style="margin-bottom: 0;">
-    <a href="{% url 'anasayfa' %}" class="laboratuvar-link">🏠 Market Genel Görünümü</a>
+  <!-- ---------------- ALARM BANNER ---------------- -->
+  <a href="{% url 'alarmlar' %}" style="display:flex; align-items:center; justify-content:center; gap:0.5rem; text-decoration:none; padding:0.6rem; border-radius:0.6rem; background:linear-gradient(135deg, #F59E0B 0%, #F97316 100%); color:#1a1a1a; font-weight:700; font-size:0.85rem; text-align:center;">
+    <span style="font-size:1.1rem;">🔔</span>
+    <span>Alarm Kur</span>
+  </a>
+
+  <!-- ---------------- MARKET GENEL GÖRÜNÜMÜ + LABORATUVAR (yan yana kutular) ---------------- -->
+  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem;">
+    <a href="{% url 'anasayfa' %}" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.3rem; text-decoration:none; padding:0.9rem 0.5rem; border:1px solid var(--border-faint); border-radius:0.6rem; color:var(--text-main); font-size:0.8rem; font-weight:600; text-align:center; transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--accent-sky)'" onmouseout="this.style.borderColor='var(--border-faint)'">
+      <span style="font-size:1.4rem;">🏠</span>
+      <span>Market Genel Görünümü</span>
+    </a>
+    <a href="{% url 'dashboard' %}" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.3rem; text-decoration:none; padding:0.9rem 0.5rem; border:1px solid var(--border-faint); border-radius:0.6rem; color:var(--text-main); font-size:0.8rem; font-weight:600; text-align:center; transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--accent-sky)'" onmouseout="this.style.borderColor='var(--border-faint)'">
+      <span style="font-size:1.4rem;">🧪</span>
+      <span>Laboratuvar</span>
+    </a>
+  </div>
+ <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; margin-top: 0.5rem;">
+    <div class="text-[10px] text-muted" style="line-height: 1.4;">
+      <b>Market Genel Görünümü:</b> Tüm pazarlardan en büyük 5 varlığın anlık fiyatı.
+    </div>
+    <div class="text-[10px] text-muted" style="line-height: 1.4;">
+      <b>Laboratuvar:</b> Yapay zeka ile al/sat tahmini, backtest ve detaylı analiz.
+    </div>
   </div>
 
   <!-- ---------------- LABORATUVAR LİNKİ ---------------- -->
-  <div class="yeni-sidebar-laboratuvar">
+  <div class="yeni-sidebar-laboratuvar" style="display:none;">
     <a href="{% url 'dashboard' %}" class="laboratuvar-link">🧪 Laboratuvar</a>
     <div class="text-[10px] text-muted" style="margin-top: 0.3rem; line-height: 1.4;">
       Yapay zeka ile al/sat tahmini, backtest ve detaylı analiz
