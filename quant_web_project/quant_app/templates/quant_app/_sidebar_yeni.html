@@ -48,9 +48,12 @@
 
   <!-- ---------------- TAKİP LİSTEM ---------------- -->
   <div class="takip-listesi-bolumu">
-    <div class="takip-listesi-baslik-satiri">
-      <div class="takip-listesi-baslik">⭐ TAKİP LİSTEM</div>
-      <button id="takip-ekle-ac-buton" class="takip-ekle-ac-buton" title="Takip listesine varlık ekle">+</button>
+    <div class="takip-listesi-baslik-satiri" id="takip-listesi-baslik-toggle" style="cursor:pointer;">
+      <div class="takip-listesi-baslik">⭐ TAKİP LİSTEM <span id="takip-listesi-sayac" style="font-size:0.7rem; color:var(--text-muted); font-weight:400;"></span></div>
+      <div style="display:flex; align-items:center; gap:0.3rem;">
+        <button id="takip-ekle-ac-buton" class="takip-ekle-ac-buton" title="Takip listesine varlık ekle" onclick="event.stopPropagation();">+</button>
+        <span id="takip-listesi-ok" style="transition: transform 0.15s ease; display:inline-block;">▾</span>
+      </div>
     </div>
 
     <!-- ---- Ekleme paneli (varsayılan gizli, + ile açılır) ---- -->
@@ -63,7 +66,7 @@
       <div id="takip-ekle-sonuclar" class="takip-ekle-sonuclar"></div>
     </div>
 
-    <div id="takip-listesi-icerik" class="takip-listesi-icerik">
+    <div id="takip-listesi-icerik" class="takip-listesi-icerik gizli">
       <div class="text-xs text-muted" style="padding: 0.5rem 0;">Yükleniyor...</div>
     </div>
   </div>
@@ -136,13 +139,31 @@ async function sidebarHakBilgisiYukle() {
 
 document.addEventListener('DOMContentLoaded', sidebarHakBilgisiYukle);
 
+
+
+// ---------------- TAKİP LİSTESİ AÇ/KAPA (dropdown tarzı) ----------------
+const takipBaslikToggle = document.getElementById('takip-listesi-baslik-toggle');
+const takipListesiIcerikEl = document.getElementById('takip-listesi-icerik');
+const takipListesiOkEl = document.getElementById('takip-listesi-ok');
+
+if (takipBaslikToggle) {
+  takipBaslikToggle.addEventListener('click', () => {
+    const kapaliMi = takipListesiIcerikEl.classList.toggle('gizli');
+    if (takipListesiOkEl) takipListesiOkEl.style.transform = kapaliMi ? 'rotate(0deg)' : 'rotate(180deg)';
+  });
+}
+
+
+
 async function takipListesiYukle() {
   const container = document.getElementById('takip-listesi-icerik');
+  const sayacEl = document.getElementById('takip-listesi-sayac');
   try {
     const resp = await fetch('/api/takip-listesi/');
     const veri = await resp.json();
     if (!veri.basarili || veri.ogeler.length === 0) {
       container.innerHTML = '<div class="text-xs text-muted" style="padding: 0.5rem 0;">Henüz bir varlık eklenmedi.</div>';
+      if (sayacEl) sayacEl.textContent = '(0)';
       return;
     }
     container.innerHTML = veri.ogeler.map(o => `
@@ -154,6 +175,7 @@ async function takipListesiYukle() {
         <button class="takip-ogesi-sil" onclick="takipListesindenSil(${o.id})" title="Listeden çıkar">✕</button>
       </div>
     `).join('');
+    if (sayacEl) sayacEl.textContent = `(${veri.ogeler.length})`;
  } catch (err) {
     container.innerHTML = '<div class="text-xs text-red" style="padding: 0.5rem 0;">Yüklenemedi.</div>';
   }

@@ -741,7 +741,6 @@ html, body {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
-    bottom: 0 !important;
     height: 100vh !important;
     z-index: 150 !important;
     width: 85vw !important;
@@ -766,4 +765,17 @@ html, body {
   background: rgba(248,113,113,0.15) !important;
   border-color: #F87171 !important;
   color: #F87171 !important;
+}
+
+/* ── Takip listesi aç/kapa (dropdown tarzı) ── */
+#takip-listesi-icerik.gizli {
+  display: none !important;
+}
+
+/* ── Takip listesi açıkken, arkasındaki içeriğin üstünde net görünsün ── */
+#takip-listesi-icerik {
+  background: var(--bg-panel);
+  position: relative;
+  z-index: 50;
+  border-radius: 0.5rem;
 }
