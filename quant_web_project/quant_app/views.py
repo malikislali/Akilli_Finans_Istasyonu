@@ -972,6 +972,20 @@ def limit_durumu_api(request):
     })
 
 
+
+def _pazar_cache_ile_fiyat_bul(sembol, pazar):
+    """Celery'nin ısıttığı günlük cache listesinden sembolün güncel
+    fiyatını arar — her seferinde canlı Yahoo isteği atmadan hızlı sonuç verir."""
+    try:
+        liste = market_fiyatlarini_cacheli_getir(pazar, '1d')
+        for v in liste:
+            if v.get('sembol') == sembol and v.get('basarili'):
+                return v.get('fiyat')
+    except Exception:
+        pass
+    return None
+
+
 @login_required
 def alarmlar_view(request):
     """GET /alarmlar/ — Fiyat alarmları sayfası (market sayfası gibi bağımsız)."""
@@ -983,15 +997,20 @@ def alarmlar_view(request):
 
 @login_required
 def alarmlar_api_getir(request):
-    """GET /api/alarmlar/ — kullanıcının tüm alarmlarını döner."""
+    """GET /api/alarmlar/ — kullanıcının tüm alarmlarını, GÜNCEL fiyatla birlikte döner."""
     from .models import FiyatAlarmi
     alarmlar = FiyatAlarmi.objects.filter(user=request.user)
-    veri = [{
-        'id': a.id, 'sembol': a.sembol, 'pazar': a.pazar,
-        'hedef_fiyat': float(a.hedef_fiyat), 'yon': a.yon, 'yon_gorunen': a.get_yon_display(),
-        'aktif': a.aktif, 'tetiklendi_mi': a.tetiklendi_mi, 'goruldu_mu': a.goruldu_mu,
-        'olusturulma_tarihi': a.olusturulma_tarihi.strftime('%d.%m.%Y %H:%M'),
-    } for a in alarmlar]
+    veri = []
+    for a in alarmlar:
+        guncel = _pazar_cache_ile_fiyat_bul(a.sembol, a.pazar)
+        veri.append({
+            'id': a.id, 'sembol': a.sembol, 'pazar': a.pazar,
+            'hedef_fiyat': float(a.hedef_fiyat), 'yon': a.yon, 'yon_gorunen': a.get_yon_display(),
+            'aktif': a.aktif, 'tetiklendi_mi': a.tetiklendi_mi, 'goruldu_mu': a.goruldu_mu,
+            'olusturulma_fiyati': float(a.olusturulma_fiyati) if a.olusturulma_fiyati is not None else None,
+            'guncel_fiyat': guncel,
+            'olusturulma_tarihi': a.olusturulma_tarihi.strftime('%d.%m.%Y %H:%M'),
+        })
     return JsonResponse({'basarili': True, 'alarmlar': veri})
 
 
@@ -1025,8 +1044,24 @@ def alarmlar_api_ekle(request):
                 'hata_mesaji': f"{ayar.ucretsiz_alarm_limiti} alarm limitine sahipsiniz. Sınırsız alarm için Ücretli Planlarımıza geçebilirsiniz.",
             }, status=429)
 
-    FiyatAlarmi.objects.create(user=request.user, sembol=sembol, pazar=pazar, hedef_fiyat=hedef_fiyat, yon=yon)
+    guncel_fiyat = _pazar_cache_ile_fiyat_bul(sembol, pazar)
+    FiyatAlarmi.objects.create(user=request.user, sembol=sembol, pazar=pazar, hedef_fiyat=hedef_fiyat, yon=yon, olusturulma_fiyati=guncel_fiyat)
     return JsonResponse({'basarili': True})
+
+@login_required
+def anlik_fiyat_api(request):
+    """GET /api/anlik-fiyat/ — form'da varlık seçilince hedef fiyat kutusunu doldurmak için."""
+    sembol = request.GET.get('sembol', '').strip()
+    pazar = request.GET.get('pazar', '').strip()
+    if not sembol or pazar not in core.VARLIK_HAVUZU:
+        return JsonResponse({'basarili': False, 'hata_mesaji': 'Eksik bilgi.'}, status=400)
+    fiyat = _pazar_cache_ile_fiyat_bul(sembol, pazar)
+    if fiyat is None:
+        sonuc = core.hafif_fiyat_getir(sembol, pazar, interval="1d")
+        fiyat = sonuc.fiyat if sonuc.basarili else None
+    if fiyat is None:
+        return JsonResponse({'basarili': False, 'hata_mesaji': 'Fiyat alınamadı.'})
+    return JsonResponse({'basarili': True, 'fiyat': fiyat})
 
 
 @login_required

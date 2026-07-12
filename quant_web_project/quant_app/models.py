@@ -285,6 +285,7 @@ class FiyatAlarmi(models.Model):
     tetiklendi_mi = models.BooleanField(default=False, verbose_name="Tetiklendi mi")
     goruldu_mu = models.BooleanField(default=False, verbose_name="Görüldü mü (bildirim rozeti için)")
     tetiklenme_tarihi = models.DateTimeField(null=True, blank=True, verbose_name="Tetiklenme Zamanı")
+    olusturulma_fiyati = models.DecimalField(max_digits=18, decimal_places=6, null=True, blank=True, verbose_name="Kurulduğu Andaki Fiyat")
     olusturulma_tarihi = models.DateTimeField(auto_now_add=True, verbose_name="Oluşturulma Zamanı")
 
     class Meta:

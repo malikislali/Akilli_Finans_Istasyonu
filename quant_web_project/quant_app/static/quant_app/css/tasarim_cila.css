@@ -1,0 +1,110 @@
+/* =====================================================================
+   TASARIM CİLASI — Piyasa Pusulam
+   =====================================================================
+   Kayıt türü: PRODUCT (trading dashboard) — gösteriş değil, bilgi
+   yoğunluğu ve taranabilirlik önceliklidir.
+   Tek fikir: "Kendinden emin, veri odaklı minimalizm" — tek sıcak vurgu
+   rengi (amber/turuncu), gerçek veri (fiyat/%) sahnenin yıldızı, dekor
+   geri planda.
+
+   BU DOSYA EKLEMELİDİR — mevcut style.css / yeni_arayuz.css'teki hiçbir
+   kuralı SİLMEZ ya da EZMEZ (aksi belirtilenler hariç, hepsi bilinçli
+   ve dar kapsamlı). Var olan hiçbir bileşeni bozmadan, üstüne ince bir
+   cila katmanı ekler. base_v2.html VE base.html'e (Laboratuvar dahil)
+   son sırada eklenmelidir.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. HAREKET — sadece transform/opacity, doğal easing, erişilebilirlik
+   --------------------------------------------------------------------- */
+:root {
+  --cila-easing: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.panel, .varlik-karti, .market-varlik-satiri, .tarama-filtre-grup,
+.btn, .btn-sky, button, a {
+  transition-timing-function: var(--cila-easing);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   2. KLAVYE ODAK DURUMU — zorunlu, opsiyonel değil
+   --------------------------------------------------------------------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+.periyot-buton:focus-visible,
+.tarama-filtre-buton:focus-visible,
+.gosterge-toggle:focus-visible,
+.alt-nav-buton:focus-visible {
+  outline: 2px solid #F97316;
+  outline-offset: 2px;
+  border-radius: 0.35rem;
+}
+
+/* ---------------------------------------------------------------------
+   3. KART-İÇİNDE-KART SORUNU — market listesi/kutu görünümü hafifletme
+   --------------------------------------------------------------------- */
+/* Panel içindeki panel varsa (örn. tarama filtre grupları panel içinde),
+   iç kart gölge/arka planını sadeleştir — çift çerçeve hissini azaltır. */
+.panel .tarama-filtre-grup,
+.panel .varlik-karti {
+  box-shadow: none;
+}
+
+/* ---------------------------------------------------------------------
+   4. TEK VURGU RENGİ TUTARLILIĞI — amber/turuncu tonu güçlendirme
+   --------------------------------------------------------------------- */
+/* Buton hover'larında mor-mavi klişe yerine, marka rengine (amber) doğru
+   ince bir kayma — sadece OPACITY/renk, layout'a dokunmaz. */
+.btn-sky:hover,
+.tarama-tara-btn:hover {
+  filter: saturate(1.08) brightness(1.03);
+}
+
+/* ---------------------------------------------------------------------
+   5. VERİ HİYERARŞİSİ — fiyat/değişim yüzdesi görsel olarak öncelikli
+   --------------------------------------------------------------------- */
+/* Fiyat rakamları, çevresindeki metinden en az 1.25x büyük olmalı —
+   ölçek kontrastı ile hiyerarşi kurma ilkesi. */
+.varlik-karti-fiyat {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Yeşil/kırmızı değişim renkleri, sadece renkle değil, ok işaretiyle de
+   (zaten mevcut ▲▼ kullanımı varsa) desteklenmeli — renk körlüğü için. */
+.varlik-karti-degisim.pozitif::before { content: "▲ "; font-size: 0.7em; }
+.varlik-karti-degisim.negatif::before { content: "▼ "; font-size: 0.7em; }
+
+/* ---------------------------------------------------------------------
+   6. YAZI TİPİ RİTMİ — mevcut 3'lü sistemi (Space Grotesk / Inter /
+   JetBrains Mono) koru, sadece boşluk/ritim sıkılaştırması
+   --------------------------------------------------------------------- */
+.font-display {
+  letter-spacing: -0.015em;
+}
+
+/* ---------------------------------------------------------------------
+   7. NATIVE DIALOG DESTEĞİ — limit-modal-overlay'i ileride <dialog>'a
+   taşımak istersen, bu sınıf hazır bekliyor (şimdilik pasif, opsiyonel)
+   --------------------------------------------------------------------- */
+dialog.cila-dialog {
+  border: 1px solid var(--border-faint);
+  border-radius: 1rem;
+  background: var(--bg-panel);
+  color: var(--text-main);
+  padding: 2rem;
+}
+dialog.cila-dialog::backdrop {
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(2px);
+}

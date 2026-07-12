@@ -61,7 +61,7 @@ urlpatterns = [
     path('api/limit-durumu/', views.limit_durumu_api, name='limit_durumu_api'),
     path('alarmlar/', views.alarmlar_view, name='alarmlar'),
     path('api/alarmlar/', views.alarmlar_api_getir, name='alarmlar_api_getir'),
-    path('api/alarmlar/ekle/', views.alarmlar_api_ekle, name='alarmlar_api_ekle'),
+    path('api/anlik-fiyat/', views.anlik_fiyat_api, name='anlik_fiyat_api'),    path('api/alarmlar/ekle/', views.alarmlar_api_ekle, name='alarmlar_api_ekle'),
     path('api/alarmlar/sil/<int:alarm_id>/', views.alarmlar_api_sil, name='alarmlar_api_sil'),
     path('api/alarmlar/gorundu/', views.alarmlar_api_gorundu, name='alarmlar_api_gorundu'),
     path('api/abonelik-durumu/', views.abonelik_durumu_api, name='abonelik_durumu_api'),

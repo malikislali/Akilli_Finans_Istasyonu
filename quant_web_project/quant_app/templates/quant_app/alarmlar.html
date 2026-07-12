@@ -96,10 +96,17 @@ alarmSembolInput.addEventListener('input', () => {
   alarmSembolSonuclari.innerHTML = eslesenler.slice(0, 15).map(v => `<div class="market-arama-sonuc-ogesi" data-sembol="${v}">${(typeof sembolGoster === 'function') ? sembolGoster(v, alarmSeciliPazar) : v}</div>`).join('');
   alarmSembolSonuclari.classList.remove('gizli');
   alarmSembolSonuclari.querySelectorAll('.market-arama-sonuc-ogesi').forEach(el => {
-    el.addEventListener('click', () => {
+    el.addEventListener('click', async () => {
       alarmSeciliSembol = el.dataset.sembol;
       alarmSembolInput.value = el.textContent;
       alarmSembolSonuclari.classList.add('gizli');
+      try {
+        const resp = await fetch(`/api/anlik-fiyat/?sembol=${encodeURIComponent(alarmSeciliSembol)}&pazar=${alarmSeciliPazar}`);
+        const veri = await resp.json();
+        if (veri.basarili && veri.fiyat !== null) {
+          document.getElementById('alarm-hedef-fiyat-input').value = veri.fiyat;
+        }
+      } catch (err) { /* sessiz geç */ }
     });
   });
 });
@@ -165,7 +172,8 @@ async function alarmListesiniYukle() {
           <div style="flex:1; padding:0.85rem 1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem;">
             <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
               <span class="font-mono font-bold text-white" style="font-size:1.05rem; width:6.5rem; flex-shrink:0;">${gorunenSembol}</span>
-              <span style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:1.2rem; color:var(--text-muted); width:6rem; flex-shrink:0; text-align:right;">${a.hedef_fiyat}</span>
+              <span style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:1.2rem; color:var(--text-muted); width:7rem; flex-shrink:0; text-align:right;" title="Hedef Fiyat">${(typeof paraBirimiFormatla === 'function') ? paraBirimiFormatla(a.hedef_fiyat, a.pazar, 4) : a.hedef_fiyat}</span>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:var(--accent-sky); width:7rem; flex-shrink:0; text-align:right;" title="Güncel Fiyat">${(a.guncel_fiyat !== null && a.guncel_fiyat !== undefined) ? ('🔸' + ((typeof paraBirimiFormatla === 'function') ? paraBirimiFormatla(a.guncel_fiyat, a.pazar, 4) : a.guncel_fiyat)) : '—'}</span>
               <span style="font-size:0.75rem; font-weight:700; color:${yonRengi}; background:${yonArkaplan}; padding:0.25rem 0.65rem; border-radius:0.4rem; width:9.5rem; flex-shrink:0; text-align:center;">${a.yon_gorunen}</span>
             </div>
             <div style="display:flex; gap:1rem; align-items:center;">
