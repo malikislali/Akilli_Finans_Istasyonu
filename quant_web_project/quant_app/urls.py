@@ -1,17 +1,12 @@
 """
-quant_app/urls.py — App seviyesi route'lar.
-
-🆕 NAVİGASYON YENİDEN YAPILANDIRILDI:
-  '' (ana sayfa)   -> anasayfa_view (YENİ market overview ekranı)
-  '/laboratuvar/'  -> dashboard_view (ESKİ tek-varlık ML analiz ekranı,
-                       İÇERİK OLARAK DOKUNULMADI, sadece URL'i değişti)
-  '/market/<pazar>/' -> market_view (pazara tıklanınca açılan ekran:
-                       arama + periyot + İÇİNDE Laboratuvar'ın analiz
-                       arayüzü)
+quant_app/urls.py — GÜNCELLENDİ (Adım 20)
+Bu dosyanın TAMAMINI mevcut quant_app/urls.py'nin yerine koy.
+(Önceki TÜM route'lar aynen korunuyor, sadece 'mobil-giris/<token>/' eklendi.)
 """
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from . import views_web_sso
 
 urlpatterns = [
     path('', views.anasayfa_view, name='anasayfa'),
@@ -43,7 +38,7 @@ urlpatterns = [
     path('sifre-sifirla/tamamlandi/', auth_views.PasswordResetCompleteView.as_view(
         template_name='quant_app/sifre_sifirla_tamamlandi.html'
     ), name='password_reset_complete'),
-    
+
     path('logout/', views.logout_view, name='logout'),
 
     path('analiz/', views.analiz_api_view, name='analiz_api'),
@@ -61,12 +56,18 @@ urlpatterns = [
     path('api/limit-durumu/', views.limit_durumu_api, name='limit_durumu_api'),
     path('alarmlar/', views.alarmlar_view, name='alarmlar'),
     path('api/alarmlar/', views.alarmlar_api_getir, name='alarmlar_api_getir'),
-    path('api/anlik-fiyat/', views.anlik_fiyat_api, name='anlik_fiyat_api'),    path('api/alarmlar/ekle/', views.alarmlar_api_ekle, name='alarmlar_api_ekle'),
+    path('api/anlik-fiyat/', views.anlik_fiyat_api, name='anlik_fiyat_api'),
+    path('api/alarmlar/ekle/', views.alarmlar_api_ekle, name='alarmlar_api_ekle'),
     path('api/alarmlar/sil/<int:alarm_id>/', views.alarmlar_api_sil, name='alarmlar_api_sil'),
     path('api/alarmlar/gorundu/', views.alarmlar_api_gorundu, name='alarmlar_api_gorundu'),
     path('api/abonelik-durumu/', views.abonelik_durumu_api, name='abonelik_durumu_api'),
     path('api/abonelik-iptal/', views.abonelik_iptal_et, name='abonelik_iptal_et'),
-    path('api/abonelik-ucretsize-gec/', views.abonelik_ucretsize_gec, name='abonelik_ucretsize_gec'),    path('api/usd-try-kuru/', views.usd_try_kuru_api, name='usd_try_kuru_api'),    path('api/takip-listesi/', views.takip_listesi_getir, name='takip_listesi_getir'),
+    path('api/abonelik-ucretsize-gec/', views.abonelik_ucretsize_gec, name='abonelik_ucretsize_gec'),
+    path('api/usd-try-kuru/', views.usd_try_kuru_api, name='usd_try_kuru_api'),
+    path('api/takip-listesi/', views.takip_listesi_getir, name='takip_listesi_getir'),
     path('api/takip-listesi/ekle/', views.takip_listesi_ekle, name='takip_listesi_ekle'),
     path('api/takip-listesi/sil/<int:oge_id>/', views.takip_listesi_sil, name='takip_listesi_sil'),
+
+    # 🆕 Mobil App → Web Otomatik Giriş (Adım 20)
+    path('mobil-giris/<str:token>/', views_web_sso.mobil_web_giris, name='mobil_web_giris'),
 ]
